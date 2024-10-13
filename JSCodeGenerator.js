@@ -2,26 +2,22 @@ import antlr4 from 'antlr4';
 import PythonParser  from './PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './PythonParserVisitor.js'; // Import the generated visitor base class
 import PythonLexer from "./PythonLexer.js";
-class JSCodeGenerator extends PythonParserVisitor {
+export default class JSCodeGenerator extends PythonParserVisitor {
     constructor(context = {}) {
         super();
         // An external context to store variables (like a symbol table)
         this.context = context;
         this.context.symbolTable = {};
     }
+
     visitFile_input(ctx)
     {
         let x = this.visitChildren(ctx)
         console.log("On file input" + x[0][0][0][0][0])
-        return x;
+        //return x;
+        return x[0][0][0][0][0];
     }
 
-    visitAssignment(ctx)
-    {
-        let x = this.visitChildren(ctx)
-        console.log("on assignment" + x[0][0][0][0][0])
-        return x;
-    }
     // Visit an assignment node (e.g., x = 5)
     visitAssignment(ctx) {
         // Get the variable name (assuming structure based on your tree)
@@ -93,4 +89,3 @@ const outputCode = codeGenerator.visit(tree);
 
 // Output the generated JavaScript code
 console.log(outputCode);
-

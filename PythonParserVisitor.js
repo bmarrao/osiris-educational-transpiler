@@ -4,7 +4,8 @@ import antlr4 from 'antlr4';
 
 // This class defines a complete generic visitor for a parse tree produced by PythonParser.
 
-export default class PythonParserVisitor extends antlr4.tree.ParseTreeVisitor {
+export default class PythonParserVisitor extends antlr4.tree.ParseTreeVisitor
+{
 
 	// Visit a parse tree produced by PythonParser#file_input.
 	visitFile_input(ctx) {

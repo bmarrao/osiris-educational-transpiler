@@ -5,15 +5,18 @@
   "description": "### About files:  - PythonParser.g4    is the ANTLR4 parser grammar that based on the official [Python PEG grammar](https://docs.python.org/3.12/reference/grammar.html)",
   "main": "Python3Parser.js",
   "directories": {
-    "example": "examples",
-    "test": "tests"
+    "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "antlr4": "^4.13.2"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3"
   }
 }
