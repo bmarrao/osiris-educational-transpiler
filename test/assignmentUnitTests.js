@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import antlr4 from 'antlr4';
 import PythonParser from '../PythonParser.js'; // Adjust the path as necessary
-import PythonLexer from '../PythonLexer.js'; // Adjust the path as necessary
-import JSCodeGenerator from '../JSCodeGenerator.js'; // Adjust the path
+import PythonLexer from '../Python/PythonLexer.js'; // Adjust the path as necessary
+import JSCodeGenerator from '../Python/JSCodeGenerator.js'; // Adjust the path
 
 
 function parse(input) {
