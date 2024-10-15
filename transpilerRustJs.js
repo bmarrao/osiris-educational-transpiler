@@ -1,7 +1,7 @@
 import antlr4 from 'antlr4';
-import RustParser  from './RustParser.js'; // Import the generated parser
-import RustParserVisitor from './RustParserVisitor.js'; // Import the generated visitor base class
-import RustLexer from "./RustLexer.js";
+import RustParser  from './rust/RustParser.js'; // Import the generated parser
+import RustParserVisitor from './rust/RustParserVisitor.js'; // Import the generated visitor base class
+import RustLexer from "./rust/RustLexer.js";
 export default class JSCodeGenerator extends RustParserVisitor {
     constructor(context = {}) {
         super();
@@ -10,59 +10,62 @@ export default class JSCodeGenerator extends RustParserVisitor {
         this.context.symbolTable = {};
     }
 
-    visitFile_input(ctx)
+    visitCrate(ctx)
     {
         let x = this.visitChildren(ctx)
-        console.log("On file input" + x[0][0][0][0][0])
-        //return x;
-        return x[0][0][0][0][0];
+        console.log("On crate" + x[0][0][0])
+        return x;
+        //return x[0][0][0][0][0];
     }
 
     // Visit an assignment node (e.g., x = 5)
-    visitAssignment(ctx) {
+    visitLetStatement(ctx) {
         // Get the variable name (assuming structure based on your tree)
-        const variableName = this.visit(ctx.star_targets())
+        const variableName = this.visit(ctx.patternNoTopAlt())
         console.log("Nome da variavel" + variableName)
         // Get the value from the right-hand side (expression)
-        const value = this.visit(ctx.star_expressions());
+        const value = this.visit(ctx.expression());
         console.log("Valor da variavel" + value)
 
         // Return the JavaScript equivalent assignment statement
         return `let ${variableName} = ${value};`;
     }
 
-    visitSum(ctx) {
-        // Check if this is a recursive sum case
-        if (ctx.sum()) {
-            const left = this.visit(ctx.sum());
-
-            // Get the operator and evaluate
-            const operator = ctx.children[1].getText();
-            const right = this.visit(ctx.term());
-
-            return (left + " " + operator + " " + right)
-        } else {
-            // It's just a term
-            return this.visit(ctx.term());
+    visitIdentifierPattern(ctx) 
+    {
+        let prefix = "";
+        if (ctx.KW_MUT() !== null) 
+        {
+            prefix = "let";
         }
+        else 
+        {
+            prefix="const";
+        }
+        let variableName = this.visitChildren(ctx);
+        // Continue a visitação normal
+        return prefix + " " + variableName;
     }
-
-    visitStar_atom(ctx) {
+    visitIdentifier(ctx)
+    {
         const variableName = ctx.getText();
-        return variableName;  // Otherwise, return the variable name as is
+        return variableName;
+    }
+    visitLiteralExpression(ctx) {
+        const variableResult = ctx.getText();
+        return variableResult;  // Otherwise, return the variable name as is
     }
 
-    // Handle variable lookups (e.g., using a variable that has been previously assigned)
-    visitAtom(ctx) {
-        const variableValue = ctx.getText();
-        return variableValue;  //
-    }
+    
 }
 
 // Usage Example:
 
 const input = `
-x = 5 + 2
+fn main() {
+    let x = 5;
+    let mut y = 10;   
+}
 `; // Example Rust-like input
 
 // Create a parser
@@ -79,7 +82,7 @@ const tokens = new antlr4.CommonTokenStream(lexer);
 const parser = new RustParser(tokens);
 
 // Start parsing at the desired rule (assuming 'file_input' is the start rule)
-const tree = parser.file_input(); // Adjust this to your start rule
+const tree = parser.crate(); // Adjust this to your start rule
 
 // Create the JS code generator (visitor) and pass a context object
 const codeGenerator = new JSCodeGenerator({});

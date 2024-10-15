@@ -1,7 +1,7 @@
 import antlr4 from 'antlr4';
-import PythonParser  from './PythonParser.js'; // Import the generated parser
-import PythonParserVisitor from './PythonParserVisitor.js'; // Import the generated visitor base class
-import PythonLexer from "./PythonLexer.js";
+import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
+import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
+import PythonLexer from "./Python/PythonLexer.js";
 export default class JSCodeGenerator extends PythonParserVisitor {
     constructor(context = {}) {
         super();
