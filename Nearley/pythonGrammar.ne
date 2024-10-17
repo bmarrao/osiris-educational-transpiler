@@ -1,108 +1,154 @@
+@{%
+const moo = require("moo");
 
-# ========================= START OF THE GRAMMAR =========================
+let lexer = moo.compile({
+    WS: /[ \t]+/,
+    comment: /\/\/.*?$/,
+    number: /0|[1-9][0-9]*/,
+    string: /"(?:\\["\\]|[^\n"\\])*"/,
+    lparen: '(',
+    rparen: ')',
+    lbrace: '{',
+    rbrace: '}',
+    lbracket: '[',
+    rbracket: ']',
+    semicolon: ';',
+    comma: ',',
+    dot: '.',
+    colon: ':',
+    arrow: '->',
+    plus: '+',
+    minus: '-',
+    multiply: '*',
+    divide: '/',
+    modulo: '%',
+    power: '**',
+    assign: '=',
+    lt: '<',
+    gt: '>',
+    lte: '<=',
+    gte: '>=',
+    eq: '==',
+    neq: '!=',
+    kw: ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'try', 'except', 'finally', 'with', 'as', 'import', 'from', 'raise', 'return', 'assert', 'pass', 'break', 'continue', 'global', 'nonlocal', 'lambda', 'yield', 'del', 'async', 'await', 'and', 'or', 'not', 'is', 'None', 'True', 'False'],
+    identifier: /[a-zA-Z_][a-zA-Z0-9_]*/,
+    NL: { match: /\n/, lineBreaks: true },
+});
+
+function soft_keyword(kw) {
+    return (d) => d[0].text === kw;
+}
+%}
+
+@lexer lexer
+
+# Starting rules
+file_input -> statements:? %EOF
+
+# General statements
+statements -> statement:+
+
+statement ->simple_stmts
+
+simple_stmts
+    -> simple_stmt (%semicolon simple_stmt):* %semicolon:? %NL
+
+simple_stmt
+    -> assignment
+
+# Simple statements
+assignment -> (star_targets %assign ):+ (yield_expr | star_expressions) 
+# Expressions
+expressions
+    -> expression (%comma expression ):* %comma:?
+
+expression
+    -> disjunction ("if" disjunction "else" expression):?
+    
+
+yield_expr
+    -> "yield" ("from" expression | star_expressions:?)
+
+star_expressions
+    -> star_expression (%comma star_expression ):* %comma:?
+
+star_expression
+    -> "*" bitwise_or
+    | expression
+disjunction
+    -> conjunction ("or" conjunction ):*
+
+conjunction
+    -> inversion ("and" inversion ):*
+
+inversion
+    -> "not" inversion
+    | comparison
+
+# Comparison operators
+comparison
+    -> bitwise_or 
+
+# Bitwise operators
+bitwise_or
+    -> bitwise_or "|" bitwise_xor
+    | bitwise_xor
+
+bitwise_xor
+    -> bitwise_xor "^" bitwise_and
+    | bitwise_and
+
+bitwise_and
+    -> bitwise_and "&" shift_expr
+    | shift_expr
+
+shift_expr
+    -> shift_expr ("<<" | ">>") sum
+    | sum
+
+# Arithmetic operators
+sum
+    -> sum (%plus | %minus) term
+    | term
+
+term
+    -> term ("*" | "/" | "//" | "%" | "@") factor
+    | factor
+
+factor
+    -> %plus factor
+    | %minus factor
+    | "~" factor
+    | power
+
+power
+    -> await_primary ("**" factor):?
 
 
-# STARTING RULES
-file -> statements
+# `await_primary`
+await_primary
+    -> "await" primary
+    | primary
 
-statements -> statement+
+# `primary`
+primary
+    -> atom
 
-statement -> simple_stmts
+atom
+    -> %identifier
+    | %number
 
-simple_stmts -> simple_stmt !';' NEWLINE | ';' simple_stmt+ [';'] NEWLINE
+star_targets
+    -> star_target (%comma star_target ):* %comma:?
 
-simple_stmt -> assignment
-
-# SIMPLE STATEMENTS
-assignment -> NAME ':' expression ['=' annotated_rhs]
-            | '(' single_target ')' | single_subscript_attribute_target ':' expression ['=' annotated_rhs]
-            | (star_targets '=' )+ (yield_expr | star_expressions) !'=' [TYPE_COMMENT]
-            | single_target augassign ~ (yield_expr | star_expressions)
-
-annotated_rhs -> yield_expr | star_expressions
-
-
-# ASSIGNMENT TARGETS
-# ==================
-
-# Generic targets
-# ---------------
-
-# NOTE: star_targets may contain *bitwise_or, targets may not.
-star_targets:
-    | star_target !',' 
-    | star_target (',' star_target )* [','] 
-
-star_targets_list_seq: ','.star_target+ [','] 
-
-star_targets_tuple_seq:
-    | star_target (',' star_target )+ [','] 
-    | star_target ',' 
-
-star_target:
-    | '*' (!'*' star_target) 
+star_target
+    -> %multiply (star_target)
     | target_with_star_atom
 
-target_with_star_atom:
-    | t_primary '.' NAME !t_lookahead 
-    | t_primary '[' slices ']' !t_lookahead 
-    | star_atom
+target_with_star_atom
+    -> star_atom
 
-star_atom:
-    | NAME 
-    | '(' target_with_star_atom ')' 
-    | '(' [star_targets_tuple_seq] ')' 
-    | '[' [star_targets_list_seq] ']' 
+star_atom
+    -> %identifier
 
-single_target:
-    | single_subscript_attribute_target
-    | NAME 
-    | '(' single_target ')' 
-
-single_subscript_attribute_target:
-    | t_primary '.' NAME !t_lookahead 
-    | t_primary '[' slices ']' !t_lookahead 
-
-t_primary:
-    | t_primary '.' NAME &t_lookahead 
-    | t_primary '[' slices ']' &t_lookahead 
-    | t_primary genexp &t_lookahead 
-    | t_primary '(' [arguments] ')' &t_lookahead 
-    | atom &t_lookahead 
-
-t_lookahead: '(' | '[' | '.'
-
-
-# EXPRESSIONS
-expression -> or_expr
-
-or_expr -> and_expr ('or' and_expr)*
-
-and_expr -> not_expr ('and' not_expr)*
-
-not_expr -> 'not' not_expr | comparison
-
-comparison -> bitwise_or_expr (('==' | '!=' | '<' | '>' | '<=' | '>=') bitwise_or_expr)*
-
-bitwise_or_expr -> bitwise_and_expr ('|' bitwise_and_expr)*
-
-bitwise_and_expr -> bitwise_xor_expr ('&' bitwise_xor_expr)*
-
-bitwise_xor_expr -> term (('^' term)*)
-
-term -> factor (('+' | '-') factor)*
-
-factor -> ('+' | '-') factor | atom | ('(' [arguments] ')') | ('[' star_expressions ']')
-
-atom -> NAME | NUMBER | STRING | 'None' | 'True' | 'False' | lambda_expr | list_comprehension | set_comprehension | dict_comprehension | generator_expression
-
-
-
-
-# STAR EXPRESSIONS
-star_expressions -> star_expression (',' star_expression)*
-
-star_expression -> '*' expression | expression
-
-# ========================= END OF THE GRAMMAR =========================
 
