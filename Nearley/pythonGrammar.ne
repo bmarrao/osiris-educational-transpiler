@@ -1,6 +1,5 @@
 @{%
 const moo = require("moo");
-
 let lexer = moo.compile({
     WS: /[ \t]+/,
     comment: /\/\/.*?$/,
@@ -30,20 +29,26 @@ let lexer = moo.compile({
     gte: '>=',
     eq: '==',
     neq: '!=',
-    kw: ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'try', 'except', 'finally', 'with', 'as', 'import', 'from', 'raise', 'return', 'assert', 'pass', 'break', 'continue', 'global', 'nonlocal', 'lambda', 'yield', 'del', 'async', 'await', 'and', 'or', 'not', 'is', 'None', 'True', 'False'],
-    identifier: /[a-zA-Z_][a-zA-Z0-9_]*/,
-    NL: { match: /\n/, lineBreaks: true },
+    kw: {
+        match: ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'try', 
+               'except', 'finally', 'with', 'as', 'import', 'from', 'raise', 
+               'return', 'assert', 'pass', 'break', 'continue', 'global', 
+               'nonlocal', 'lambda', 'yield', 'del', 'async', 'await', 'and', 
+               'or', 'not', 'is', 'None', 'True', 'False']
+    },
+    identifier: /[a-zA-Z_][a-zA-Z0-9_]*/  // This is the main fix - use regex instead of fixed "x"
 });
 
 function soft_keyword(kw) {
     return (d) => d[0].text === kw;
 }
 %}
-
 @lexer lexer
-
 # Starting rules
-file_input -> statements:? %EOF
+
+@entry file_input
+
+file_input -> statements:?
 
 # General statements
 statements -> statement:+
@@ -51,13 +56,12 @@ statements -> statement:+
 statement ->simple_stmts
 
 simple_stmts
-    -> simple_stmt (%semicolon simple_stmt):* %semicolon:? %NL
-
+    -> simple_stmt
 simple_stmt
     -> assignment
 
 # Simple statements
-assignment -> (star_targets %assign ):+ (yield_expr | star_expressions) 
+assignment -> _ star_targets _ %assign _ star_expressions
 # Expressions
 expressions
     -> expression (%comma expression ):* %comma:?
@@ -151,4 +155,6 @@ target_with_star_atom
 star_atom
     -> %identifier
 
-
+# Define optional whitespace
+_ -> %WS:*    {% () => null %}  # matches zero or more whitespace
+__ -> %WS:+   {% () => null %}  # matches one or more whitespace (mandatory space)

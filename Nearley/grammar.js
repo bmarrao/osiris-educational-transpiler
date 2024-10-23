@@ -4,7 +4,6 @@
 function id(x) { return x[0]; }
 
 const moo = require("moo");
-
 let lexer = moo.compile({
     WS: /[ \t]+/,
     comment: /\/\/.*?$/,
@@ -34,9 +33,14 @@ let lexer = moo.compile({
     gte: '>=',
     eq: '==',
     neq: '!=',
-    kw: ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'try', 'except', 'finally', 'with', 'as', 'import', 'from', 'raise', 'return', 'assert', 'pass', 'break', 'continue', 'global', 'nonlocal', 'lambda', 'yield', 'del', 'async', 'await', 'and', 'or', 'not', 'is', 'None', 'True', 'False'],
-    identifier: /[a-zA-Z_][a-zA-Z0-9_]*/,
-    NL: { match: /\n/, lineBreaks: true },
+    kw: {
+        match: ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'try', 
+               'except', 'finally', 'with', 'as', 'import', 'from', 'raise', 
+               'return', 'assert', 'pass', 'break', 'continue', 'global', 
+               'nonlocal', 'lambda', 'yield', 'del', 'async', 'await', 'and', 
+               'or', 'not', 'is', 'None', 'True', 'False']
+    },
+    identifier: /[a-zA-Z_][a-zA-Z0-9_]*/  // This is the main fix - use regex instead of fixed "x"
 });
 
 function soft_keyword(kw) {
@@ -47,25 +51,14 @@ var grammar = {
     ParserRules: [
     {"name": "file_input$ebnf$1", "symbols": ["statements"], "postprocess": id},
     {"name": "file_input$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "file_input", "symbols": ["file_input$ebnf$1", (lexer.has("EOF") ? {type: "EOF"} : EOF)]},
+    {"name": "file_input", "symbols": ["file_input$ebnf$1"]},
     {"name": "statements$ebnf$1", "symbols": ["statement"]},
     {"name": "statements$ebnf$1", "symbols": ["statements$ebnf$1", "statement"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "statements", "symbols": ["statements$ebnf$1"]},
     {"name": "statement", "symbols": ["simple_stmts"]},
-    {"name": "simple_stmts$ebnf$1", "symbols": []},
-    {"name": "simple_stmts$ebnf$1$subexpression$1", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon), "simple_stmt"]},
-    {"name": "simple_stmts$ebnf$1", "symbols": ["simple_stmts$ebnf$1", "simple_stmts$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "simple_stmts$ebnf$2", "symbols": [(lexer.has("semicolon") ? {type: "semicolon"} : semicolon)], "postprocess": id},
-    {"name": "simple_stmts$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "simple_stmts", "symbols": ["simple_stmt", "simple_stmts$ebnf$1", "simple_stmts$ebnf$2", (lexer.has("NL") ? {type: "NL"} : NL)]},
+    {"name": "simple_stmts", "symbols": ["simple_stmt"]},
     {"name": "simple_stmt", "symbols": ["assignment"]},
-    {"name": "assignment$ebnf$1$subexpression$1", "symbols": ["star_targets", (lexer.has("assign") ? {type: "assign"} : assign)]},
-    {"name": "assignment$ebnf$1", "symbols": ["assignment$ebnf$1$subexpression$1"]},
-    {"name": "assignment$ebnf$1$subexpression$2", "symbols": ["star_targets", (lexer.has("assign") ? {type: "assign"} : assign)]},
-    {"name": "assignment$ebnf$1", "symbols": ["assignment$ebnf$1", "assignment$ebnf$1$subexpression$2"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "assignment$subexpression$1", "symbols": ["yield_expr"]},
-    {"name": "assignment$subexpression$1", "symbols": ["star_expressions"]},
-    {"name": "assignment", "symbols": ["assignment$ebnf$1", "assignment$subexpression$1"]},
+    {"name": "assignment", "symbols": ["_", "star_targets", "_", (lexer.has("assign") ? {type: "assign"} : assign), "_", "star_expressions"]},
     {"name": "expressions$ebnf$1", "symbols": []},
     {"name": "expressions$ebnf$1$subexpression$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma), "expression"]},
     {"name": "expressions$ebnf$1", "symbols": ["expressions$ebnf$1", "expressions$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
@@ -144,7 +137,13 @@ var grammar = {
     {"name": "star_target", "symbols": [(lexer.has("multiply") ? {type: "multiply"} : multiply), "star_target$subexpression$1"]},
     {"name": "star_target", "symbols": ["target_with_star_atom"]},
     {"name": "target_with_star_atom", "symbols": ["star_atom"]},
-    {"name": "star_atom", "symbols": [(lexer.has("identifier") ? {type: "identifier"} : identifier)]}
+    {"name": "star_atom", "symbols": [(lexer.has("identifier") ? {type: "identifier"} : identifier)]},
+    {"name": "_$ebnf$1", "symbols": []},
+    {"name": "_$ebnf$1", "symbols": ["_$ebnf$1", (lexer.has("WS") ? {type: "WS"} : WS)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "_", "symbols": ["_$ebnf$1"], "postprocess": () => null},
+    {"name": "__$ebnf$1", "symbols": [(lexer.has("WS") ? {type: "WS"} : WS)]},
+    {"name": "__$ebnf$1", "symbols": ["__$ebnf$1", (lexer.has("WS") ? {type: "WS"} : WS)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "__", "symbols": ["__$ebnf$1"], "postprocess": () => null}
 ]
   , ParserStart: "file_input"
 }

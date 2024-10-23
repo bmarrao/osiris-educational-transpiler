@@ -9,7 +9,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         this.context = context;
         this.context.symbolTable = {};
     }
-
+    //TODO : CRIAR FLATTEN PEGAR RESULT E RETIRAR ARRAY E DEIXAR SO O QUE NÃO É CONCATENADO
     visitFile_input(ctx)
     {
         let x = this.visitChildren(ctx)

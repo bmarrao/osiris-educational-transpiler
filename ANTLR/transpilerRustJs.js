@@ -9,7 +9,7 @@ export default class JSCodeGenerator extends RustParserVisitor {
         this.context = context;
         this.context.symbolTable = {};
     }
-
+    //TODO : CRIAR FLATTEN PEGAR RESULT E RETIRAR ARRAY E DEIXAR SO O QUE NÃO É CONCATENADO
     visitCrate(ctx)
     {
         let x = this.visitChildren(ctx)
@@ -28,7 +28,7 @@ export default class JSCodeGenerator extends RustParserVisitor {
         console.log("Valor da variavel" + value)
 
         // Return the JavaScript equivalent assignment statement
-        return `let ${variableName} = ${value};`;
+        return `${variableName} = ${value};`;
     }
 
     visitIdentifierPattern(ctx) 
