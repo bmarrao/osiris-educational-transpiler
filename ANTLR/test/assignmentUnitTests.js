@@ -47,6 +47,13 @@ describe('Python', () => {
         expect(outputCode).to.equal('let x = 5 + 2;');
     });
 
+    it('should generate JavaScript from Python minus assignment', () => {
+        const input = 'x = 5 - 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 - 2;');
+    });
+
 
 });
 describe('Rust', () => {

@@ -2,6 +2,7 @@ import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
 import PythonLexer from "./Python/PythonLexer.js";
+import { flatten } from './tools/flatten.js';
 export default class JSCodeGenerator extends PythonParserVisitor {
     constructor(context = {}) {
         super();
@@ -13,19 +14,13 @@ export default class JSCodeGenerator extends PythonParserVisitor {
     visitFile_input(ctx)
     {
         let x = this.visitChildren(ctx)
-        console.log("On file input" + x[0][0][0][0][0])
         //return x;
-        return x[0][0][0][0][0];
+        return flatten(x)[0];
     }
 
-    // Visit an assignment node (e.g., x = 5)
     visitAssignment(ctx) {
-        // Get the variable name (assuming structure based on your tree)
         const variableName = this.visit(ctx.star_targets())
-        console.log("Nome da variavel" + variableName)
-        // Get the value from the right-hand side (expression)
         const value = this.visit(ctx.star_expressions());
-        console.log("Valor da variavel" + value)
 
         // Return the JavaScript equivalent assignment statement
         return `let ${variableName} = ${value};`;
@@ -62,7 +57,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 // Usage Example:
 
 const input = `
-x = 5 + 2
+x = 5 - 2
 `; // Example Python-like input
 
 // Create a parser
