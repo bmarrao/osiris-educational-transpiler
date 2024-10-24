@@ -167,6 +167,126 @@ describe('Python', () => {
         const outputCode = codeGenerator.visit(tree);
         expect(outputCode).to.equal('let x = ! ( true && false );');
     });
+
+    it('should generate JavaScript for bitwise OR between two numbers', () => {
+        const input = 'x = 5 | 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 | 3;');
+    });
+
+    it('should generate JavaScript for bitwise OR between two variables', () => {
+        const input = 'x = y | b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = y | b;');
+    });
+
+    it('should generate JavaScript for complex bitwise OR operation', () => {
+        const input = 'x = (5 | 3) | (8 | 2)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 | 3 ) | ( 8 | 2 );');
+    });
+
+    it('should generate JavaScript for bitwise XOR between two numbers', () => {
+        const input = 'x = 5 ^ 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 ^ 3;');
+ //       expect(eval(outputCode)).to.equal(6); // 5 (101) ^ 3 (011) = 6 (110)
+    });
+
+    it('should generate JavaScript for nested XOR operations', () => {
+        const input = 'x = ( 5 ^ 3 )  ^ 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 ^ 3 ) ^ 2;');
+   //     expect(eval(outputCode)).to.equal(4); // Result of the nested XOR operations
+    });
+
+    it('should generate JavaScript for XOR between variables', () => {
+        const input = 'x = a ^ b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = a ^ b;');
+    });
+
+    it('should generate JavaScript for bitwise AND between two numbers', () => {
+        const input = 'x = 5 & 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 & 3;');
+      //  expect(eval(outputCode)).to.equal(1); // 5 (101) & 3 (011) = 1 (001)
+    });
+
+    it('should generate JavaScript for nested AND operations', () => {
+        const input = 'x = (5 & 3) & 1';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 & 3 ) & 1;');
+      //  expect(eval(outputCode)).to.equal(1); // Result of the nested AND operations
+    });
+
+    it('should generate JavaScript for AND between variables', () => {
+        const input = 'x = a & b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = a & b;');
+    });
+
+
+    it('should generate JavaScript for left shift', () => {
+        const input = 'x = 5 << 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 << 2;');
+    //    expect(eval(outputCode)).to.equal(20); // 5 (101) << 2 = 20 (10100)
+    });
+
+    it('should generate JavaScript for right shift', () => {
+        const input = 'x = 16 >> 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 16 >> 2;');
+  //      expect(eval(outputCode)).to.equal(4); // 16 (10000) >> 2 = 4 (100)
+    });
+
+    it('should generate JavaScript for combined shift expressions', () => {
+        const input = 'x = (5 << 2) >> 1';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 << 2 ) >> 1;');
+//        expect(eval(outputCode)).to.equal(10); // (5 << 2) = 20, then 20 >> 1 = 10
+    });
+
+    it('should generate JavaScript from Python power expression using Math.pow()', () => {
+        const input = 'x = 2 ** 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = Math.pow(2,3);');
+    });
+
+    it('should generate JavaScript from Python power with parentheses using Math.pow()', () => {
+        const input = 'x = (2 + 3) ** 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = Math.pow(( 2 + 3 ),2);');
+    });
+
+    it('should generate JavaScript from Python power with complex base using Math.pow()', () => {
+        const input = 'x = (5 - 2) ** (3 + 1)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = Math.pow(( 5 - 2 ),( 3 + 1 ));');
+    });
+
+    it('should generate JavaScript from nested Python power expression using Math.pow()', () => {
+        const input = 'x = (5 ** 2) ** 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = Math.pow(( Math.pow(5,2) ),3);');
+    });
 });
 /*
 describe('Rust', () => {

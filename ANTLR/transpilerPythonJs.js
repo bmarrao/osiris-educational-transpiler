@@ -10,7 +10,6 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         this.context = context;
         this.context.symbolTable = {};
     }
-    //TODO : CRIAR FLATTEN PEGAR RESULT E RETIRAR ARRAY E DEIXAR SO O QUE NÃO É CONCATENADO
     visitFile_input(ctx)
     {
         let x = this.visitChildren(ctx)
@@ -24,6 +23,53 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 
         // Return the JavaScript equivalent assignment statement
         return `let ${variableName} = ${value};`;
+    }
+    
+    visitBitwise_or(ctx) {
+        if (ctx.bitwise_or()) {
+            // Recursive case: `bitwise_or '|' bitwise_xor`
+            const left = this.visit(ctx.bitwise_or());
+            const right = this.visit(ctx.bitwise_xor());
+            return `${left} | ${right}`; // Combine with bitwise OR operator
+        } else {
+            // Base case: Just a bitwise_xor
+            return this.visit(ctx.bitwise_xor());
+        }
+    }
+
+    visitBitwise_xor(ctx) {
+        if (ctx.bitwise_xor()) {
+            // Recursive case: `bitwise_xor '^' bitwise_and`
+            const left = this.visit(ctx.bitwise_xor());
+            const right = this.visit(ctx.bitwise_and());
+            return `${left} ^ ${right}`;  // Bitwise XOR operator in JS
+        } else {
+            // Base case: just a bitwise_and
+            return this.visit(ctx.bitwise_and());
+        }
+    }
+    visitBitwise_and(ctx) {
+        if (ctx.bitwise_and()) {
+            // Recursive case: `bitwise_and '&' shift_expr`
+            const left = this.visit(ctx.bitwise_and());
+            const right = this.visit(ctx.shift_expr());
+            return `${left} & ${right}`;  // Bitwise AND operator in JS
+        } else {
+            // Base case: just a shift_expr
+            return this.visit(ctx.shift_expr());
+        }
+    }
+    visitShift_expr(ctx) {
+        if (ctx.shift_expr()) {
+            // Case: shift_expr ('<<' | '>>') sum
+            const left = this.visit(ctx.shift_expr());
+            const operator = ctx.children[1].getText();  // Get '<<' or '>>'
+            const right = this.visit(ctx.sum());
+            return `${left} ${operator} ${right}`;  // Use the operator in JS
+        } else {
+            // Base case: just a sum
+            return this.visit(ctx.sum());
+        }
     }
 
     visitSum(ctx) {
@@ -131,6 +177,33 @@ export default class JSCodeGenerator extends PythonParserVisitor {
             return this.visit(ctx.comparison());
         }
     }
+
+    visitPower(ctx) {
+        // Check if there is an exponentiation operation '**'
+        if (ctx.factor()) {
+            // Visit the base of the exponentiation (await_primary)
+            const base = this.visit(ctx.await_primary());
+            // Visit the exponent part (factor)
+            const exponent = this.visit(ctx.factor());
+            // Return the JavaScript equivalent using the '**' operator
+            return `Math.pow(${base},${exponent})`;
+        } else {
+            // If there is no exponentiation, just return the base (await_primary)
+            return this.visit(ctx.await_primary());
+        }
+    }
+    //TODO MAKE TEST FOR THIS WHEN PRIMARY DONE
+    visitAwait_primary(ctx) {
+        if (ctx.AWAIT()) {
+            // Handle the 'await' expression
+            const primaryExpression = this.visit(ctx.primary());
+            return `await ${primaryExpression}`; // Translate 'await primary' to 'await primaryExpression'
+        } else {
+            // Handle just the primary expression without 'await'
+            return this.visit(ctx.primary());
+        }
+    }
+   
     visitIf(ctx) 
     {
         //TODO WHEN DEFINING THIS DONT FORGET IF HAS TO HAVE() WHILE IN PYTHON IT DOES NOT NEED IT
