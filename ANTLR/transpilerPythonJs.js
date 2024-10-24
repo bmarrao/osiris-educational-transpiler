@@ -24,7 +24,18 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         // Return the JavaScript equivalent assignment statement
         return `let ${variableName} = ${value};`;
     }
-    
+    /*
+   visitBlock(ctx) {
+    // Check if the block is defined by a NEWLINE and INDENT
+        if (ctx.NEWLINE()) {
+            const statements = this.visit(ctx.statements());
+            return "{\n\tstatements\b}"; // Return the processed statements
+        } else {
+            // Handle the case for simple statements
+            return this.visit(ctx.simple_stmts());
+        }
+    }
+    */
     visitBitwise_or(ctx) {
         if (ctx.bitwise_or()) {
             // Recursive case: `bitwise_or '|' bitwise_xor`
@@ -203,10 +214,25 @@ export default class JSCodeGenerator extends PythonParserVisitor {
             return this.visit(ctx.primary());
         }
     }
-   
-    visitIf(ctx) 
-    {
-        //TODO WHEN DEFINING THIS DONT FORGET IF HAS TO HAVE() WHILE IN PYTHON IT DOES NOT NEED IT
+    
+    visitIf_stmt(ctx) {
+        // Visit the condition expression (named_expression)
+        const condition = this.visit(ctx.named_expression());
+
+        // Visit the block of code that follows the condition
+        const body = this.visit(ctx.block());
+
+        // Handle elif_stmt or else_block
+        let elifElse = '';
+        if (ctx.elif_stmt()) {
+            elifElse += this.visit(ctx.elif_stmt()); // Visit elif statement(s)
+        }
+        if (ctx.else_block()) {
+            elifElse += this.visit(ctx.else_block()); // Visit else block
+        }
+
+        // Construct the JavaScript if statement
+        return `if (${condition}) {\n${body}}${elifElse}`;
     }
     visitStar_atom(ctx) {
         const variableName = ctx.getText();
@@ -259,7 +285,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 // Usage Example:
 
 const input = `
-x = + ( 5 ) % 2
+const input = 'if true:\n    x = 5';
 `; // Example Python-like input
 
 // Create a parser
@@ -278,6 +304,7 @@ const parser = new PythonParser(tokens);
 // Start parsing at the desired rule (assuming 'file_input' is the start rule)
 const tree = parser.file_input(); // Adjust this to your start rule
 
+console.log(tree)
 // Create the JS code generator (visitor) and pass a context object
 const codeGenerator = new JSCodeGenerator({});
 

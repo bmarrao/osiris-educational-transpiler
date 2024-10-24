@@ -287,6 +287,14 @@ describe('Python', () => {
         const outputCode = codeGenerator.visit(tree);
         expect(outputCode).to.equal('let x = Math.pow(( Math.pow(5,2) ),3);');
     });
+
+     it('should generate JavaScript from Python if statement', () => {
+        const input = 'if true:\n    x = 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        console.log(outputCode)
+        expect(outputCode).to.equal('if (x > 0) {\n    let x = 5;\n}');
+    });
 });
 /*
 describe('Rust', () => {
