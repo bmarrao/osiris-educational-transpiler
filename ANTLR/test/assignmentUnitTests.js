@@ -87,14 +87,14 @@ describe('Python', () => {
         const input = 'x = + ( 5 ) % 2';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('let x = + (5) % 2;');
+        expect(outputCode).to.equal('let x = + ( 5 ) % 2;');
     });
 
     it('should generate JavaScript from Python - factor and minus assignment', () => {
         const input = 'x = - ( 5 ) - 2';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('let x = - (5) - 2;');
+        expect(outputCode).to.equal('let x = - ( 5 ) - 2;');
 
     });
 
@@ -102,7 +102,7 @@ describe('Python', () => {
         const input = 'x = ~ ( 5 ) + 2';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('let x = ~ (5) + 2;');
+        expect(outputCode).to.equal('let x = ~ ( 5 ) + 2;');
     });
 
     it('should generate JavaScript from Python - factor and logical OR assignment', () => {
@@ -116,14 +116,56 @@ describe('Python', () => {
         const input = 'x = ~ 5 or 2';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('let x = ~ 5 || 2 ;');
+        expect(outputCode).to.equal('let x = ~ 5 || 2;');
     });
         
     it('should generate JavaScript from Python with multiple ors as true and false', () => {
         const input = 'x = true or false or true';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('let x = true || false || true ;');
+        expect(outputCode).to.equal('let x = true || false || true;');
+    });
+
+    it('should generate JavaScript from Python with multiple ors as true and false', () => {
+        const input = 'x = (5+2) * 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 + 2 ) * 3;');
+    });
+
+    it('should generate JavaScript from Python with multiple ors as true and false', () => {
+        const input = 'x = ( 5 + ( 6* 3) )* 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 + ( 6 * 3 ) ) * 3;');
+    });
+
+    it('should generate JavaScript from Python - factor and logical AND assignment', () => {
+        const input = 'x = ( 5 and 2 )';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 && 2 );');
+    });
+
+    it('should generate JavaScript from Python ~ factor and logical AND assignment', () => {
+        const input = 'x = ~ 5 and 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ~ 5 && 2;');
+    });
+
+    it('should generate JavaScript from Python with multiple ands as true and false', () => {
+        const input = 'x = true and false and true';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = true && false && true;');
+    });
+
+    it('should handle complex logical expressions', () => {
+        const input = 'x = not (True and False)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ! ( true && false );');
     });
 });
 /*

@@ -87,7 +87,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
             return this.visit(ctx.power());
         }
     }
-
+    
 
     visitDisjunction(ctx) {
         // Visit the first conjunction
@@ -97,10 +97,39 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         for (let i = 1; i < ctx.conjunction().length; i++) {
             const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
             const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
-            left = `${left} || ${right} `;           // Combine with the 'or'
+            left = `${left} || ${right}`;           // Combine with the 'or'
         }
 
         return left; // Return the final expression
+    }
+
+    visitConjunction(ctx) {
+        // Visit the first conjunction
+        let left = this.visit(ctx.inversion(0)); // Get the first conjunction
+
+        // Iterate through any additional conjunctions connected by 'or'
+        for (let i = 1; i < ctx.inversion().length; i++) {
+            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
+            const right = this.visit(ctx.inversion(i));      // Get the next conjunction
+            left = `${left} && ${right}`;           // Combine with the 'or'
+        }
+
+        return left; // Return the final expression
+    }
+    
+    visitInversion(ctx) {
+    // Check if this is a recursive sum case
+        if (ctx.inversion()) 
+        {
+            // Get the operator and evaluate
+            const right = this.visit(ctx.inversion());
+            return ("! " + right);
+
+        }
+        else 
+        {
+            return this.visit(ctx.comparison());
+        }
     }
     visitIf(ctx) 
     {
@@ -110,12 +139,48 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         const variableName = ctx.getText();
         return variableName;  // Otherwise, return the variable name as is
     }
+    visitAtom(ctx) {
+        if (ctx.tuple() || ctx.group() || ctx.genexp()) {
+            return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
+        } else if (ctx.list() || ctx.listcomp()) {
+            return this.visit(ctx.list() || ctx.listcomp());
+        } else if (ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp()) {
+            return this.visit(ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp());
+        } else if (ctx.TRUE()) {
+        // Handle the case for the boolean literal True
+            return 'true';
+        } 
+        else if (ctx.FALSE()) {
+            // Handle the case for the boolean literal False
+            return 'false';
+        } 
+        
+        
+        return ctx.getText(); // Default case
+    }
 
+    visitGroup(ctx) {
+        console.log("Here");
+        
+        // Visit the inner expression
+        let inside;
+        if (ctx.yield_expr()) {
+            inside = this.visit(ctx.yield_expr());
+        } else if (ctx.named_expression()) {
+            inside = this.visit(ctx.named_expression());
+        } else {
+            inside = ""; // Handle case where there's no valid expression
+        }
+        
+        return "( " + inside + " )"; // Return formatted group
+    }
+   /*
     // Handle variable lookups (e.g., using a variable that has been previously assigned)
     visitAtom(ctx) {
         const variableValue = ctx.getText();
         return variableValue;  //
     }
+    */
 }
 
 // Usage Example:
