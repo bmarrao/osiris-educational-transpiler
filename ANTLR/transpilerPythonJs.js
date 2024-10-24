@@ -37,11 +37,75 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 
             return (left + " " + operator + " " + right)
         } else {
-            // It's just a term
             return this.visit(ctx.term());
         }
     }
 
+    visitTerm(ctx) {
+    // Check if this is a recursive sum case
+        if (ctx.term()) 
+        {
+            const left = this.visit(ctx.term());
+            // Get the operator and evaluate
+            const operator = ctx.children[1].getText();
+            const right = this.visit(ctx.factor());
+            if (operator === "//")
+            {
+                return `Math.floor(${left} / ${right})`;
+            }
+            else if (operator === "@")
+            {
+                //TODO:BRING UP THE PROBLEM WITH THE LIBRARIES, IN THE END DO I JUST IMPORT ?
+               return ""; 
+            }
+            else 
+            {
+                return (left + " " + operator + " " + right);
+            }
+
+        }
+        else 
+        {
+            // It's just a term
+            return this.visit(ctx.factor());
+        }
+    }
+
+    visitFactor(ctx) {
+    // Check if this is a recursive sum case
+        if (ctx.factor()) 
+        {
+            // Get the operator and evaluate
+            const factor = ctx.children[0].getText();
+            const right = this.visit(ctx.factor());
+            return (factor + " " + right);
+
+        }
+        else 
+        {
+            // It's just a term
+            return this.visit(ctx.power());
+        }
+    }
+
+
+    visitDisjunction(ctx) {
+        // Visit the first conjunction
+        let left = this.visit(ctx.conjunction(0)); // Get the first conjunction
+
+        // Iterate through any additional conjunctions connected by 'or'
+        for (let i = 1; i < ctx.conjunction().length; i++) {
+            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
+            const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
+            left = `${left} || ${right} `;           // Combine with the 'or'
+        }
+
+        return left; // Return the final expression
+    }
+    visitIf(ctx) 
+    {
+        //TODO WHEN DEFINING THIS DONT FORGET IF HAS TO HAVE() WHILE IN PYTHON IT DOES NOT NEED IT
+    }
     visitStar_atom(ctx) {
         const variableName = ctx.getText();
         return variableName;  // Otherwise, return the variable name as is
@@ -57,7 +121,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 // Usage Example:
 
 const input = `
-x = 5 - 2
+x = + ( 5 ) % 2
 `; // Example Python-like input
 
 // Create a parser

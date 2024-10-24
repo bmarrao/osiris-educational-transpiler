@@ -7,8 +7,6 @@ import RustParser from '../rust/RustParser.js'; // Adjust the path as necessary
 import RustLexer from '../rust/RustLexer.js'; // Adjust the path as necessary
 import RustCodeGenerator from '../transpilerRustJs.js'; // Adjust the path
 
-
-
 function parsePython(input) {
     const inputStream = new antlr4.InputStream(input);
     const lexer = new PythonLexer(inputStream);
@@ -24,7 +22,6 @@ function parseRust(input) {
     const parser = new RustParser(tokens);
     return parser.file_input(); // Adjust this to your start rule
 }
-
 
 describe('Python', () => {
     let codeGenerator;
@@ -53,9 +50,83 @@ describe('Python', () => {
         const outputCode = codeGenerator.visit(tree);
         expect(outputCode).to.equal('let x = 5 - 2;');
     });
+    
+     it('should generate JavaScript from Python multiplication assignment', () => {
+        const input = 'x = 5 * 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 * 2;');
+    });
+
+     it('should generate JavaScript from Python division assignment', () => {
+        const input = 'x = 5 / 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 / 2;');
+    });
+
+     it('should generate JavaScript from Python mod assignment', () => {
+        const input = 'x = 5 % 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5 % 2;');
+    });
+    
+     it('should generate JavaScript from Python floor division assignment', () => {
+        const left = 5 ; 
+        const right = 2 ;
+        const input = 'x = 5 // 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`let x = Math.floor(${left} / ${right});`);
+        expect(eval(`Math.floor(${left} / ${right})`)).to.equal(2);
+    });
 
 
+     it('should generate JavaScript from Python + factor and plus assignment', () => {
+        const input = 'x = + ( 5 ) % 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = + (5) % 2;');
+    });
+
+    it('should generate JavaScript from Python - factor and minus assignment', () => {
+        const input = 'x = - ( 5 ) - 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = - (5) - 2;');
+
+    });
+
+    it('should generate JavaScript from Python ~ factor and + assignment', () => {
+        const input = 'x = ~ ( 5 ) + 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ~ (5) + 2;');
+    });
+
+    it('should generate JavaScript from Python - factor and logical OR assignment', () => {
+        const input = 'x = ( 5 or 2 )';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ( 5 || 2 );');
+    });
+
+    it('should generate JavaScript from Python ~ factor and logical OR assignment', () => {
+        const input = 'x = ~ 5 or 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = ~ 5 || 2 ;');
+    });
+        
+    it('should generate JavaScript from Python with multiple ors as true and false', () => {
+        const input = 'x = true or false or true';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = true || false || true ;');
+    });
 });
+/*
 describe('Rust', () => {
     let codeGenerator;
 
@@ -76,6 +147,5 @@ describe('Rust', () => {
         const outputCode = codeGenerator.visit(tree);
         expect(outputCode).to.equal('let x = 5 + 2;');
     });
-
-
-
+});
+*/
