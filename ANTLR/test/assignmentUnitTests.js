@@ -33,7 +33,170 @@ describe('Python', () => {
     beforeEach(() => {
         codeGenerator = new PythonCodeGenerator({});
     });
-    
+    describe('bitwise_or', () => {
+      it('should generate JavaScript for bitwise OR between two numbers', () => {
+        const input = '5 | 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 | 3');
+      });
+
+      it('should generate JavaScript for bitwise OR between two variables', () => {
+        const input = 'y | b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('y | b');
+      });
+
+      it('should generate JavaScript for complex bitwise OR operation', () => {
+        const input = '(5 | 3) | (8 | 2)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('( 5 | 3 ) | ( 8 | 2 )');
+      });
+    });
+
+    describe('bitwise_xor', () => {
+      it('should generate JavaScript for bitwise XOR between two numbers', () => {
+        const input = '5 ^ 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 ^ 3');
+      });
+
+      it('should generate JavaScript for nested XOR operations', () => {
+        const input = '(5 ^ 3) ^ 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('( 5 ^ 3 ) ^ 2');
+      });
+
+      it('should generate JavaScript for XOR between variables', () => {
+        const input = 'a ^ b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('a ^ b');
+      });
+    });
+
+    describe('bitwise_and', () => {
+      it('should generate JavaScript for bitwise AND between two numbers', () => {
+        const input = '5 & 3';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 & 3');
+      });
+
+      it('should generate JavaScript for nested AND operations', () => {
+        const input = '(5 & 3) & 1';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('( 5 & 3 ) & 1');
+      });
+
+      it('should generate JavaScript for AND between variables', () => {
+        const input = 'a & b';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('a & b');
+      });
+    });
+
+    describe('shift_expr', () => {
+      it('should generate JavaScript for left shift', () => {
+        const input = '5 << 1';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 << 1');
+      });
+
+      it('should generate JavaScript for right shift', () => {
+        const input = '5 >> 1';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 >> 1');
+      });
+    });
+
+    describe('sum', () => {
+      it('should generate JavaScript for addition', () => {
+        const input = '5 + 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 + 2');
+      });
+
+      it('should generate JavaScript for subtraction', () => {
+        const input = '5 - 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 - 2');
+      });
+    });
+
+    describe('term', () => {
+      it('should generate JavaScript for multiplication', () => {
+        const input = '5 * 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 * 2');
+      });
+
+      it('should generate JavaScript for division', () => {
+        const input = '5 / 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 / 2');
+      });
+
+      it('should generate JavaScript for floor division', () => {
+        const input = '5 // 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('Math.floor(5 / 2)');
+      });
+
+      it('should generate JavaScript for modulus', () => {
+        const input = '5 % 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('5 % 2');
+      });
+    });
+
+    describe('factor', () => {
+      it('should generate JavaScript for unary plus', () => {
+        const input = '+ ( 5 )';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('+ ( 5 )');
+      });
+
+      it('should generate JavaScript for unary minus', () => {
+        const input = '- ( 5 )';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('- ( 5 )');
+      });
+
+      it('should generate JavaScript for bitwise NOT', () => {
+        const input = '~ ( 5 )';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('~ ( 5 )');
+      });
+    });
+
+    describe('power', () => {
+      it('should generate JavaScript for exponentiation', () => {
+        const input = '5 ** 2';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('Math.pow(5,2)');
+      });
+
+    });
+
     describe('atom' , () => {
        it('should generate integer number', () => {
         const input = '5';
@@ -93,21 +256,21 @@ describe('Python', () => {
         const input = '{ "key": "value", "number": 1 }';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('{ "key": "value", "number": 1 }');
+        expect(outputCode).to.equal('{"key":"value","number":1}');
       });
 
      it('should generate set', () => {
         const input = '{1, 2, 3}';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('new Set([1, 2, 3])'); // JavaScript representation of a set
+        expect(outputCode).to.equal('new Set([1,2,3])'); // JavaScript representation of a set
       });
 
      it('should generate ellipsis', () => {
         const input = '...';
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
-        expect(outputCode).to.equal('undefined'); // Ellipsis in Python often translates to undefined in JS
+        expect(outputCode).to.equal('...'); // Ellipsis in Python often translates to undefined in JS
       });
 
     }); 
