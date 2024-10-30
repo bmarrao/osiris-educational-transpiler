@@ -252,17 +252,46 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         else if (ctx.FALSE()) {
             // Handle the case for the boolean literal False
             return 'false';
-        } 
+        }
+        else if (ctx.NONE()) {
+        // Handle the case for the Python None literal
+        return 'null'; // Convert to JavaScript's null
+        }
         
         
         return ctx.getText(); // Default case
     }
 
+    visitList(ctx) {
+    // Check for star named expressions and process them
+        let namedExpressions = ctx.star_named_expressions() 
+            ? this.visit(ctx.star_named_expressions()) 
+            : '';
+        namedExpressions = String(namedExpressions).replace(/,+/g, ',').trim();
+        return `[${namedExpressions}]`; // Wrap the named expressions in brackets for a JavaScript array
+    }
+
+    visitTuple(ctx) {
+        let elements = '';
+
+        // Handle the star named expression, if it exists
+        if (ctx.star_named_expression()) {
+            elements += this.visit(ctx.star_named_expression());
+        }
+        
+        // Handle additional star named expressions, if they exist
+        if (ctx.star_named_expressions()) {
+            elements += elements ? ', ' : ''; // Add a comma if there are elements already
+            elements += this.visit(ctx.star_named_expressions());
+        }
+        elements = elements.replace(/\s*,\s*/g, ',').replace(/,+/g, ',').trim();
+        return `(${elements})`; // Wrap the elements in parentheses for a JavaScript tuple
+    } 
+
     visitGroup(ctx) {
-        console.log("Here");
         
         // Visit the inner expression
-        let inside;
+        let inside = "";
         if (ctx.yield_expr()) {
             inside = this.visit(ctx.yield_expr());
         } else if (ctx.named_expression()) {
@@ -270,7 +299,6 @@ export default class JSCodeGenerator extends PythonParserVisitor {
         } else {
             inside = ""; // Handle case where there's no valid expression
         }
-        
         return "( " + inside + " )"; // Return formatted group
     }
    /*
@@ -285,7 +313,7 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 // Usage Example:
 
 const input = `
-const input = 'if true:\n    x = 5';
+x=5
 `; // Example Python-like input
 
 // Create a parser
@@ -304,7 +332,6 @@ const parser = new PythonParser(tokens);
 // Start parsing at the desired rule (assuming 'file_input' is the start rule)
 const tree = parser.file_input(); // Adjust this to your start rule
 
-console.log(tree)
 // Create the JS code generator (visitor) and pass a context object
 const codeGenerator = new JSCodeGenerator({});
 
