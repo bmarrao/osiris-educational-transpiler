@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python to JavaScript Translator</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        textarea { width: 80%; height: 100px; margin: 10px; }
+        #output { width: 80%; height: 100px; margin: 10px; background-color: #f0f0f0; overflow: auto; padding: 10px; }
+        button { padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+<h2>Python to JavaScript Translator</h2>
+<textarea id="pythonCode" placeholder="Enter Python code here"></textarea>
+<button id="translateButton">Translate to JavaScript</button>
+<div id="output"></div>
+
+<script type="module">
+    import * as translator from './src/dist/bundle.js';
+
+    document.getElementById('translateButton').addEventListener('click', () => {
+        const pythonCode = document.getElementById('pythonCode').value;
+        try {
+            const outputCode = translator.translatePython(pythonCode);
+            document.getElementById('output').textContent = outputCode;
+        } catch (error) {
+            document.getElementById('output').textContent = 'Error: ' + error.message;
+        }
+    });
+</script>
+</body>
+</html>

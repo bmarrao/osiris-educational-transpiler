@@ -3,7 +3,7 @@ import PythonParser  from './Python/PythonParser.js'; // Import the generated pa
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
 import PythonLexer from "./Python/PythonLexer.js";
 import { flatten } from './tools/flatten.js';
-export default class JSCodeGenerator extends PythonParserVisitor {
+export default class PythonCodeGenerator extends PythonParserVisitor {
     constructor(context = {}) {
         super();
         // An external context to store variables (like a symbol table)
@@ -361,29 +361,4 @@ export default class JSCodeGenerator extends PythonParserVisitor {
 
 
 }
-const input = '{1, 2, 3}';
-// Usage Example:
 
-// Create a parser
-// Create a new input stream from the input
-const inputStream = new antlr4.InputStream(input);
-
-// Create a lexer that feeds off the input stream
-const lexer = new PythonLexer(inputStream);
-
-// Create a token stream from the lexer
-const tokens = new antlr4.CommonTokenStream(lexer);
-
-// Create a parser that feeds off the token stream
-const parser = new PythonParser(tokens);
-
-// Start parsing at the desired rule (assuming 'file_input' is the start rule)
-const tree = parser.file_input(); // Adjust this to your start rule
-
-// Create the JS code generator (visitor) and pass a context object
-const codeGenerator = new JSCodeGenerator({});
-
-// Visit the tree and generate JavaScript code
-const outputCode = codeGenerator.visit(tree);
-
-// Output the generated JavaScript code
