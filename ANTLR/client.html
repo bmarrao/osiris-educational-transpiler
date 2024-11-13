@@ -6,27 +6,64 @@
     <title>Python to JavaScript Translator</title>
     <style>
         body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        textarea { width: 80%; height: 100px; margin: 10px; }
+        #editor { width: 80%; height: 200px; margin: 10px; }
         #output { width: 80%; height: 100px; margin: 10px; background-color: #f0f0f0; overflow: auto; padding: 10px; }
-        button { padding: 10px 20px; cursor: pointer; }
+        #terminal { width: 80%; height: 200px; margin: 10px; background-color: black; color: white; padding: 10px; overflow-y: auto; font-family: monospace; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
+        button { padding: 10px 20px; cursor: pointer; margin: 5px; }
     </style>
+    <!-- Include Ace Editor CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 </head>
 <body>
 <h2>Python to JavaScript Translator</h2>
-<textarea id="pythonCode" placeholder="Enter Python code here"></textarea>
+
+<!-- Ace Editor -->
+<div id="editor"></div>
+
+<!-- Buttons -->
 <button id="translateButton">Translate to JavaScript</button>
+<button id="runButton" disabled>Run JavaScript Code</button>
+
+<!-- Output -->
 <div id="output"></div>
+
+<!-- Terminal output for JS code execution -->
+<div id="terminal"></div>
 
 <script type="module">
     import * as translator from './src/dist/bundle.js';
 
+    // Initialize Ace editor
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/python");
+
+    let translatedCode = "";
+
     document.getElementById('translateButton').addEventListener('click', () => {
-        const pythonCode = document.getElementById('pythonCode').value;
+        const pythonCode = editor.getValue();
         try {
-            const outputCode = translator.translatePython(pythonCode);
-            document.getElementById('output').textContent = outputCode;
+            // Translate Python to JavaScript
+            translatedCode = translator.translatePython(pythonCode);
+            document.getElementById('output').textContent = translatedCode;
+
+            // Enable the "Run JavaScript Code" button after translation
+            document.getElementById('runButton').disabled = false;
         } catch (error) {
             document.getElementById('output').textContent = 'Error: ' + error.message;
+        }
+    });
+
+    document.getElementById('runButton').addEventListener('click', () => {
+        try {
+            // Run the translated JavaScript code and capture the output
+            const result = eval(translatedCode);
+            
+            // Display result in terminal-like output area
+            document.getElementById('terminal').textContent = result !== undefined ? result : 'No output or undefined result';
+
+        } catch (error) {
+            document.getElementById('terminal').textContent = 'Error running JavaScript: ' + error.message;
         }
     });
 </script>

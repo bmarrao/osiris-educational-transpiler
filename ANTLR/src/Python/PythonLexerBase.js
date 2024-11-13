@@ -60,10 +60,12 @@ export default class PythonLexerBase extends Lexer {
 
     get #INVALID_LENGTH() { return -1; }
     get #ERR_TXT() { return " ERROR: "; }
+    
 
-    nextToken() { // reading the input stream until a return EOF
+    nextToken() {
         this.#checkNextToken();
-        return this.pendingTokens.shift() /* .pollFirst() */; // add the queued token to the token stream
+        const token = this.pendingTokens.shift(); 
+        return token;
     }
 
     reset() {
@@ -84,11 +86,11 @@ export default class PythonLexerBase extends Lexer {
         this.curToken = null;
         this.ffgToken = null;
     }
-
     #checkNextToken() {
         if (this.previousPendingTokenType !== Token.EOF) {
             this.#setCurrentAndFollowingTokens();
-            if (this.indentLengthStack.length === 0) { // We're at the first token
+            
+            if (this.indentLengthStack.length === 0) {
                 this.#handleStartOfInput();
             }
 
@@ -108,11 +110,7 @@ export default class PythonLexerBase extends Lexer {
                 case PythonLexer.NEWLINE:
                     this.#handleNEWLINEtoken();
                     break;
-                case PythonLexer.FSTRING_MIDDLE:
-                    this.#handleFSTRING_MIDDLE_token();
-                    break;
                 case PythonLexer.ERRORTOKEN:
-                    this.#reportLexerError(`token recognition error at: '${this.curToken.text}'`);
                     this.#addPendingToken(this.curToken);
                     break;
                 case Token.EOF:
@@ -171,46 +169,42 @@ export default class PythonLexerBase extends Lexer {
             }
         }
     }
-
     #handleNEWLINEtoken() {
-        if (this.opened > 0) { // We're in an implicit line joining, ignore the current NEWLINE token
+        
+        if (this.opened > 0) {
             this.#hideAndAddPendingToken(this.curToken);
         } else {
-            let nlToken = this.curToken.clone(); // save the current NEWLINE token
+            let nlToken = this.curToken.clone();
             const isLookingAhead = this.ffgToken.type === PythonLexer.WS;
             if (isLookingAhead) {
-                this.#setCurrentAndFollowingTokens(); // set the next two tokens
+                this.#setCurrentAndFollowingTokens();
             }
 
             switch (this.ffgToken.type) {
-                case PythonLexer.NEWLINE: // We're before a blank line
-                case PythonLexer.COMMENT: // We're before a comment
+                case PythonLexer.NEWLINE:
+                case PythonLexer.COMMENT:
                     this.#hideAndAddPendingToken(nlToken);
                     if (isLookingAhead) {
-                        this.#addPendingToken(this.curToken); // WS token
+                        this.#addPendingToken(this.curToken);
                     }
                     break;
                 default:
                     this.#addPendingToken(nlToken);
-                    if (isLookingAhead) { // We're on whitespace(s) followed by a statement
-                        const indentationLength = this.ffgToken.type === Token.EOF ?
-                            0 :
-                            this.#getIndentationLength(this.curToken.text);
-
+                    if (isLookingAhead) {
+                        const indentationLength = this.ffgToken.type === Token.EOF ? 0 : this.#getIndentationLength(this.curToken.text);
                         if (indentationLength !== this.#INVALID_LENGTH) {
-                            this.#addPendingToken(this.curToken); // WS token
-                            this.#insertIndentOrDedentToken(indentationLength); // may insert INDENT token or DEDENT token(s)
+                            this.#addPendingToken(this.curToken);
+                            this.#insertIndentOrDedentToken(indentationLength);
                         } else {
                             this.#reportError("inconsistent use of tabs and spaces in indentation");
                         }
-                    } else { // We're at a newline followed by a statement (there is no whitespace before the statement)
-                        this.#insertIndentOrDedentToken(0); // may insert DEDENT token(s)
+                    } else {
+                        this.#insertIndentOrDedentToken(0);
                     }
             }
         }
     }
-
-    #insertIndentOrDedentToken(curIndentLength) {
+        #insertIndentOrDedentToken(curIndentLength) {
         let prevIndentLength = this.indentLengthStack.at(-1) /* peek() */;
         if (curIndentLength > prevIndentLength) {
             this.#createAndAddPendingToken(PythonLexer.INDENT, Token.DEFAULT_CHANNEL, null, this.ffgToken);

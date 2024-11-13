@@ -24,18 +24,29 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         // Return the JavaScript equivalent assignment statement
         return `let ${variableName} = ${value};`;
     }
-    /*
-   visitBlock(ctx) {
-    // Check if the block is defined by a NEWLINE and INDENT
+
+    visitStatements(ctx) {
+        const results = [];
+
+        // Iterate through each statement
+        for (const statementCtx of ctx.statement()) {
+            // Visit each statement and collect results
+            const result = this.visit(statementCtx);
+            results.push(result);
+        }
+
+        return results; // Return an array of results from each statement
+    }
+    visitBlock(ctx) {
+        console.log("Im on block/n");
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
-            return "{\n\tstatements\b}"; // Return the processed statements
+            return `\t${statements}\n`;// Return the processed statements
         } else {
             // Handle the case for simple statements
             return this.visit(ctx.simple_stmts());
         }
     }
-    */
     visitBitwise_or(ctx) {
         if (ctx.bitwise_or()) {
             // Recursive case: `bitwise_or '|' bitwise_xor`

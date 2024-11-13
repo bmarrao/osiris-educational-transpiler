@@ -6,7 +6,7 @@ import PythonCodeGenerator from '../transpilerPythonJs.js'; // Adjust the path
 import RustParser from '../rust/RustParser.js'; // Adjust the path as necessary
 import RustLexer from '../rust/RustLexer.js'; // Adjust the path as necessary
 import RustCodeGenerator from '../transpilerRustJs.js'; // Adjust the path
-
+//TODO ADICIONAR TESTES COM ERROS E VER SE ACONTECE COM FACTO ERROS
 function parsePython(input) {
     const inputStream = new antlr4.InputStream(input);
     const lexer = new PythonLexer(inputStream);
@@ -32,6 +32,83 @@ describe('Python', () => {
 // TODO : CONCATENAÇÃO DE STRING
     beforeEach(() => {
         codeGenerator = new PythonCodeGenerator({});
+    });
+
+    describe('if statement', () => {
+      it('should generate correct JavaScript for a simple if statement', () => {
+        const input = `
+          if x > 0:
+              print('positive')
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    console.log('positive');\n}`);
+      });
+
+      it('should generate correct JavaScript for an if-elif-else statement', () => {
+        const input = `
+          if x > 0:
+              print('positive')
+          elif x < 0:
+              print('negative')
+          else:
+              print('zero')
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    console.log('positive');\n} else if (x < 0) {\n    console.log('negative');\n} else {\n    console.log('zero');\n}`);
+      });
+
+      it('should generate correct JavaScript for a nested if statement', () => {
+        const input = `
+          if x > 0:
+              if y > 0:
+                  print('both positive')
+              else:
+                  print('x positive, y non-positive')
+          else:
+              print('x non-positive')
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    if (y > 0) {\n        console.log('both positive');\n    } else {\n        console.log('x positive, y non-positive');\n    }\n} else {\n    console.log('x non-positive');\n}`);
+      });
+    });
+
+    describe('block', () => {
+      it('should generate correct JavaScript for a block with a single statement', () => {
+        const input = `
+          if x > 0:
+              print('positive')
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    console.log('positive');\n}`);
+      });
+
+      it('should generate correct JavaScript for a block with multiple statements', () => {
+        const input = `
+          if x > 0:
+              print('positive')
+              x = x - 1
+              print('decremented x')
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    console.log('positive');\n    x = x - 1;\n    console.log('decremented x');\n}`);
+      });
+
+      it('should generate correct JavaScript for a block with a compound statement', () => {
+        const input = `
+          if x > 0:
+              while x > 0:
+                  print('positive')
+                  x = x - 1
+          `;
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal(`if (x > 0) {\n    while (x > 0) {\n        console.log('positive');\n        x = x - 1;\n    }\n}`);
+      });
     });
     describe('bitwise_or', () => {
       it('should generate JavaScript for bitwise OR between two numbers', () => {
