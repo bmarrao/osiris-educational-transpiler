@@ -132,6 +132,43 @@ describe('Python', () => {
         expect(outputCode).to.equal('( 5 | 3 ) | ( 8 | 2 )');
       });
     });
+    
+    describe('comparison', () => {
+      it('should generate JavaScript for a simple comparison between two operands', () => {
+          const input = 'a == b';
+          const tree = parsePython(input);
+          const outputCode = codeGenerator.visit(tree);
+          expect(outputCode).to.equal('a == b');
+      });
+
+      it('should generate JavaScript for a comparison with multiple operands', () => {
+          const input = 'a == b != c';
+          const tree = parsePython(input);
+          const outputCode = codeGenerator.visit(tree);
+          expect(outputCode).to.equal('a == b != c');
+      });
+
+      it('should generate JavaScript for comparisons with different operators', () => {
+          const input = 'a <= b > c';
+          const tree = parsePython(input);
+          const outputCode = codeGenerator.visit(tree);
+          expect(outputCode).to.equal('a <= b > c');
+      });
+
+      it('should generate JavaScript for complex comparisons with multiple operators', () => {
+          const input = 'a == b != c <= d';
+          const tree = parsePython(input);
+          const outputCode = codeGenerator.visit(tree);
+          expect(outputCode).to.equal('a == b != c <= d');
+      });
+
+      it('should generate JavaScript for nested comparisons', () => {
+          const input = '( a == b ) != ( c <= d )';
+          const tree = parsePython(input);
+          const outputCode = codeGenerator.visit(tree);
+          expect(outputCode).to.equal('( a == b ) != ( c <= d )');
+      });
+  });
 
     describe('bitwise_xor', () => {
       it('should generate JavaScript for bitwise XOR between two numbers', () => {
@@ -589,4 +626,4 @@ describe('Rust', () => {
         expect(outputCode).to.equal('let x = 5 + 2;');
     });
 });
-*/
+ */

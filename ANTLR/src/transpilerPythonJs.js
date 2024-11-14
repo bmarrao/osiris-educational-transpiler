@@ -37,12 +37,25 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
 
         return results; // Return an array of results from each statement
     }
+
+    visitStatement(ctx) {
+        // Check if the context has a compound statement
+        if (ctx.compound_stmt()) {
+            // Visit the compound statement and return the result
+            return flatten(this.visit(ctx.compound_stmt()))[0];
+        } 
+        // Otherwise, visit the simple statements
+        else if (ctx.simple_stmts()) {
+            // Visit the simple statements and return the result
+            return flatten(this.visit(ctx.simple_stmts()))[0];
+        }
+        // If neither is found, return an empty string or handle error
+        return '';
+    }
     visitBlock(ctx) {
-        console.log("Im on block/n");
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
-            console.log(`STATEMENT :${statements}`);
-            return `\t${statements}\n`;// Return the processed statements
+            return statements.map(statement => `\t${statement}\n`).join(''); // Format each statement with tab and newline
         } else {
             // Handle the case for simple statements
             return this.visit(ctx.simple_stmts());
@@ -63,22 +76,27 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return left; // Return the final expression
     }
     visitComparison(ctx) {
-        // Visit the first operand (bitwise_or)
-        let left = this.visit(ctx.bitwise_or(0)); // Get the first operand
-        
+        // Visit the first operand (bitwise_or), ensure it's a string and trim it
+        let left = String(this.visit(ctx.bitwise_or(0))).trim(); 
+    
         // Create an array to store the comparison pairs
         let comparisonPairs = [];
-    
+        
         // Iterate through all comparison pairs (compare_op_bitwise_or_pair)
         for (let i = 0; i < ctx.compare_op_bitwise_or_pair().length; i++) {
-            // Visit each comparison pair and push the result into the array
-            const comparisonPair = this.visit(ctx.compare_op_bitwise_or_pair(i));
-            comparisonPairs.push(comparisonPair); // Store the result of visiting the comparison pair
+            // Visit each comparison pair, convert to string, and trim
+            const comparisonPair = String(this.visit(ctx.compare_op_bitwise_or_pair(i))).trim(); 
+            comparisonPairs.push(comparisonPair); 
         }
+        
+        // Join the comparison pairs and remove extra spaces
+        return `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
+    } 
     
-        // Return the left operand and all comparison pairs joined
-        return `${left} ${comparisonPairs.join(' ')}`; // Combine the comparisons with spaces
-    }    // Translate inequality operator with bitwise OR
+    visitEq_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `== ${right}`;  // JavaScript "equal to" operator
+    }
     visitNoteq_bitwise_or(ctx) {
         const right = this.visit(ctx.bitwise_or());
         return `!= ${right}`;  // Return as JavaScript inequality
@@ -314,7 +332,6 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitIf_stmt(ctx) {
         // Visit the condition expression (named_expression)
         const condition = this.visit(ctx.named_expression());
-        console.log(`CONDICAO ${condition}`)
         // Visit the block of code that follows the condition
         const body = this.visit(ctx.block());
 
@@ -441,7 +458,6 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
 
     visitSet(ctx) {
         let elements = this.visit(ctx.star_named_expressions());
-        console.log(elements.replace(/,+/g, ',')) 
         return  `new Set([${elements}])`;
     }
 
