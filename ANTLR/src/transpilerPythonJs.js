@@ -48,6 +48,90 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
             return this.visit(ctx.simple_stmts());
         }
     }
+
+    visitDisjunction(ctx) {
+        // Visit the first conjunction
+        let left = this.visit(ctx.conjunction(0)); // Get the first conjunction
+
+        // Iterate through any additional conjunctions connected by 'or'
+        for (let i = 1; i < ctx.conjunction().length; i++) {
+            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
+            const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
+            left = `${left} || ${right}`;           // Combine with the 'or'
+        }
+
+        return left; // Return the final expression
+    }
+    visitComparison(ctx) {
+        // Visit the first operand (bitwise_or)
+        let left = this.visit(ctx.bitwise_or(0)); // Get the first operand
+        
+        // Create an array to store the comparison pairs
+        let comparisonPairs = [];
+    
+        // Iterate through all comparison pairs (compare_op_bitwise_or_pair)
+        for (let i = 0; i < ctx.compare_op_bitwise_or_pair().length; i++) {
+            // Visit each comparison pair and push the result into the array
+            const comparisonPair = this.visit(ctx.compare_op_bitwise_or_pair(i));
+            comparisonPairs.push(comparisonPair); // Store the result of visiting the comparison pair
+        }
+    
+        // Return the left operand and all comparison pairs joined
+        return `${left} ${comparisonPairs.join(' ')}`; // Combine the comparisons with spaces
+    }    // Translate inequality operator with bitwise OR
+    visitNoteq_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `!= ${right}`;  // Return as JavaScript inequality
+    }
+
+    // Translate less than or equal operator with bitwise OR
+    visitLte_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `<= ${right}`;  // JavaScript "less than or equal"
+    }
+
+    // Translate less than operator with bitwise OR
+    visitLt_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `< ${right}`;  // JavaScript "less than"
+    }
+
+    // Translate greater than or equal operator with bitwise OR
+    visitGte_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `>= ${right}`;  // JavaScript "greater than or equal"
+    }
+
+    // Translate greater than operator with bitwise OR
+    visitGt_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `> ${right}`;  // JavaScript "greater than"
+    }
+    /* TODO WHAT TO DO IN THESE CASES
+    // Translate "not in" operator with bitwise OR
+    visitNotin_bitwise_or(ctx) {
+        const right = this.visitBitwise_or(ctx.bitwise_or);
+        return `!(${right} in ...)`;  // JavaScript equivalent of "not in"
+    }
+
+    // Translate "in" operator with bitwise OR
+    visitIn_bitwise_or(ctx) {
+        const right = this.visitBitwise_or(ctx.bitwise_or);
+        return `(${right} in ...)`;  // JavaScript "in" operator
+    }
+    */
+    // Translate "is not" operator with bitwise OR
+    visitIsnot_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `!== ${right}`;  // JavaScript "is not"
+    }
+
+    // Translate "is" operator with bitwise OR
+    visitIs_bitwise_or(ctx) {
+        const right = this.visit(ctx.bitwise_or());
+        return `=== ${right}`;  // JavaScript "is"
+    }
+
     visitBitwise_or(ctx) {
         if (ctx.bitwise_or()) {
             // Recursive case: `bitwise_or '|' bitwise_xor`
