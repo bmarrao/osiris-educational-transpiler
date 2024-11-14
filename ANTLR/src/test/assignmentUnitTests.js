@@ -169,6 +169,78 @@ describe('Python', () => {
           expect(outputCode).to.equal('( a == b ) != ( c <= d )');
       });
   });
+    
+     describe('visitEq_bitwise_or', () => {
+        it('should generate JavaScript for equality with bitwise OR', () => {
+            const input = 'a == b';
+            const tree = parsePython(input); // Assuming your parser generates a tree
+            const outputCode = codeGenerator.visitEq_bitwise_or(tree);
+            expect(outputCode).to.equal('== b');
+        });
+    });
+
+    describe('visitNoteq_bitwise_or', () => {
+        it('should generate JavaScript for inequality with bitwise OR', () => {
+            const input = 'a != b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitNoteq_bitwise_or(tree);
+            expect(outputCode).to.equal('!= b');
+        });
+    });
+
+    describe('visitLte_bitwise_or', () => {
+        it('should generate JavaScript for less than or equal to with bitwise OR', () => {
+            const input = 'a <= b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitLte_bitwise_or(tree);
+            expect(outputCode).to.equal('<= b');
+        });
+    });
+
+    describe('visitLt_bitwise_or', () => {
+        it('should generate JavaScript for less than with bitwise OR', () => {
+            const input = 'a < b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitLt_bitwise_or(tree);
+            expect(outputCode).to.equal('< b');
+        });
+    });
+
+    describe('visitGte_bitwise_or', () => {
+        it('should generate JavaScript for greater than or equal to with bitwise OR', () => {
+            const input = 'a >= b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitGte_bitwise_or(tree);
+            expect(outputCode).to.equal('>= b');
+        });
+    });
+
+    describe('visitGt_bitwise_or', () => {
+        it('should generate JavaScript for greater than with bitwise OR', () => {
+            const input = 'a > b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitGt_bitwise_or(tree);
+            expect(outputCode).to.equal('> b');
+        });
+    });
+
+    describe('visitIsnot_bitwise_or', () => {
+        it('should generate JavaScript for "is not" with bitwise OR', () => {
+            const input = 'a is not b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitIsnot_bitwise_or(tree);
+            expect(outputCode).to.equal('!== b');
+        });
+    });
+
+    describe('visitIs_bitwise_or', () => {
+        it('should generate JavaScript for "is" with bitwise OR', () => {
+            const input = 'a is b';
+            const tree = parsePython(input);
+            const outputCode = codeGenerator.visitIs_bitwise_or(tree);
+            expect(outputCode).to.equal('=== b');
+        });
+    });
 
     describe('bitwise_xor', () => {
       it('should generate JavaScript for bitwise XOR between two numbers', () => {
