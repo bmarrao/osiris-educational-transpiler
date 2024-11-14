@@ -41,6 +41,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log("Im on block/n");
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
+            console.log(`STATEMENT :${statements}`);
             return `\t${statements}\n`;// Return the processed statements
         } else {
             // Handle the case for simple statements
@@ -229,7 +230,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitIf_stmt(ctx) {
         // Visit the condition expression (named_expression)
         const condition = this.visit(ctx.named_expression());
-
+        console.log(`CONDICAO ${condition}`)
         // Visit the block of code that follows the condition
         const body = this.visit(ctx.block());
 
