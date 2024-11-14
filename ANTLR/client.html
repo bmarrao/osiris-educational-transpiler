@@ -51,7 +51,13 @@
                 // Enable the "Run JavaScript Code" button after translation
             document.getElementById('runButton').disabled = false;
         } catch (error) {
-            document.getElementById('output').textContent = 'Error: ' + error.message;
+           
+            console.log(`I GOT error${error.message}`);
+            document.getElementById('output').textContent = translatedCode;
+
+                // Enable the "Run JavaScript Code" button after translation
+            document.getElementById('runButton').disabled = false;
+
         }
     });
 
