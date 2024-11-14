@@ -12,11 +12,15 @@ function parsePython(input) {
 }
 
 export function translatePython(input) {
-    const codeGenerator = new PythonCodeGenerator({});
-    const tree = parsePython(input);
-    return codeGenerator.visit(tree);
+    try {
+        const codeGenerator = new PythonCodeGenerator({});
+        const tree = parsePython(input);  // Attempt to parse the input
+        return codeGenerator.visit(tree); // Generate code from the parse tree
+    } catch (error) {
+        // Handle the error and provide feedback
+        return `Error: ${error.message}`;  // Return the error message or handle as needed
+    } 
 }
-
 // Add a default export as well for flexibility
 export default {
     translatePython

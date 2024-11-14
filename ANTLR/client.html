@@ -45,9 +45,10 @@
         try {
             // Translate Python to JavaScript
             translatedCode = translator.translatePython(pythonCode);
+            console.log(`I GOT ${translatedCode}`);
             document.getElementById('output').textContent = translatedCode;
 
-            // Enable the "Run JavaScript Code" button after translation
+                // Enable the "Run JavaScript Code" button after translation
             document.getElementById('runButton').disabled = false;
         } catch (error) {
             document.getElementById('output').textContent = 'Error: ' + error.message;
