@@ -40,7 +40,9 @@ describe('Python', () => {
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
         console.log(outputCode);
-        expect(outputCode).to.equal(`if (x > 0) {\n    let x = 5;\n}`);
+        expect(outputCode).to.equal(`if (x > 0) {
+        let x = 5;
+}`);
       });
 /*
       it('should generate correct JavaScript for an if-elif-else statement', () => {

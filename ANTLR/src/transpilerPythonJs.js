@@ -1,3 +1,4 @@
+import * as StartingRules from './PythonVisitorMethods/starting_rules.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -10,11 +11,25 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         this.context = context;
         this.context.symbolTable = {};
     }
-    visitFile_input(ctx)
-    {
-        let x = this.visitChildren(ctx)
-        //return x;
-        return flatten(x)[0];
+
+    visitFile_input(ctx) {
+        return StartingRules.visitFileInput.call(this, ctx);
+    }
+
+    visitInteractive(ctx) {
+        return StartingRules.visitInteractive.call(this, ctx);
+    }
+
+    visitFstringInput(ctx) {
+        return StartingRules.visitFstringInput.call(this, ctx);
+    }
+
+    visitEval(ctx) {
+        return StartingRules.visitEval.call(this, ctx);
+    }
+
+    visitFuncType(ctx) {
+        return StartingRules.visitFuncType.call(this, ctx);
     }
 
     visitAssignment(ctx) {
@@ -25,34 +40,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return `let ${variableName} = ${value};`;
     }
 
-    visitStatements(ctx) {
-        const results = [];
-
-        // Iterate through each statement
-        for (const statementCtx of ctx.statement()) {
-            // Visit each statement and collect results
-            const result = this.visit(statementCtx);
-            results.push(result);
-        }
-
-        return results; // Return an array of results from each statement
-    }
-
-    visitStatement(ctx) {
-        // Check if the context has a compound statement
-        if (ctx.compound_stmt()) {
-            // Visit the compound statement and return the result
-            return flatten(this.visit(ctx.compound_stmt()))[0];
-        } 
-        // Otherwise, visit the simple statements
-        else if (ctx.simple_stmts()) {
-            // Visit the simple statements and return the result
-            return flatten(this.visit(ctx.simple_stmts()))[0];
-        }
-        // If neither is found, return an empty string or handle error
-        return '';
-    }
-    visitBlock(ctx) {
+      visitBlock(ctx) {
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
             return statements.map(statement => `\t${statement}\n`).join(''); // Format each statement with tab and newline

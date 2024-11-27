@@ -17,4 +17,4 @@ export function translatePython(input) {
     return codeGenerator.visit(tree);
 }
 let input = "if x > 0:\n    x= 5"
-console.log("TRANSLATED PYTHON\n" + translatePython(input));
+console.log( translatePython(input));
