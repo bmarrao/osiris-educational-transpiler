@@ -3,116 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python to JavaScript Translator</title>
+    <title>Code Translator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-python.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-rust.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
-        #editor { width: 80%; height: 200px; margin: 10px; }
-        #output { width: 80%; height: 100px; margin: 10px; background-color: #f0f0f0; overflow: auto; padding: 10px; }
-        #terminal { width: 80%; height: 200px; margin: 10px; background-color: black; color: white; padding: 10px; overflow-y: auto; font-family: monospace; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
-        button { padding: 10px 20px; cursor: pointer; margin: 5px; }
-        /* Custom CSS class for error highlights */
-        .ace-error-highlight {
-            background-color: rgba(255, 0, 0, 0.3);  /* Light red background */
-            position: absolute;
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #languageSelector {
+            margin-bottom: 15px;
+            padding: 5px;
+        }
+        #editor { 
+            width: 100%; 
+            height: 300px; 
+            margin: 10px 0; 
+            border: 1px solid #ccc;
+        }
+        #output { 
+            width: 100%; 
+            height: 150px; 
+            margin: 10px 0; 
+            background-color: #f0f0f0; 
+            overflow: auto; 
+            padding: 10px; 
+            white-space: pre-wrap; 
+        }
+        #terminal { 
+            width: 100%; 
+            height: 300px; 
+            background-color: black; 
+            color: green; 
+            padding: 10px; 
+            overflow-y: scroll; 
+            font-family: monospace;
+        }
+        button { 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            margin: 5px; 
         }
     </style>
-    <!-- Include Ace Editor CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 </head>
 <body>
-<h2>Python to JavaScript Translator</h2>
+<h2>Code Translator</h2>
 
-<!-- Ace Editor -->
+<select id="languageSelector">
+    <option value="python">Python</option>
+    <option value="rust">Rust</option>
+</select>
+
 <div id="editor"></div>
 
-<!-- Buttons -->
 <button id="translateButton">Translate to JavaScript</button>
 <button id="runButton" disabled>Run JavaScript Code</button>
 
-<!-- Output -->
-<div id="output"></div>
-
-<!-- Terminal output for JS code execution -->
+<div id="output">Translated code will appear here</div>
 <div id="terminal"></div>
 
-<script type="module">
-    import * as translator from './src/dist/bundle.js';
-
+<script>
     // Initialize Ace editor
     const editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
+    
+    // Language selector
+    const languageSelector = document.getElementById('languageSelector');
+    const translateButton = document.getElementById('translateButton');
+    const runButton = document.getElementById('runButton');
+    const outputDiv = document.getElementById('output');
+    const terminal = document.getElementById('terminal');
+
+    // Set initial mode to Python
     editor.session.setMode("ace/mode/python");
 
-    let translatedCode = "";
-    let errorMarkers = [];  // Store marker IDs to clear them later
+    // Update editor mode on language change
+    languageSelector.addEventListener('change', (e) => {
+        const selectedLanguage = e.target.value;
+        
+        // Update editor mode
+        switch(selectedLanguage) {
+            case 'python':
+                editor.session.setMode("ace/mode/python");
+                break;
+            case 'rust':
+                editor.session.setMode("ace/mode/rust");
+                break;
+        }
 
-    document.getElementById('translateButton').addEventListener('click', () => {
-        // Clear previous annotations and markers
-        editor.getSession().clearAnnotations();
-        errorMarkers.forEach(markerId => editor.getSession().removeMarker(markerId));
-        errorMarkers = [];
+        // Clear previous content
+        editor.setValue('');
+        outputDiv.textContent = 'Translated code will appear here';
+        terminal.innerHTML = '';
+        runButton.disabled = true;
+    });
 
-        const pythonCode = editor.getValue();
-        const result = translator.translatePython(pythonCode);
+    // Placeholder translation function (replace with actual implementation)
+    function translateCode(code, language) {
+        // This is a mock implementation
+        return {
+            success: true,
+            code: `// Translated ${language} code\nconsole.log("Hello, World!");`
+        };
+    }
+
+    // Translation button click handler
+    translateButton.addEventListener('click', () => {
+        const sourceCode = editor.getValue();
+        const sourceLanguage = languageSelector.value;
+
+        // Clear previous output
+        outputDiv.textContent = '';
+        terminal.innerHTML = '';
+
+        // Perform translation
+        const result = translateCode(sourceCode, sourceLanguage);
 
         if (result.success) {
-            // Show translated code in output
-            document.getElementById('output').textContent = result.code;
-            translatedCode = result.code;
-
-            // Enable the "Run JavaScript Code" button after successful translation
-            document.getElementById('runButton').disabled = false;
+            outputDiv.textContent = result.code;
+            runButton.disabled = false;
         } else {
-            // Display error messages in the output
-            document.getElementById('output').textContent = result.errors.join('\n');
-
-            const annotations = [];
-
-            // Process each error and add annotations and markers
-            result.errors.forEach((error) => {
-                const errorMatch = error.match(/line (\d+), column (\d+): (.+)/);
-                if (errorMatch) {
-                    const line = parseInt(errorMatch[1], 10) - 1;  // Convert to zero-based index
-                    const column = parseInt(errorMatch[2], 10);
-                    const message = errorMatch[3];
-
-                    // Add each error as an annotation
-                    annotations.push({
-                        row: line,
-                        column: column,
-                        text: message,
-                        type: "error"
-                    });
-
-                    // Highlight the error in the editor
-                    const Range = ace.require("ace/range").Range;
-                    const markerId = editor.getSession().addMarker(
-                        new Range(line, column, line, column + 1),  // Adjust end column as needed
-                        "ace-error-highlight",
-                        "text",
-                        true
-                    );
-                    errorMarkers.push(markerId);  // Store marker ID to remove later if needed
-                }
-            });
-
-            // Apply all annotations to the editor at once
-            editor.getSession().setAnnotations(annotations);
+            outputDiv.textContent = 'Translation failed';
         }
     });
 
-    document.getElementById('runButton').addEventListener('click', () => {
+    // Run button click handler
+    runButton.addEventListener('click', () => {
+        terminal.innerHTML = ''; // Clear terminal
         try {
-            // Run the translated JavaScript code and capture the output
-            const result = eval(translatedCode);
-            
-            // Display result in terminal-like output area
-            document.getElementById('terminal').textContent = result !== undefined ? result : 'No output or undefined result';
+            // Create a function from the translated code
+            const runCode = new Function(outputDiv.textContent);
+            // Capture console output
+            const originalLog = console.log;
+            console.log = (msg) => {
+                const line = document.createElement('div');
+                line.textContent = msg;
+                terminal.appendChild(line);
+            };
 
+            // Run the code
+            runCode();
+
+            // Restore original console.log
+            console.log = originalLog;
         } catch (error) {
-            document.getElementById('terminal').textContent = 'Error running JavaScript: ' + error.message;
+            const errorLine = document.createElement('div');
+            errorLine.textContent = `Error: ${error.message}`;
+            errorLine.style.color = 'red';
+            terminal.appendChild(errorLine);
         }
     });
 </script>
 </body>
-</html>
+</html>
