@@ -90,12 +90,12 @@ compound_stmt
 // SIMPLE STATEMENTS
 // =================
 
-// NOTE: annotated_rhs may start with 'yield'; yield_expr must start with 'yield'
+// note: annotated_rhs may start with 'yield'; yield_expr must start with 'yield'
 assignment
-    : NAME ':' expression ('=' annotated_rhs )?
+    : name ':' expression ('=' annotated_rhs )?
     | ('(' single_target ')'
          | single_subscript_attribute_target) ':' expression ('=' annotated_rhs )?
-    | (star_targets '=' )+ (yield_expr | star_expressions) TYPE_COMMENT?
+    | (star_targets '=' )+ (yield_expr | star_expressions) type_comment?
     | single_target augassign (yield_expr | star_expressions);
 
 annotated_rhs: yield_expr | star_expressions;
@@ -122,9 +122,9 @@ raise_stmt
     : 'raise' (expression ('from' expression )?)?
     ;
 
-global_stmt: 'global' NAME (',' NAME)*;
+global_stmt: 'global' name (',' name)*;
 
-nonlocal_stmt: 'nonlocal' NAME (',' NAME)*;
+nonlocal_stmt: 'nonlocal' name (',' name)*;
 
 del_stmt
     : 'del' del_targets;

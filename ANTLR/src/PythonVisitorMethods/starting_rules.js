@@ -1,23 +1,23 @@
 import { flatten } from '../tools/flatten.js';
 
 export function visitFileInput(ctx) {
-    let x = this.visitChildren(ctx);
-    return flatten(x)[0];
+    let x = this.visit(ctx.statements());
+    return x;
 }
 
 export function visitInteractive(ctx) {
     let x = this.visit(ctx.statement_newline());
-    return flatten(x)[0];
+    return x;
 }
 
 export function visitFstringInput(ctx) {
     let x = this.visit(ctx.star_expressions());
-    return flatten(x)[0];
+    return x;
 }
 
 export function visitEval(ctx) {
     let x = this.visit(ctx.expressions());
-    return flatten(x)[0];
+    return x; 
 }
 
 export function visitFuncType(ctx) {
@@ -26,5 +26,3 @@ export function visitFuncType(ctx) {
 
     return `(${args.join(', ')}) => ${returnExpression}`; // Construct JavaScript function
 }
-
-

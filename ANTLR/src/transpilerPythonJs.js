@@ -1,4 +1,6 @@
 import * as StartingRules from './PythonVisitorMethods/starting_rules.js';
+import * as GeneralStatements from './PythonVisitorMethods/general_statements.js'; 
+import * as SimpleStatements from './PythonVisitorMethods/simple_statements.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -32,7 +34,31 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return StartingRules.visitFuncType.call(this, ctx);
     }
 
+    visitStatements(ctx){
+        return GeneralStatements.visitStatements.call(this,ctx);
+    }
+
+    visitStatement(ctx){
+        return GeneralStatements.visitStatement.call(this,ctx);
+    }
+    visitStatement_newline(ctx) {
+        return GeneralStatements.visitStatement_newline.call(this, ctx);
+    }
+
+    visitSimple_stmts(ctx) {
+        return GeneralStatements.visitSimple_stmts.call(this, ctx);
+    }
+
+    visitSimple_stmt(ctx) {
+        return GeneralStatements.visitSimple_stmt.call(this, ctx);
+    }
+
+    visitCompound_stmt(ctx) {
+        return GeneralStatements.visitCompound_stmt.call(this, ctx);
+    }
+
     visitAssignment(ctx) {
+        return SimpleStatements.visitAssignment.call(this, ctx);
         const variableName = this.visit(ctx.star_targets())
         const value = this.visit(ctx.star_expressions());
 
@@ -40,7 +66,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return `let ${variableName} = ${value};`;
     }
 
-      visitBlock(ctx) {
+    visitBlock(ctx) {
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
             return statements.map(statement => `\t${statement}\n`).join(''); // Format each statement with tab and newline
