@@ -393,6 +393,117 @@ describe('Python', () => {
     }); 
 
     describe('assignment', () => {
+
+      it('should generate JavaScript from Python tuple assignment', () => {
+        const input = '(a, b) = (1, 2)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let a = 1, b = 2;');
+      });
+
+      // Test subscript assignment (list or dictionary-like assignment)
+      it('should generate JavaScript from Python subscript assignment', () => {
+        const input = 'my_list[0] = 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let my_list[0] = 5;');
+      });
+
+      // Test assignment with multiple star targets
+      it('should generate JavaScript from Python star target assignment', () => {
+        const input = '*a, *b = (1, 2, 3, 4)';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let ...a = 1, ...b = 2, 3, 4;');
+      });
+
+      // Test augmented assignment (e.g., +=)
+      it('should generate JavaScript from Python augmented assignment (+=)', () => {
+        const input = 'x += 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x += 5;');
+      });
+
+      // Test augmented assignment (e.g., -=)
+      it('should generate JavaScript from Python augmented assignment (-=)', () => {
+        const input = 'x -= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x -= 5;');
+      });
+
+      // Test augmented assignment (e.g., *=)
+      it('should generate JavaScript from Python augmented assignment (*=)', () => {
+        const input = 'x *= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x *= 5;');
+      });
+
+      // Test augmented assignment (e.g., /=)
+      it('should generate JavaScript from Python augmented assignment (/=)', () => {
+        const input = 'x /= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x /= 5;');
+      });
+
+      // Test augmented assignment (e.g., %=)
+      it('should generate JavaScript from Python augmented assignment (%=)', () => {
+        const input = 'x %= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x %= 5;');
+      });
+
+      // Test augmented assignment (e.g., |=)
+      it('should generate JavaScript from Python augmented assignment (|=)', () => {
+        const input = 'x |= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x |= 5;');
+      });
+
+      // Test augmented assignment (e.g., &=)
+      it('should generate JavaScript from Python augmented assignment (&=)', () => {
+        const input = 'x &= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x &= 5;');
+      });
+
+      // Test augmented assignment (e.g., ^=)
+      it('should generate JavaScript from Python augmented assignment (^=)', () => {
+        const input = 'x ^= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x ^= 5;');
+      });
+
+      // Test augmented assignment (e.g., <<=)
+      it('should generate JavaScript from Python augmented assignment (<<=)', () => {
+        const input = 'x <<= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x <<= 5;');
+      });
+
+      // Test augmented assignment (e.g., >>=)
+      it('should generate JavaScript from Python augmented assignment (>>=)', () => {
+        const input = 'x >>= 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('x >>= 5;');
+      });
+
+      // Test assignment with type comments (Python-specific, we handle the type comment)
+      it('should generate JavaScript from Python assignment with type comment', () => {
+        const input = 'x: int = 5';
+        const tree = parsePython(input);
+        const outputCode = codeGenerator.visit(tree);
+        expect(outputCode).to.equal('let x = 5;');
+      });
       it('should generate JavaScript from Python for simple assignment', () => {
         const input = 'x = 5';
         const tree = parsePython(input);

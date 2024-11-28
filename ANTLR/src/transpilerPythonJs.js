@@ -1,6 +1,7 @@
 import * as StartingRules from './PythonVisitorMethods/starting_rules.js';
 import * as GeneralStatements from './PythonVisitorMethods/general_statements.js'; 
 import * as SimpleStatements from './PythonVisitorMethods/simple_statements.js';
+import * as GenericTargets from './PythonVisitorMethods/generic_targets.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -361,32 +362,44 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         // Construct the JavaScript if statement
         return `if (${condition}) {\n${body}}${elifElse}`;
     }
-    visitStar_atom(ctx) {
-        const variableName = ctx.getText();
-        return variableName;  // Otherwise, return the variable name as is
+    visitStar_targets(ctx) {
+        return GenericTargets.visitStar_targets.call(this, ctx);
     }
+
+    visitStar_targets_list_seq(ctx) {
+        return GenericTargets.visitStar_targets_list_seq.call(this, ctx);
+    }
+
+    visitStar_targets_tuple_seq(ctx) {
+        return GenericTargets.visitStar_targets_tuple_seq.call(this, ctx);
+    }
+
+    visitStar_target(ctx) {
+        return GenericTargets.visitStar_target.call(this, ctx);
+    }
+
+    visitTarget_with_star_atom(ctx) {
+        return GenericTargets.visitTarget_with_star_atom.call(this, ctx);
+    }
+
+    visitStar_atom(ctx) {
+        return GenericTargets.visitStar_atom.call(this, ctx);
+    }
+
+    visitSingle_target(ctx) {
+        return GenericTargets.visitSingle_target.call(this, ctx);
+    }
+
+    visitSingle_subscript_attribute_target(ctx) {
+        return GenericTargets.visitSingle_subscript_attribute_target.call(this, ctx);
+    }
+
+    visitT_primary(ctx) {
+        return GenericTargets.visitT_primary.call(this, ctx);
+    }
+
     visitAtom(ctx) {
-        if (ctx.tuple() || ctx.group() || ctx.genexp()) {
-            return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
-        } else if (ctx.list() || ctx.listcomp()) {
-            return this.visit(ctx.list() || ctx.listcomp());
-        } else if (ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp()) {
-            return this.visit(ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp());
-        } else if (ctx.TRUE()) {
-        // Handle the case for the boolean literal True
-            return 'true';
-        } 
-        else if (ctx.FALSE()) {
-            // Handle the case for the boolean literal False
-            return 'false';
-        }
-        else if (ctx.NONE()) {
-        // Handle the case for the Python None literal
-        return 'null'; // Convert to JavaScript's null
-        }
-        
-        
-        return ctx.getText(); // Default case
+        return GenericTargets.visitAtom.call(this, ctx);
     }
 
     visitList(ctx) {
