@@ -31,6 +31,7 @@
     "http-server": "^14.1.1",
     "mocha": "^10.7.3",
     "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "worker-loader": "^3.0.8"
   }
 }

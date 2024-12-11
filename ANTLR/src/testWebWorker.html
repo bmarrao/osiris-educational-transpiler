@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker Example</title>
+</head>
+<body>
+    <h1>Web Worker Example</h1>
+    <p>Open the console to see the result of the Web Worker.</p>
+
+    <!-- Main thread JavaScript -->
+    <script>
+        // Create a new Web Worker
+        const worker = new Worker("worker.js");
+
+        // Send data to the worker
+        worker.postMessage({ counter: 0 });
+
+        // Receive the result from the worker
+        worker.onmessage = function(event) {
+            const updatedCounter = event.data;
+            console.log("Updated counter from worker:", updatedCounter);
+        };
+    </script>
+</body>
+</html>
+
