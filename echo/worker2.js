@@ -1,9 +1,8 @@
 let counter = 0;
 
-self.onmessage = async function (event) {
-    const { type, input } = event.data;
+// Main event listener for "start"
+async function handleStart() {
 
-    if (type === "start") {
         postMessage("Execution started");
 
         // Pause execution to wait for input
@@ -15,21 +14,26 @@ self.onmessage = async function (event) {
         postMessage(`Counter updated to ${counter}`);
         // Continue asking for input as needed
         while (true) {
-            postMessage("Waiting for input")
+            postMessage("Execution started");
             userInput = await waitForInput();
             counter += userInput;
             postMessage(`Counter updated to ${counter}`);
         }
-    }
 };
 
 // Utility to wait for input from the main thread
-function waitForInput() {
+async function waitForInput() {
     return new Promise((resolve) => {
-        self.onmessage = (event) => {
+        const inputListener = (event) => {
             if (event.data.type === "input") {
                 resolve(event.data.input);
+                // Remove the listener to avoid multiple triggers
+                self.removeEventListener("message", inputListener);
             }
         };
+
+        self.addEventListener("message", inputListener);
     });
 }
+
+await handleStart()
