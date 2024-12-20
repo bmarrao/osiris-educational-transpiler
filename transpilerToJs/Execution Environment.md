@@ -23,5 +23,9 @@ While investigating what a client would need from this package, I encountered a 
 		- Limited by browser support and constraints on shared memory.
 - **Custom JavaScript Interpreter (js-lang)** - tool designed to parse and execute JavaScript code manually. It often implements its own execution engine, allowing you to control how JavaScript	
 	- Pros:
-		- 
-		  
+		- **Sandboxing:** Can implement full sandboxing, ensuring executed code does not have unintended access to sensitive APIs or the global scope.
+		- **Timeout on Execution:** Timeout functionality can be built into the interpreter, pausing or terminating execution as needed. Infinite loops can be controlled without affecting the rest of the page.
+	- Cons: 
+		-  Performance may be slower than native execution.
+		-  Increased complexity compared to built-in solutions.
+In the end, the only two viable choices were Web Workers and a Custom JavaScript Interpreter. I decided to go with Web Workers because they run on a separate thread, allowing code to execute without blocking the browser's main thread. Using Web Workers is straightforward since they are part of the browser's built-in API. Additionally, Web Workers leverage native browser optimizations, making them faster and more reliable for most use cases. Their ability to safely terminate execution and prevent infinite loops from affecting the main thread further solidifies their suitability for this project.
