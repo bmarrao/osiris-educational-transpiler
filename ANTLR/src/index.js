@@ -3,6 +3,27 @@ import PythonParser from './Python/PythonParser.js';
 import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
+let Worker = window.Worker;
+
+var code_suffix = `
+// Utility to wait for input from the main thread
+async function waitForInput() {
+    return new Promise((resolve) => {
+        const inputListener = (event) => {
+            if (event.data.type === "input") {
+                resolve(event.data.input);
+                // Remove the listener to avoid multiple triggers
+                self.removeEventListener("message", inputListener);
+            }
+        };
+
+        self.addEventListener("message", inputListener);
+    });
+}
+
+main()
+`;
+
 // Custom error collector to store syntax errors
 class ErrorCollector {
     constructor() {
@@ -34,7 +55,28 @@ class PythonTranspiler {
         return this.transpiledCode;
     }
 
-    runCode()
+    sendIO(input)
+    {
+        worker.postMessage({ type: "input", input: input });
+    }
+
+    runCode(code, appendToTerminal,timeout)
+    {
+        let runCode = `async function main() {
+        ${code}
+        };
+        ${code_suffix}
+        `
+        console.log(runCode)
+        // Create a Blob with the Web Worker code
+        const blob = new Blob([runCode], { type: "application/javascript" });
+        this.worker = new Worker(URL.createObjectURL(blob));
+        worker.onmessage = function(event) {
+            const data = event.data;
+            appendToTerminal(data);
+        };
+
+    }
     parsePython(input) {
         const inputStream = new antlr4.InputStream(input);
         const lexer = new PythonLexer(inputStream);
