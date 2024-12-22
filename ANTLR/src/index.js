@@ -57,7 +57,8 @@ class PythonTranspiler {
 
     sendIO(input)
     {
-        worker.postMessage({ type: "input", input: input });
+        console.log(this.worker)
+        this.worker.postMessage({ type: "input", input: input });
     }
 
     runCode(code, appendToTerminal,timeout)
@@ -71,9 +72,9 @@ class PythonTranspiler {
         // Create a Blob with the Web Worker code
         const blob = new Blob([runCode], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
-        worker.onmessage = function(event) {
-            const data = event.data;
-            appendToTerminal(data);
+        this.worker.postMessage({ type: "start" });
+        this.worker.onmessage = function(event) {
+            appendToTerminal(event)
         };
 
     }
