@@ -58,14 +58,14 @@
             postMessage(\`Received input: \${userInput}\`);
 
             // Continue execution after input
-            counter += userInput;
+            counter += +(userInput);
             postMessage(\`Counter updated to \${counter}\`);
 
             // Continue asking for input as needed
             while (true) {
                 postMessage("Execution started");
                 userInput = await waitForInput();
-                counter += userInput;
+                counter += +userInput;
                 postMessage(\`Counter updated to \${counter}\`);
             }
         `;
