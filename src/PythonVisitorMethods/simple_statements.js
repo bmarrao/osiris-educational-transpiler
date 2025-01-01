@@ -43,13 +43,10 @@ export function visitAssignment(ctx) {
 	    // Visit the target and expression nodes
 	    const target = this.visit(ctx.single_target());
 	    const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
-	
+            console.log("HERE1");	
+
 	    // Visit the augmented assignment operator
 	    const augassign = this.visit(ctx.augassign());
-	
-	    console.log(target)
-	    console.log(expression)
-	    console.log(augassign)
 	    // Handle the augmented assignment
 	    if (augassign !== "floor") {  // Assuming "//=" is your floor operator
 		return `${target} ${augassign} ${expression};`;
@@ -80,8 +77,8 @@ export function visitAnnotatedRhs(ctx) {
 
 export function visitAugassign(ctx) {
     console.log("visitAugassign");
-    const operator = ctx.augassign().getText(); // Get the operator (e.g., +=, -=, etc.)
     console.log("AUGASSIGN");
+    const operator = ctx.getText(); // Get the operator (e.g., +=, -=, etc.)
     console.log(operator); 
     // Return the operator if it's valid in JavaScript, or its equivalent
     switch (operator) {
