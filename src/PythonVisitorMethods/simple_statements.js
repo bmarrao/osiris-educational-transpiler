@@ -1,4 +1,5 @@
 export function visitAssignment(ctx) {
+    console.log("visitAssignment\n");
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
 	console.log("FIRST");
@@ -36,8 +37,8 @@ export function visitAssignment(ctx) {
     }
 
     // Handle augmented assignment (single_target augassign (yield_expr | star_expressions))
-    // Handle augmented assignment (single_target augassign (yield_expr | star_expressions))
-	if (ctx.single_target() && ctx.augassign()) {
+    if (ctx.single_target() && ctx.augassign()) {
+        console.log("FOURTH");
 	
 	    // Visit the target and expression nodes
 	    const target = this.visit(ctx.single_target());
@@ -56,11 +57,13 @@ export function visitAssignment(ctx) {
 		// For floor division (//=), use Math.floor to simulate the operation in JavaScript
 		return `${target} = Math.floor(${target} / ${expression});`;
 	    }
-	}    // Default case (if no condition matches)
+	}
+    // Default case (if no condition matches)
     return null;
 }
 
 export function visitAnnotatedRhs(ctx) {
+    console.log("visitAnnotatedRhs");
     // Check for 'yield_expr' first
     if (ctx.yield_expr()) {
         return this.visit(ctx.yield_expr()); // Visit the yield expression
@@ -76,6 +79,7 @@ export function visitAnnotatedRhs(ctx) {
 }
 
 export function visitAugassign(ctx) {
+    console.log("visitAugassign");
     const operator = ctx.augassign().getText(); // Get the operator (e.g., +=, -=, etc.)
     console.log("AUGASSIGN");
     console.log(operator); 

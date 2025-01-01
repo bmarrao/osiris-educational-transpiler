@@ -3,7 +3,6 @@ import PythonParser from './Python/PythonParser.js';
 import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
-let Worker = window.Worker;
 
 var code_suffix = `
 // Utility to wait for input from the main thread
@@ -63,6 +62,7 @@ class PythonTranspiler {
 
     runCode(code, appendToTerminal,timeout)
     {
+        let Worker = window.Worker;
         let runCode = `async function main() {
         ${code}
         };

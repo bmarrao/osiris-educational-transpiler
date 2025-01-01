@@ -58,13 +58,12 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return GeneralStatements.visitCompound_stmt.call(this, ctx);
     }
 
+    visitAugassign(ctx){
+        return SimpleStatements.visitAugassign.call(this, ctx);
+    }
+
     visitAssignment(ctx) {
         return SimpleStatements.visitAssignment.call(this, ctx);
-        const variableName = this.visit(ctx.star_targets())
-        const value = this.visit(ctx.star_expressions());
-
-        // Return the JavaScript equivalent assignment statement
-        return `let ${variableName} = ${value};`;
     }
 
     visitBlock(ctx) {
