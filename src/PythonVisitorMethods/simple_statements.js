@@ -43,8 +43,6 @@ export function visitAssignment(ctx) {
 	    // Visit the target and expression nodes
 	    const target = this.visit(ctx.single_target());
 	    const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
-            console.log("HERE1");	
-
 	    // Visit the augmented assignment operator
 	    const augassign = this.visit(ctx.augassign());
 	    // Handle the augmented assignment

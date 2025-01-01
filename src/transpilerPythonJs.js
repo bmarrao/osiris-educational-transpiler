@@ -2,6 +2,9 @@ import * as StartingRules from './PythonVisitorMethods/starting_rules.js';
 import * as GeneralStatements from './PythonVisitorMethods/general_statements.js'; 
 import * as SimpleStatements from './PythonVisitorMethods/simple_statements.js';
 import * as GenericTargets from './PythonVisitorMethods/generic_targets.js';
+import * as ComparisonOperators from './PythonVisitorMethods/comparison_operators.js';
+import * as BitwiseOperators from './PythonVisitorMethods/bitwise_operators.js';
+import * as ArithmeticOperators from './PythonVisitorMethods/arithmetic_operators.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -90,190 +93,80 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return left; // Return the final expression
     }
     visitComparison(ctx) {
-        // Visit the first operand (bitwise_or), ensure it's a string and trim it
-        let left = String(this.visit(ctx.bitwise_or(0))).trim(); 
-    
-        // Create an array to store the comparison pairs
-        let comparisonPairs = [];
-        
-        // Iterate through all comparison pairs (compare_op_bitwise_or_pair)
-        for (let i = 0; i < ctx.compare_op_bitwise_or_pair().length; i++) {
-            // Visit each comparison pair, convert to string, and trim
-            const comparisonPair = String(this.visit(ctx.compare_op_bitwise_or_pair(i))).trim(); 
-            comparisonPairs.push(comparisonPair); 
-        }
-        
-        // Join the comparison pairs and remove extra spaces
-        return `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
-    } 
-    
+        return ComparisonOperators.visitComparison.call(this, ctx);
+    }
+
     visitEq_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `== ${right}`;  // JavaScript "equal to" operator
+        return ComparisonOperators.visitEq_bitwise_or.call(this, ctx);
     }
+
     visitNoteq_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `!= ${right}`;  // Return as JavaScript inequality
+        return ComparisonOperators.visitNoteq_bitwise_or.call(this, ctx);
     }
 
-    // Translate less than or equal operator with bitwise OR
     visitLte_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `<= ${right}`;  // JavaScript "less than or equal"
+        return ComparisonOperators.visitLte_bitwise_or.call(this, ctx);
     }
 
-    // Translate less than operator with bitwise OR
     visitLt_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `< ${right}`;  // JavaScript "less than"
+        return ComparisonOperators.visitLt_bitwise_or.call(this, ctx);
     }
 
-    // Translate greater than or equal operator with bitwise OR
     visitGte_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `>= ${right}`;  // JavaScript "greater than or equal"
+        return ComparisonOperators.visitGte_bitwise_or.call(this, ctx);
     }
 
-    // Translate greater than operator with bitwise OR
     visitGt_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `> ${right}`;  // JavaScript "greater than"
+        return ComparisonOperators.visitGt_bitwise_or.call(this, ctx);
     }
-    /* TODO WHAT TO DO IN THESE CASES
-    // Translate "not in" operator with bitwise OR
+/* TODO DEFINE THESE 
     visitNotin_bitwise_or(ctx) {
-        const right = this.visitBitwise_or(ctx.bitwise_or);
-        return `!(${right} in ...)`;  // JavaScript equivalent of "not in"
+        return ComparisonOperators.visitNotin_bitwise_or.call(this, ctx);
     }
 
-    // Translate "in" operator with bitwise OR
     visitIn_bitwise_or(ctx) {
-        const right = this.visitBitwise_or(ctx.bitwise_or);
-        return `(${right} in ...)`;  // JavaScript "in" operator
+        return ComparisonOperators.visitIn_bitwise_or.call(this, ctx);
     }
-    */
-    // Translate "is not" operator with bitwise OR
+*/
     visitIsnot_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `!== ${right}`;  // JavaScript "is not"
+        return ComparisonOperators.visitIsnot_bitwise_or.call(this, ctx);
     }
 
-    // Translate "is" operator with bitwise OR
     visitIs_bitwise_or(ctx) {
-        const right = this.visit(ctx.bitwise_or());
-        return `=== ${right}`;  // JavaScript "is"
+        return ComparisonOperators.visitIs_bitwise_or.call(this, ctx);
     }
 
     visitBitwise_or(ctx) {
-        if (ctx.bitwise_or()) {
-            // Recursive case: `bitwise_or '|' bitwise_xor`
-            const left = this.visit(ctx.bitwise_or());
-            const right = this.visit(ctx.bitwise_xor());
-            return `${left} | ${right}`; // Combine with bitwise OR operator
-        } else {
-            // Base case: Just a bitwise_xor
-            return this.visit(ctx.bitwise_xor());
-        }
+        return BitwiseOperators.visitBitwise_or.call(this, ctx);
     }
 
     visitBitwise_xor(ctx) {
-        if (ctx.bitwise_xor()) {
-            // Recursive case: `bitwise_xor '^' bitwise_and`
-            const left = this.visit(ctx.bitwise_xor());
-            const right = this.visit(ctx.bitwise_and());
-            return `${left} ^ ${right}`;  // Bitwise XOR operator in JS
-        } else {
-            // Base case: just a bitwise_and
-            return this.visit(ctx.bitwise_and());
-        }
+        return BitwiseOperators.visitBitwise_xor.call(this, ctx);
     }
+
     visitBitwise_and(ctx) {
-        if (ctx.bitwise_and()) {
-            // Recursive case: `bitwise_and '&' shift_expr`
-            const left = this.visit(ctx.bitwise_and());
-            const right = this.visit(ctx.shift_expr());
-            return `${left} & ${right}`;  // Bitwise AND operator in JS
-        } else {
-            // Base case: just a shift_expr
-            return this.visit(ctx.shift_expr());
-        }
+        return BitwiseOperators.visitBitwise_and.call(this, ctx);
     }
+
     visitShift_expr(ctx) {
-        if (ctx.shift_expr()) {
-            // Case: shift_expr ('<<' | '>>') sum
-            const left = this.visit(ctx.shift_expr());
-            const operator = ctx.children[1].getText();  // Get '<<' or '>>'
-            const right = this.visit(ctx.sum());
-            return `${left} ${operator} ${right}`;  // Use the operator in JS
-        } else {
-            // Base case: just a sum
-            return this.visit(ctx.sum());
-        }
+        return BitwiseOperators.visitShift_expr.call(this, ctx);
     }
 
     visitSum(ctx) {
-        // Check if this is a recursive sum case
-        if (ctx.sum()) {
-            const left = this.visit(ctx.sum());
-
-            // Get the operator and evaluate
-            const operator = ctx.children[1].getText();
-            const right = this.visit(ctx.term());
-
-            return (left + " " + operator + " " + right)
-        } else {
-            return this.visit(ctx.term());
-        }
+        return ArithmeticOperators.visitSum.call(this, ctx);
     }
 
     visitTerm(ctx) {
-    // Check if this is a recursive sum case
-        if (ctx.term()) 
-        {
-            const left = this.visit(ctx.term());
-            // Get the operator and evaluate
-            const operator = ctx.children[1].getText();
-            const right = this.visit(ctx.factor());
-            if (operator === "//")
-            {
-                return `Math.floor(${left} / ${right})`;
-            }
-            else if (operator === "@")
-            {
-                //TODO:BRING UP THE PROBLEM WITH THE LIBRARIES, IN THE END DO I JUST IMPORT ?
-               return ""; 
-            }
-            else 
-            {
-                return (left + " " + operator + " " + right);
-            }
-
-        }
-        else 
-        {
-            // It's just a term
-            return this.visit(ctx.factor());
-        }
+        return ArithmeticOperators.visitTerm.call(this, ctx);
     }
 
     visitFactor(ctx) {
-    // Check if this is a recursive sum case
-        if (ctx.factor()) 
-        {
-            // Get the operator and evaluate
-            const factor = ctx.children[0].getText();
-            const right = this.visit(ctx.factor());
-            return (factor + " " + right);
-
-        }
-        else 
-        {
-            // It's just a term
-            return this.visit(ctx.power());
-        }
+        return ArithmeticOperators.visitFactor.call(this, ctx);
     }
-    
 
+    visitPower(ctx) {
+        return ArithmeticOperators.visitPower.call(this, ctx);
+    }
     visitDisjunction(ctx) {
         // Visit the first conjunction
         let left = this.visit(ctx.conjunction(0)); // Get the first conjunction
@@ -317,20 +210,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         }
     }
 
-    visitPower(ctx) {
-        // Check if there is an exponentiation operation '**'
-        if (ctx.factor()) {
-            // Visit the base of the exponentiation (await_primary)
-            const base = this.visit(ctx.await_primary());
-            // Visit the exponent part (factor)
-            const exponent = this.visit(ctx.factor());
-            // Return the JavaScript equivalent using the '**' operator
-            return `Math.pow(${base},${exponent})`;
-        } else {
-            // If there is no exponentiation, just return the base (await_primary)
-            return this.visit(ctx.await_primary());
-        }
-    }
+    
     //TODO MAKE TEST FOR THIS WHEN PRIMARY DONE
     visitAwait_primary(ctx) {
         if (ctx.AWAIT()) {
