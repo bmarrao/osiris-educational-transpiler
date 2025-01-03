@@ -6,7 +6,9 @@
 export function visitBlock(ctx) {
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
-            return statements.map(statement => `\t${statement}\n`).join(''); // Format each statement with tab and newline
+            console.log("STATEMENTS");
+            console.log(statements);
+            return statements
         } else {
             // Handle the case for simple statements
             return this.visit(ctx.simple_stmts());

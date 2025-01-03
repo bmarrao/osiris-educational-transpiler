@@ -42,15 +42,60 @@ export function visitGroup(ctx) {
     }
     return "( " + inside + " )"; // Return formatted group
 }
+
 /*
 TODO FINISH THESE 
+export function visitPrimary(ctx) {
+    if (ctx.primary()) {
+        const primary = this.visit(ctx.primary());
+        if (ctx.NAME()) {
+            return `${primary}.${ctx.NAME().getText()}`; // obj.property
+        } else if (ctx.genexp()) {
+            return `${primary}.map(${this.visit(ctx.genexp())})`; // Generators map/forEach
+        } else if (ctx.arguments()) {
+            return `${primary}(${this.visit(ctx.arguments())})`; // Function calls
+        } else if (ctx.slices()) {
+            return `${primary}.slice(${this.visit(ctx.slices())})`; // Array slicing
+        }
+    } else {
+        return this.visit(ctx.atom());
+    }
+}
+
+export function visitSlices(ctx) {
+    if (ctx.slice()) {
+        return this.visit(ctx.slice());
+    } else {
+        const slices = ctx.children.map(child => this.visit(child)).filter(Boolean);
+        return slices.join(', ');
+    }
+}
+
+export function visitSlice(ctx) {
+    if (ctx.named_expression()) {
+        // Handle named expression directly
+        return this.visit(ctx.named_expression());
+    }
+
+    const start = ctx.expression(0) ? this.visit(ctx.expression(0)) : '0';
+    const end = ctx.expression(1) ? this.visit(ctx.expression(1)) : '';
+    const step = ctx.expression(2) ? this.visit(ctx.expression(2)) : '';
+
+    if (step) {
+        // Include step in slicing
+        return `${start}, ${end}, ${step}`;
+    } else {
+        return `${start}, ${end}`;
+    }
+}
+
+*/
+/*
 
 primary
     : primary ('.' NAME | genexp | '(' arguments? ')' | '[' slices ']')
     | atom
     ;
-
-
 
 slices
     : slice

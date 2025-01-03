@@ -2,17 +2,15 @@ export function visitAssignment(ctx) {
     console.log("visitAssignment\n");
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
-	console.log("FIRST");
-        const variableName = this.visit(ctx.name());
+        console.log("FIRST");
+        const variableName = ctx.NAME().getText();
         const expression = this.visit(ctx.expression());
-        const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
-
-        // Return the JavaScript equivalent of assignment
-        return annotatedRhs
-            ? `let ${variableName} =  ${annotatedRhs};`
-            : `let ${variableName} ;`;
+        let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
+            // Return the JavaScript equivalent of assignment
+            return annotatedRhs
+            ? `let ${variableName} = ${String(annotatedRhs).trim()};`
+            : `let ${variableName};`;
     }
-    
     // TODO ADD TUPLE HANDLING IN HEREHandle assignment with parentheses (single_target or single_subscript_attribute_target): expression '=' annotated_rhs
     if (ctx.single_target() && ctx.expression()) {
         const target = this.visit(ctx.single_target());
@@ -31,7 +29,7 @@ export function visitAssignment(ctx) {
         console.log("THIRD");
 	const targets = this.visit(ctx.star_targets());
         const value = this.visit(ctx.star_expressions());
-
+        console.log(`TARGETS ${targets}`) 
         // Return the JavaScript equivalent for multiple star targets
         return `let ${targets} = ${value};`;
     }

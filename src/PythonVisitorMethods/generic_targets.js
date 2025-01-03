@@ -9,8 +9,8 @@ export function visitStar_targets(ctx) {
     // Translation to JavaScript:
     // `...args`
     // `...a, ...b`
-    
     const targets = ctx.star_target().map(target => this.visit(target));
+    console.log(`${targets.join(', ')}`)
     return `${targets.join(', ')}`; // Spread syntax for multiple star targets
 }
 
@@ -138,27 +138,7 @@ export function visitStar_atom(ctx) {
     return ctx.getText(); // Default case, return raw text
 }
 
-export function visitAtom(ctx) {
-	if (ctx.tuple() || ctx.group() || ctx.genexp()) {
-	    return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
-	} else if (ctx.list() || ctx.listcomp()) {
-	    return this.visit(ctx.list() || ctx.listcomp());
-	} else if (ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp()) {
-	    return this.visit(ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp());
-	} else if (ctx.TRUE()) {
-	// Handle the case for the boolean literal True
-	    return 'true';
-	} 
-	else if (ctx.FALSE()) {
-	    // Handle the case for the boolean literal False
-	    return 'false';
-	}
-	else if (ctx.NONE()) {
-		// Handle the case for the Python None literal
-		return 'null'; // Convert to JavaScript's null
-	}	
-	return ctx.getText(); // Default case
-}
+
 
 
 // Visitor method for single_target
