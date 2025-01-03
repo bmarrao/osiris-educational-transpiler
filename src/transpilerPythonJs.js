@@ -5,6 +5,10 @@ import * as GenericTargets from './PythonVisitorMethods/generic_targets.js';
 import * as ComparisonOperators from './PythonVisitorMethods/comparison_operators.js';
 import * as BitwiseOperators from './PythonVisitorMethods/bitwise_operators.js';
 import * as ArithmeticOperators from './PythonVisitorMethods/arithmetic_operators.js';
+import * as CommonElements from './PythonVisitorMethods/common_elements.js';
+import * as Expressions from './PythonVisitorMethods/expressions.js';
+import * as Literals from './PythonVisitorMethods/literals.js';
+import * as PrimaryElements from './PythonVisitorMethods/primary_elements.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -70,28 +74,10 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     }
 
     visitBlock(ctx) {
-        if (ctx.NEWLINE()) {
-            const statements = this.visit(ctx.statements());
-            return statements.map(statement => `\t${statement}\n`).join(''); // Format each statement with tab and newline
-        } else {
-            // Handle the case for simple statements
-            return this.visit(ctx.simple_stmts());
-        }
+        return CommonElements.visitBlock.call(this, ctx);
     }
 
-    visitDisjunction(ctx) {
-        // Visit the first conjunction
-        let left = this.visit(ctx.conjunction(0)); // Get the first conjunction
-
-        // Iterate through any additional conjunctions connected by 'or'
-        for (let i = 1; i < ctx.conjunction().length; i++) {
-            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
-            const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
-            left = `${left} || ${right}`;           // Combine with the 'or'
-        }
-
-        return left; // Return the final expression
-    }
+    
     visitComparison(ctx) {
         return ComparisonOperators.visitComparison.call(this, ctx);
     }
@@ -167,62 +153,33 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitPower(ctx) {
         return ArithmeticOperators.visitPower.call(this, ctx);
     }
+
     visitDisjunction(ctx) {
-        // Visit the first conjunction
-        let left = this.visit(ctx.conjunction(0)); // Get the first conjunction
-
-        // Iterate through any additional conjunctions connected by 'or'
-        for (let i = 1; i < ctx.conjunction().length; i++) {
-            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
-            const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
-            left = `${left} || ${right}`;           // Combine with the 'or'
-        }
-
-        return left; // Return the final expression
+        return Expressions.visitDisjunction.call(this, ctx);
     }
 
     visitConjunction(ctx) {
-        // Visit the first conjunction
-        let left = this.visit(ctx.inversion(0)); // Get the first conjunction
-
-        // Iterate through any additional conjunctions connected by 'or'
-        for (let i = 1; i < ctx.inversion().length; i++) {
-            const operator = ctx.children[2 * i - 1].getText(); // Get the 'or' operator
-            const right = this.visit(ctx.inversion(i));      // Get the next conjunction
-            left = `${left} && ${right}`;           // Combine with the 'or'
-        }
-
-        return left; // Return the final expression
+        return Expressions.visitConjunction.call(this, ctx);
     }
-    
+
     visitInversion(ctx) {
-    // Check if this is a recursive sum case
-        if (ctx.inversion()) 
-        {
-            // Get the operator and evaluate
-            const right = this.visit(ctx.inversion());
-            return ("! " + right);
-
-        }
-        else 
-        {
-            return this.visit(ctx.comparison());
-        }
+        return Expressions.visitInversion.call(this, ctx);
     }
 
-    
-    //TODO MAKE TEST FOR THIS WHEN PRIMARY DONE
+    visitStar_named_expressions(ctx) {
+        return Expressions.visitStar_named_expressions.call(this, ctx);
+    }
+
+   //TODO MAKE TEST FOR THIS WHEN PRIMARY DONE
     visitAwait_primary(ctx) {
-        if (ctx.AWAIT()) {
-            // Handle the 'await' expression
-            const primaryExpression = this.visit(ctx.primary());
-            return `await ${primaryExpression}`; // Translate 'await primary' to 'await primaryExpression'
-        } else {
-            // Handle just the primary expression without 'await'
-            return this.visit(ctx.primary());
-        }
+        return PrimaryElements.visitAwait_primary.call(this, ctx);
     }
-    
+    visitAtom(ctx) {
+        return PrimaryElements.visitAtom.call(this, ctx);
+    }
+    visitGroup(ctx) {
+        return PrimaryElements.visitGroup.call(this, ctx);
+    }
     visitIf_stmt(ctx) {
         // Visit the condition expression (named_expression)
         const condition = this.visit(ctx.named_expression());
@@ -277,48 +234,15 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return GenericTargets.visitT_primary.call(this, ctx);
     }
 
-    visitAtom(ctx) {
-        return GenericTargets.visitAtom.call(this, ctx);
-    }
-
     visitList(ctx) {
-    // Check for star named expressions and process them
-        let namedExpressions = ctx.star_named_expressions() 
-            ? this.visit(ctx.star_named_expressions()) 
-            : '';
-        namedExpressions = String(namedExpressions).replace(/,+/g, ',').trim();
-        return `[${namedExpressions}]`; // Wrap the named expressions in brackets for a JavaScript array
+        return Literals.visitList.call(this, ctx);
     }
 
     visitTuple(ctx) {
-        let elements = '';
-
-        // Handle the star named expression, if it exists
-        if (ctx.star_named_expression()) {
-            elements += this.visit(ctx.star_named_expression());
-        }
-        
-        // Handle additional star named expressions, if they exist
-        if (ctx.star_named_expressions()) {
-            elements += elements ? ', ' : ''; // Add a comma if there are elements already
-            elements += this.visit(ctx.star_named_expressions());
-        }
-        elements = elements.replace(/\s*,\s*/g, ',').replace(/,+/g, ',').trim();
-        return `(${elements})`; // Wrap the elements in parentheses for a JavaScript tuple
-    } 
-
-    visitGroup(ctx) {
-        
-        // Visit the inner expression
-        let inside = "";
-        if (ctx.yield_expr()) {
-            inside = this.visit(ctx.yield_expr());
-        } else if (ctx.named_expression()) {
-            inside = this.visit(ctx.named_expression());
-        } else {
-            inside = ""; // Handle case where there's no valid expression
-        }
-        return "( " + inside + " )"; // Return formatted group
+        return Literals.visitTuple.call(this, ctx);
+    }
+    visitSet(ctx) {
+        return Literals.visitSet.call(this, ctx);
     }
     visitDict(ctx) {
         let keyValuePairs = ""
@@ -362,21 +286,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return `${key}: ${value}`; // Format as key: value
     }
 
-    visitSet(ctx) {
-        let elements = this.visit(ctx.star_named_expressions());
-        return  `new Set([${elements}])`;
-    }
-
-    visitStar_named_expressions(ctx) {
-        const expressions = [];
-
-        for (const exprCtx of ctx.star_named_expression()) {
-          expressions.push(this.visit(exprCtx)); // Visit each expression and convert it
-        }
-        // Return expressions as a JavaScript array, for example: "[...elements]"
-        return `${expressions.join(',')}`;
-    }
-
+    
 
 }
 
