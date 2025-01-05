@@ -36,15 +36,14 @@ describe('Python', () => {
 
     describe('if statement', () => {
       it('should generate correct JavaScript for a simple if statement', () => {
-        let input = "if x > 0:\n    x= 5"
+        let input = "if x > 0:\n\tx= 5"
         const tree = parsePython(input);
         const outputCode = codeGenerator.visit(tree);
         console.log(outputCode);
         expect(outputCode).to.equal(`if (x > 0) {
-        let x = 5;
+        \tlet x = 5;
 }`);
       });
-/*
       it('should generate correct JavaScript for an if-elif-else statement', () => {
         const input = `
           if x > 0:
@@ -59,6 +58,7 @@ describe('Python', () => {
         expect(outputCode).to.equal(`if (x > 0) {\n    console.log('positive');\n} else if (x < 0) {\n    console.log('negative');\n} else {\n    console.log('zero');\n}`);
       });
 
+/*
       it('should generate correct JavaScript for a nested if statement', () => {
         const input = `
           if x > 0:

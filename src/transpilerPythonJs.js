@@ -218,6 +218,15 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return IfStmt.visitIf_stmt.call(this, ctx);
     }
 
+    visitElif_stmt(ctx) {
+        console.log('Visiting elif_stmt');
+        return IfStmt.visitElif_stmt.call(this, ctx);
+    }
+
+    visitElse_stmt(ctx) {
+        console.log('Visiting else_stmt');
+        return IfStmt.visitElse_stmt.call(this, ctx);
+    }
     visitStar_targets(ctx) {
         console.log('Visiting star_targets');
         return GenericTargets.visitStar_targets.call(this, ctx);

@@ -7,7 +7,7 @@ export function visitStatements(ctx)
         // Iterate through each statement
         for (const statementCtx of ctx.statement()) {
             // Visit each statement and collect results
-            results += `${this.visit(statementCtx)}\n`
+            results += `${this.visit(statementCtx)}`
         }
 
         return results; // Return an array of results from each statement
