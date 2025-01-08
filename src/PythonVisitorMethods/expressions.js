@@ -22,8 +22,6 @@ star_expressions
     : star_expression (',' star_expression )* ','?
     ;
 
-
-
 star_named_expression
     : '*' bitwise_or
     | named_expression;
@@ -44,10 +42,11 @@ export function visitStar_expressions(ctx) {
     
     // Handle trailing comma
     const hasTrailingComma = ctx.getText().trim().endsWith(',');
-
+    console.log("TESTE\n\n\n\n\n")
+    console.log(expressions.join(', '))
     // Return as a comma-separated string or an array depending on the parent context
     return hasTrailingComma 
-        ? `${expressions.join(', ')},` 
+        ? `${expressions.join(', ')}` 
         : `${expressions.join(', ')}`;
 }
 export function visitStar_expression(ctx)

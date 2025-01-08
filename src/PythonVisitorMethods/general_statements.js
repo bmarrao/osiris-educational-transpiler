@@ -53,9 +53,10 @@ export function visitSimple_stmts(ctx) {
         if (result) {
             result += "; "; // Add separator for multiple statements
         }
+        
         result += this.visit(stmt);
     }
-
+    console.log(`RESULT\n\n\n\n\n\n${result}`)
     return result;
 }
 

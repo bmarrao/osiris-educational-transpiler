@@ -65,17 +65,26 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting statement_newline');
         return GeneralStatements.visitStatement_newline.call(this, ctx);
     }
-
     visitImport_stmts(ctx)
     {
         throw new Error('Transpiler Error: Import statements are not supported.');
     }
-
-    vtisitSimple_stmts(ctx) {
+    visitSimple_stmts(ctx) {
         console.log('Visiting simple_stmts');
         return GeneralStatements.visitSimple_stmts.call(this, ctx);
     }
-
+    visitStar_expressions(ctx) {
+        console.log('Visiting star expressions');
+        return Expressions.visitStar_expressions.call(this, ctx);
+    }
+     visitStar_expression(ctx) {
+        console.log('Visiting star expression');
+        return Expressions.visitStar_expression.call(this, ctx);
+    }   visitReturn_stmt(ctx)
+    {
+        console.log('Visiting Return');
+        return SimpleStatements.visitReturn_stmt.call(this, ctx);
+    }
     visitSimple_stmt(ctx) {
         console.log('Visiting simple_stmt');
         return GeneralStatements.visitSimple_stmt.call(this, ctx);
@@ -89,11 +98,6 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitAugassign(ctx){
         console.log('Visiting augassign');
         return SimpleStatements.visitAugassign.call(this, ctx);
-    }
-    visitReturn_stmt(ctx)
-    {
-        console.log('Visiting Return');
-        return SimpleStatements.visitReturn_stmt.call(this, ctx);
     }
 
     visitAssignment(ctx) {
@@ -209,16 +213,6 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitStar_named_expressions(ctx) {
         console.log('Visiting star_named_expressions');
         return Expressions.visitStar_named_expressions.call(this, ctx);
-    }
-
-    visitStar_expression(ctx) {
-        console.log('Visiting star expression');
-        return Expressions.visitStar_expression.call(this, ctx);
-    }
-
-    visitStar_expressions(ctx) {
-        console.log('Visiting star expressions');
-        return Expressions.visitStar_expressions.call(this, ctx);
     }
 
     visitAwait_primary(ctx) {

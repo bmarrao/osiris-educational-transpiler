@@ -2,6 +2,6 @@ import PythonTranspiler from './dist/bundle.js';
 
 const pythonTranspiler = new PythonTranspiler();
 
-const input = `x = 5`;
+const input = `return x,y`;
 
-console.log(pythonTranspiler.translatePython(input).code)
+console.log(pythonTranspiler.translatePython(input))

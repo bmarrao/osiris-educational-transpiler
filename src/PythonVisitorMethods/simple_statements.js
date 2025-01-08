@@ -47,7 +47,7 @@ export function visitAssignment(ctx,vars) {
 
     // Handle assignments with multiple star targets (star_targets '=')
     if (ctx.star_targets() && !ctx.augassign()) {
-        console.log("THIRD");
+        console.log("THIRD----------");
 	const targets = this.visit(ctx.star_targets());
         const value = this.visit(ctx.star_expressions());
         console.log(`TARGETS ${targets}`)
@@ -142,9 +142,7 @@ export function visitReturn_stmt(ctx) {
     return 'return;';
 }
 
-export function visitImport_stmt(ctx) {
-    throw new Error('Transpiler Error: Import statements are not supported.');
-}
+
 /*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?
