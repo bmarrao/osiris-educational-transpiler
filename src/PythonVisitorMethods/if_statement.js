@@ -44,13 +44,13 @@ export function visitElif_stmt(ctx) {
     }).join('\n'); // Add \t to each line except the last empty one
 
     // Handle elif_stmt or else_block
-    let else = '';
+    let elseV = '';
     if (ctx.else_block()) {
-        else += this.visit(ctx.else_block()); // Visit else block
+        elseV += this.visit(ctx.else_block()); // Visit else block
     }
 
     // Construct the JavaScript if statement
-    return `else if (${condition}) {\n${body}\n}${else}`;
+    return `else if (${condition}) {\n${body}\n}${elseV}`;
 }
 
 export function visitElse_stmt(ctx) {
