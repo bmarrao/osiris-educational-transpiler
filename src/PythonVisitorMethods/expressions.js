@@ -23,9 +23,6 @@ star_expressions
     ;
 
 
-star_expression
-    : '*' bitwise_or
-    | expression;
 
 star_named_expression
     : '*' bitwise_or
@@ -39,6 +36,31 @@ named_expression
     | expression;
 
 */
+
+
+export function visitStar_expressions(ctx) {
+    // Process each star_expression
+    const expressions = ctx.star_expression().map(expr => this.visit(expr));
+    
+    // Handle trailing comma
+    const hasTrailingComma = ctx.getText().trim().endsWith(',');
+
+    // Return as a comma-separated string or an array depending on the parent context
+    return hasTrailingComma 
+        ? `${expressions.join(', ')},` 
+        : `${expressions.join(', ')}`;
+}
+export function visitStar_expression(ctx)
+{
+    if (ctx.bitwise_or()) {
+       return `...${this.visit(ctx.bitwise_or())}`;
+    }
+    if (ctx.expression()) {
+        // Handles regular expression
+        return this.visit(ctx.expression());
+    }
+    throw new Error('Invalid star_expression');
+}
 
 export function visitDisjunction(ctx) {
     // Visit the first conjunction

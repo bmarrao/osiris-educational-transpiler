@@ -6,7 +6,7 @@ import PythonCodeGenerator from '../transpilerPythonJs.js'; // Adjust the path
 import RustParser from '../rust/RustParser.js'; // Adjust the path as necessary
 import RustLexer from '../rust/RustLexer.js'; // Adjust the path as necessary
 import RustCodeGenerator from '../transpilerRustJs.js'; // Adjust the path
-import PythonTranspiler from '../dist/bundle.js';
+import PythonTranspiler from '../index.js';
 
 
 function parsePython(input) {
@@ -388,6 +388,52 @@ describe('Python', () => {
       });
 
     }); 
+
+    describe('return', () => {
+      
+      it('should generate JavaScript from Python return with expression', () => {
+        const input = 'return x + 1';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return x + 1;');
+      });
+
+      it('should generate JavaScript from Python return without expression', () => {
+        const input = 'return';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return;');
+      });
+
+      it('should generate JavaScript from Python return with multiple expressions', () => {
+        const input = 'return x, y';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return [x, y];');
+      });
+
+      it('should generate JavaScript from Python return with a function call', () => {
+        const input = 'return foo(5)';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return foo(5);');
+      });
+
+      it('should generate JavaScript from Python return with a unary operator', () => {
+        const input = 'return -x';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return -x;');
+      });
+
+      it('should generate JavaScript from Python return with a binary expression', () => {
+        const input = 'return x * y';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('return x * y;');
+      });
+
+    });
 
     describe('assignment', () => {
 

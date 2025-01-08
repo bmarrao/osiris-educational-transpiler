@@ -10,7 +10,7 @@ but at the same time we cant have
 let x = 5 
 let x = 7 
 */
-export function visitAssignment(ctx) {
+export function visitAssignment(ctx,vars) {
     console.log("visitAssignment\n");
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
@@ -51,7 +51,7 @@ export function visitAssignment(ctx) {
 	const targets = this.visit(ctx.star_targets());
         const value = this.visit(ctx.star_expressions());
         console.log(`TARGETS ${targets}`)
-        console.log(`vars ${this.vars}`)
+        console.log(`vars ${vars}`)
         // Return the JavaScript equivalent for multiple star targets
         return `let ${targets} = ${value};`;
     }
@@ -132,10 +132,20 @@ export function visitAugassign(ctx) {
             return null;  // Default case for any unsupported operator
     }
 }
-/*
-return_stmt
-    : 'return' star_expressions?;
 
+export function visitReturn_stmt(ctx) {
+    // Check if there are star_expressions
+    if (ctx.star_expressions()) {
+        const expression = this.visit(ctx.star_expressions());
+        return `return ${expression};`;
+    }
+    return 'return;';
+}
+
+export function visitImport_stmt(ctx) {
+    throw new Error('Transpiler Error: Import statements are not supported.');
+}
+/*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?
     ;
