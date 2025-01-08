@@ -4,4 +4,4 @@ const pythonTranspiler = new PythonTranspiler();
 
 const input = `x = 5`;
 
-console.log(pythonTranspiler.translatePython(input))
+console.log(pythonTranspiler.translatePython(input).code)
