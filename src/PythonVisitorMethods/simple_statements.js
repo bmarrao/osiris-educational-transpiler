@@ -1,3 +1,15 @@
+/*TODO ADD HANDLING FOR THE CASE IN WICH  
+
+func() : 
+    x = 5 
+
+fun2() : 
+    x = 5 
+
+but at the same time we cant have 
+let x = 5 
+let x = 7 
+*/
 export function visitAssignment(ctx) {
     console.log("visitAssignment\n");
     // Handle simple assignment (name: expression '=' annotated_rhs)
@@ -7,9 +19,18 @@ export function visitAssignment(ctx) {
         const expression = this.visit(ctx.expression());
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
+        
+        if (this.vars.includes(variableName))
+        {
+            return `${variableName} = ${String(annotatedRhs).trim()};`
+        }
+        else 
+        {
+            this.vars.push(variableName);
             return annotatedRhs
             ? `let ${variableName} = ${String(annotatedRhs).trim()};`
             : `let ${variableName};`;
+        }
     }
     // TODO ADD TUPLE HANDLING IN HEREHandle assignment with parentheses (single_target or single_subscript_attribute_target): expression '=' annotated_rhs
     if (ctx.single_target() && ctx.expression()) {
@@ -29,7 +50,8 @@ export function visitAssignment(ctx) {
         console.log("THIRD");
 	const targets = this.visit(ctx.star_targets());
         const value = this.visit(ctx.star_expressions());
-        console.log(`TARGETS ${targets}`) 
+        console.log(`TARGETS ${targets}`)
+        console.log(`vars ${this.vars}`)
         // Return the JavaScript equivalent for multiple star targets
         return `let ${targets} = ${value};`;
     }
@@ -38,19 +60,30 @@ export function visitAssignment(ctx) {
     if (ctx.single_target() && ctx.augassign()) {
         console.log("FOURTH");
 	
-	    // Visit the target and expression nodes
-	    const target = this.visit(ctx.single_target());
-	    const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
-	    // Visit the augmented assignment operator
-	    const augassign = this.visit(ctx.augassign());
-	    // Handle the augmented assignment
-	    if (augassign !== "floor") {  // Assuming "//=" is your floor operator
-		return `${target} ${augassign} ${expression};`;
-	    } else {
-		// For floor division (//=), use Math.floor to simulate the operation in JavaScript
-		return `${target} = Math.floor(${target} / ${expression});`;
-	    }
-	}
+        // Visit the target and expression nodes
+        const target = this.visit(ctx.single_target());
+        const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
+        // Visit the augmented assignment operator
+        const augassign = this.visit(ctx.augassign());
+        // Handle the augmented assignment
+        let ret = null ;
+        if (augassign !== "floor") {  // Assuming "//=" is your floor operator
+             ret = `${target} ${augassign} ${expression};`;
+        } else {
+            // For floor division (//=), use Math.floor to simulate the operation in JavaScript
+            ret = `${target} = Math.floor(${target} / ${expression});`;
+        }
+        console.log(this.vars)
+        if (this.vars.includes(variableName) && ret != null)
+        {
+            return ret;
+        }
+        else if (ret != null)
+        {
+            this.vars.push(target);
+            return `let ${ret}`;
+        }
+    } 
     // Default case (if no condition matches)
     return null;
 }

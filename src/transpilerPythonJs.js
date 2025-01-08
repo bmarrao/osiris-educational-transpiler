@@ -16,11 +16,14 @@ import PythonParser  from './Python/PythonParser.js'; // Import the generated pa
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
 import PythonLexer from "./Python/PythonLexer.js";
 import { flatten } from './tools/flatten.js';
+
+//TODO ADD HANDLING FOR PRINT 
+
 export default class PythonCodeGenerator extends PythonParserVisitor {
     constructor(context = {}) {
         super();
         this.context = context;
-        this.context.symbolTable = {};
+        this.context.vars = [];
     }
 
     visitFile_input(ctx) {
@@ -85,7 +88,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
 
     visitAssignment(ctx) {
         console.log('Visiting assignment');
-        return SimpleStatements.visitAssignment.call(this, ctx);
+        return SimpleStatements.visitAssignment.call(this, ctx,this.vars);
     }
 
     visitBlock(ctx) {
@@ -222,8 +225,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting elif_stmt');
         return IfStmt.visitElif_stmt.call(this, ctx);
     }
-
-    visitElse_stmt(ctx) {
+    visitElse_block(ctx) {
         console.log('Visiting else_stmt');
         return IfStmt.visitElse_stmt.call(this, ctx);
     }
