@@ -153,6 +153,9 @@ export function visitNonlocal_stmt(ctx) {
     return '';
 }
 
+export function visitGlobal_stmt(ctx) {
+    return '';
+}
 /*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?

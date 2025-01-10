@@ -87,6 +87,10 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting non local');
         return SimpleStatements.visitNonlocal_stmt.call(this, ctx);
     }
+    visitGlobal_stmt(ctx){
+        console.log('Visiting global');
+        return SimpleStatements.visitGlobal_stmt.call(this, ctx);
+    }
     visitReturn_stmt(ctx)
     {
         console.log('Visiting Return');
