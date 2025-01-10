@@ -156,12 +156,28 @@ export function visitNonlocal_stmt(ctx) {
 export function visitGlobal_stmt(ctx) {
     return '';
 }
+
+export function visitAssert_stmt(ctx) {
+    const condition = ctx.expression(0).getText(); // The condition to check
+    let message = "Assertion failed"; // Default message if no second expression is present
+
+    // If a second expression is present (i.e., the error message)
+    if (ctx.expression().length > 1) {
+      message = ctx.expression(1).getText();  // Use the second expression as the message
+    }
+
+    // Return JavaScript equivalent
+    if (ctx.expression().length > 1) {
+      return `if (!(${condition})) {\n  throw new Error(${message});\n}`;
+    } else {
+      return `if (!(${condition})) {\n  throw new Error("Assertion failed : ${condition} ");\n}`;
+    }
+}
+
 /*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?
     ;
-
-global_stmt: 'global' name (',' name)*;
 
 del_stmt
     : 'del' del_targets;

@@ -96,6 +96,10 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting Return');
         return SimpleStatements.visitReturn_stmt.call(this, ctx);
     }
+    visitAssert_stmt(ctx) {
+        console.log('Visiting assert');
+        return SimpleStatements.visitAssert_stmt.call(this, ctx);
+    }
     visitSimple_stmt(ctx) {
         console.log('Visiting simple_stmt');
         return GeneralStatements.visitSimple_stmt.call(this, ctx);

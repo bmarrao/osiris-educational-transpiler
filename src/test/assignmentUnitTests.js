@@ -783,7 +783,22 @@ describe('Python', () => {
         expect(outputCode).to.equal('let x = a & b;');
       });
     });
+    
+    describe('assert statement', () => {
+      it('should generate JavaScript for assert without a message', () => {
+        const input = 'assert x == 5';
+        const outputCode = parsePython(input);
+        console.log(outputCode);
+        expect(outputCode).to.equal(`if (!(x==5)) {\n  throw new Error("Assertion failed : x==5 ");\n}`);
+      });
 
+      it('should generate JavaScript for assert with a message', () => {
+        const input = 'assert x == 5, "x should be 5"';
+        const outputCode = parsePython(input);
+        console.log(outputCode);
+        expect(outputCode).to.equal(`if (!(x==5)) {\n  throw new Error("x should be 5");\n}`);
+      });
+    });
    /*
      it('should generate JavaScript from Python if statement', () => {
         const input = 'if true:\n    x = 5';

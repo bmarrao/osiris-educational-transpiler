@@ -18,10 +18,6 @@ yield_expr
     : 'yield' ('from' expression | star_expressions?)
     ;
 
-star_expressions
-    : star_expression (',' star_expression )* ','?
-    ;
-
 star_named_expression
     : '*' bitwise_or
     | named_expression;
