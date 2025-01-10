@@ -52,6 +52,7 @@ export function visitAssignment(ctx) {
         // Return the JavaScript equivalent for multiple star targets
         let ret = `${targets} = ${value};`;
         console.log(this.context.vars)
+        // TODO HANDLE CASE WHERE  x = 7; x,y = 7,6
         if (this.context.vars.includes(targets))
         {
             return ret;
@@ -148,6 +149,9 @@ export function visitReturn_stmt(ctx) {
     return 'return;';
 }
 
+export function visitNonlocal_stmt(ctx) {
+    return '';
+}
 
 /*
 raise_stmt
@@ -156,17 +160,11 @@ raise_stmt
 
 global_stmt: 'global' name (',' name)*;
 
-nonlocal_stmt: 'nonlocal' name (',' name)*;
-
 del_stmt
     : 'del' del_targets;
 
 yield_stmt: yield_expr;
 
 assert_stmt: 'assert' expression (',' expression )?;
-
-import_stmt
-    : import_name
-    | import_from;
 
 */

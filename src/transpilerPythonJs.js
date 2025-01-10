@@ -73,6 +73,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting simple_stmts');
         return GeneralStatements.visitSimple_stmts.call(this, ctx);
     }
+    
     visitStar_expressions(ctx) {
         console.log('Visiting star expressions');
         return Expressions.visitStar_expressions.call(this, ctx);
@@ -80,7 +81,13 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
      visitStar_expression(ctx) {
         console.log('Visiting star expression');
         return Expressions.visitStar_expression.call(this, ctx);
-    }   visitReturn_stmt(ctx)
+    }   
+
+    visitNonlocal_stmt(ctx) {
+        console.log('Visiting non local');
+        return SimpleStatements.visitNonlocal_stmt.call(this, ctx);
+    }
+    visitReturn_stmt(ctx)
     {
         console.log('Visiting Return');
         return SimpleStatements.visitReturn_stmt.call(this, ctx);

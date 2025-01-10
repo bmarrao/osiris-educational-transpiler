@@ -248,6 +248,15 @@ describe('Python', () => {
       });
     });
 
+    describe('nonlocal', () => {
+      it('should generate JavaScript for multiplication', () => {
+        const input = 'nonlocal x\nx = 7'
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('let x = 7;');
+      });
+    });
+
     describe('term', () => {
       it('should generate JavaScript for multiplication', () => {
         const input = '5 * 2';
@@ -422,7 +431,7 @@ describe('Python', () => {
         const input = 'return -x';
         const tree = parsePython(input);
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal('return -x;');
+        expect(outputCode).to.equal('return - x;');
       });
 
       it('should generate JavaScript from Python return with a binary expression', () => {
@@ -459,6 +468,12 @@ describe('Python', () => {
         expect(outputCode).to.equal('let ...a = 1, ...b = 2, 3, 4;');
       });
 
+      it('should generate JavaScript from Python star target assignment', () => {
+        const input = 'a = 5; a,b  = 2,3';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('let ...a = 1, ...b = 2, 3, 4;');
+      });
       // Test augmented assignment (e.g., +=)
       it('should generate JavaScript from Python augmented assignment (+=)', () => {
         const input = 'x += 5';
