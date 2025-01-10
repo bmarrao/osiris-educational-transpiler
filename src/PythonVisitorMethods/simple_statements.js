@@ -174,6 +174,23 @@ export function visitAssert_stmt(ctx) {
     }
 }
 
+
+export function visitRaise_stmt(ctx) {
+    const exception = ctx.expression(0).getText(); // The exception expression
+    let cause = null; // Default: no cause
+
+    // If the 'from' clause exists, get the cause (second expression)
+    if (ctx.expression().length > 1) {
+      cause = ctx.expression(1).getText();
+    }
+
+    // If a cause exists, use the 'cause' property in the Error constructor
+    if (cause) {
+      return `throw new Error(${exception}, { cause: ${cause} });`;
+    } else {
+      return `throw new Error(${exception});`;
+    }
+  }
 /*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?
@@ -183,7 +200,5 @@ del_stmt
     : 'del' del_targets;
 
 yield_stmt: yield_expr;
-
-assert_stmt: 'assert' expression (',' expression )?;
 
 */
