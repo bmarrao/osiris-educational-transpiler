@@ -10,7 +10,7 @@ but at the same time we cant have
 let x = 5 
 let x = 7 
 */
-export function visitAssignment(ctx,vars) {
+export function visitAssignment(ctx) {
     console.log("visitAssignment\n");
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
@@ -20,13 +20,13 @@ export function visitAssignment(ctx,vars) {
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
         
-        if (this.vars.includes(variableName))
+        if (this.context.vars.includes(variableName))
         {
             return `${variableName} = ${String(annotatedRhs).trim()};`
         }
         else 
         {
-            this.vars.push(variableName);
+            this.context.vars.push(variableName);
             return annotatedRhs
             ? `let ${variableName} = ${String(annotatedRhs).trim()};`
             : `let ${variableName};`;
@@ -47,18 +47,24 @@ export function visitAssignment(ctx,vars) {
 
     // Handle assignments with multiple star targets (star_targets '=')
     if (ctx.star_targets() && !ctx.augassign()) {
-        console.log("THIRD----------");
 	const targets = this.visit(ctx.star_targets());
         const value = this.visit(ctx.star_expressions());
-        console.log(`TARGETS ${targets}`)
-        console.log(`vars ${vars}`)
         // Return the JavaScript equivalent for multiple star targets
-        return `let ${targets} = ${value};`;
+        let ret = `${targets} = ${value};`;
+        console.log(this.context.vars)
+        if (this.context.vars.includes(targets))
+        {
+            return ret;
+        }
+        else if (ret != null)
+        {
+            this.context.vars.push(targets);
+            return `let ${ret}`;
+        }
     }
 
     // Handle augmented assignment (single_target augassign (yield_expr | star_expressions))
     if (ctx.single_target() && ctx.augassign()) {
-        console.log("FOURTH");
 	
         // Visit the target and expression nodes
         const target = this.visit(ctx.single_target());
@@ -73,14 +79,14 @@ export function visitAssignment(ctx,vars) {
             // For floor division (//=), use Math.floor to simulate the operation in JavaScript
             ret = `${target} = Math.floor(${target} / ${expression});`;
         }
-        console.log(this.vars)
-        if (this.vars.includes(variableName) && ret != null)
+        console.log(this.context.vars)
+        if (this.context.vars.includes(target) && ret != null)
         {
             return ret;
         }
         else if (ret != null)
         {
-            this.vars.push(target);
+            this.context.vars.push(target);
             return `let ${ret}`;
         }
     } 

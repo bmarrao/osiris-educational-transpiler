@@ -390,7 +390,6 @@ describe('Python', () => {
     }); 
 
     describe('return', () => {
-      
       it('should generate JavaScript from Python return with expression', () => {
         const input = 'return x + 1';
         const tree = parsePython(input);
@@ -467,7 +466,12 @@ describe('Python', () => {
         const outputCode = parsePython(input);
         expect(outputCode).to.equal('let x += 5;');
       });
-
+      it('should generate JavaScript from Python augmented assignment (+=) repeated', () => {
+        const input = 'x += 5\nx+=6';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('let x += 5;\nlet x += 6');
+      });
       // Test augmented assignment (e.g., -=)
       it('should generate JavaScript from Python augmented assignment (-=)', () => {
         const input = 'x -= 5';
@@ -547,6 +551,7 @@ describe('Python', () => {
         const outputCode = parsePython(input);
         expect(outputCode).to.equal('let x = 5;');
       });
+
       it('should generate JavaScript from Python for simple assignment', () => {
         const input = 'x = 5';
         const tree = parsePython(input);
@@ -554,6 +559,12 @@ describe('Python', () => {
         expect(outputCode).to.equal('let x = 5;');
       });
 
+      it('should generate JavaScript from Python for simple assignment', () => {
+        const input = 'x = 5\nx=5';
+        const tree = parsePython(input);
+        const outputCode = parsePython(input);
+        expect(outputCode).to.equal('let x = 5;\nlet x = 5;');
+      });
       it('should generate JavaScript from Python sum assignment', () => {
         const input = 'x = 5 + 2';
         const tree = parsePython(input);
