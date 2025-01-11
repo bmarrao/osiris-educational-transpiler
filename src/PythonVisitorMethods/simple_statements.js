@@ -196,10 +196,6 @@ export function visitRaise_stmt(ctx) {
     }
 }
 /*
-raise_stmt
-    : 'raise' (expression ('from' expression )?)?
-    ;
-
 del_stmt
     : 'del' del_targets;
 
