@@ -176,7 +176,11 @@ export function visitAssert_stmt(ctx) {
 
 
 export function visitRaise_stmt(ctx) {
-    const exception = ctx.expression(0).getText(); // The exception expression
+    
+    const exceptionRaw = ctx.expression(0).getText(); // The exception expression
+    const exceptionMatch = exceptionRaw.match(/"(.*?)"/); // Extract text between quotes
+    const exception = exceptionMatch ? `"${exceptionMatch[1]}"` : exceptionRaw; // Use matched text or raw expression
+
     let cause = null; // Default: no cause
 
     // If the 'from' clause exists, get the cause (second expression)
@@ -190,7 +194,7 @@ export function visitRaise_stmt(ctx) {
     } else {
       return `throw new Error(${exception});`;
     }
-  }
+}
 /*
 raise_stmt
     : 'raise' (expression ('from' expression )?)?

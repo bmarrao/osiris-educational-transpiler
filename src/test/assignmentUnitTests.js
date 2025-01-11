@@ -248,6 +248,7 @@ describe('Python', () => {
       });
     });
 
+    
     describe('nonlocal', () => {
       it('should generate javascript for non local assignment', () => {
         const input = 'nonlocal x\nx = 7'
@@ -799,7 +800,26 @@ describe('Python', () => {
         expect(outputCode).to.equal(`if (!(x==5)) {\n  throw new Error("x should be 5");\n}`);
       });
     });
-   /*
+   
+    describe('Raise', () => {
+
+        it('should generate correct JavaScript for raise without from', () => {
+            const input = 'raise ValueError("Something went wrong")';
+
+            const outputCode = parsePython(input);
+            console.log(outputCode);
+            expect(outputCode).to.equal('throw new Error("Something went wrong");');
+        });
+
+        it('should generate correct JavaScript for raise with from', () => {
+            const input = 'raise ValueError("Something went wrong") from e';
+
+            const outputCode = parsePython(input);
+            console.log(outputCode);
+            expect(outputCode).to.equal('throw new Error("Something went wrong", { cause: e });');
+        });
+    });
+    /*
      it('should generate JavaScript from Python if statement', () => {
         const input = 'if true:\n    x = 5';
         
