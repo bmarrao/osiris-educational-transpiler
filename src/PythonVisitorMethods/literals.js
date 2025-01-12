@@ -17,12 +17,41 @@ fstring_format_spec
 fstring
     : FSTRING_START fstring_middle* FSTRING_END;
 
-string: STRING;
-strings: (fstring|string)+;
-
-set: LBRACE star_named_expressions RBRACE;
-
 */
+
+export function visitFstring(ctx) {
+  // Capture the start and end markers of the f-string
+  const start = "`"  // Get the start of the f-string (e.g., "f" or "f'")
+  const end = "`"      // Get the end of the f-string (e.g., '"' or "'")
+
+  // Process each part of the f-string, which could be text or expressions
+  const middleParts = ctx.fstring_middle().map(middle => this.visit(middle));  // Get the middle parts (could be expressions or text)
+
+  // Join the middle parts into a single string expression
+  const fstringContent = middleParts.join('');
+
+  // Return the full f-string as JavaScript (template literals in JS)
+  return `${start}${fstringContent}${end}`;
+}
+
+export function visitString(ctx) {
+  // Get the text of the string (e.g., with quotes included)
+  const stringLiteral = ctx.STRING().getText();
+
+  // Return the string as-is or process it if needed
+  return stringLiteral;
+}
+
+
+//TODO TEST THIS
+export function visitStrings(ctx) {
+  // Process each `fstring` or `string` in the `strings` rule
+  const stringList = ctx.children.map(child => this.visit(child));
+
+  // Concatenate all strings, assuming they represent a combined literal
+  return stringList.join('');
+}
+
 
 export function visitList(ctx) {
 // Check for star named expressions and process them
