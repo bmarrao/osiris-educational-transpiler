@@ -310,6 +310,38 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return GenericTargets.visitT_primary.call(this, ctx);
     }
 
+    
+    visitFstring_replacement_field(ctx) {
+      console.log('Visiting fstring_replacement_field');
+      return Literals.visitFstring_replacement_field.call(this, ctx);
+    }
+
+    visitFstring_format_spec(ctx) {
+      console.log('Visiting fstring_format_spec');
+      return Literals.visitFstring_format_spec.call(this, ctx);
+    }
+
+    visitFstring_middle(ctx) {
+      console.log('Visiting fstring_middle');
+      return Literals.visitFstring_middle.call(this, ctx);
+    }
+
+    visitFstring(ctx) {
+      console.log('Visiting fstring');
+      return Literals.visitFstring.call(this, ctx);
+    }
+
+    visitString(ctx) {
+      console.log('Visiting string');
+      return Literals.visitString.call(this, ctx);
+    }
+
+    visitStrings(ctx) {
+        console.log('Visiting String');
+        return Literals.visitStrings.call(this, ctx);
+
+    }
+
     visitList(ctx) {
         console.log('Visiting list');
         return Literals.visitList.call(this, ctx);

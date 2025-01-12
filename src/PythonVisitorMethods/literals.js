@@ -2,27 +2,62 @@
 // ========
 
 /*
-fstring_middle
-    : fstring_replacement_field
-    | FSTRING_MIDDLE;
-fstring_replacement_field
-    : LBRACE (yield_expr | star_expressions) '='? fstring_conversion? fstring_full_format_spec? RBRACE;
-fstring_conversion
-    : '!' NAME;
+TODO THESE LAST ONES
 fstring_full_format_spec
     : ':' fstring_format_spec*;
 fstring_format_spec
     : FSTRING_MIDDLE
     | fstring_replacement_field;
-fstring
-    : FSTRING_START fstring_middle* FSTRING_END;
-
 */
+
+export function visitFstring_replacement_field(ctx) {
+  // Handle the expression inside the curly braces
+  const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
+  let expressionConversion= ""
+  // Check if there's a conversion (e.g., `!r` in Python)
+  const conversion = ctx.fstring_conversion() ? ctx.fstring_conversion().getText() : '';
+  if (conversionType === 'r') {
+    expressionConversion = `JSON.stringify(${expression})`;
+  } else if (conversionType === 's') {
+    expressionConversion = `String(${expression})`;
+  } else if (conversionType === 'a') {
+    expressionConversion = `escape(${expression})`;
+  }
+  else{
+    expressionConversion = expression; 
+  }
+  // Check if there is a full format spec (e.g., `:d` for formatting numbers)
+  const formatSpec = ctx.fstring_full_format_spec() ? this.visit(ctx.fstring_full_format_spec()) : '';
+
+  // Return the formatted JavaScript expression for the f-string
+  return `${expression}${conversion}${formatSpec}`;
+}
+
+export function visitFstring_format_spec(ctx) {
+  // Process the format specifiers for the f-string
+  if (ctx.FSTRING_MIDDLE()) {
+    return ctx.FSTRING_MIDDLE().getText();  // Static parts of the format spec
+  } else if (ctx.fstring_replacement_field()) {
+    return this.visit(ctx.fstring_replacement_field());  // Format a nested replacement field
+  }
+  return '';
+}
+
+
+export function visitFstring_middle(ctx) {
+  // Check if it's a replacement field or just a middle part (static string)
+  if (ctx.fstring_replacement_field()) {
+    return this.visit(ctx.fstring_replacement_field());
+  } else if (ctx.FSTRING_MIDDLE()) {
+    // Return the static string part of the f-string
+    return ctx.FSTRING_MIDDLE().getText();
+  }
+}
 
 export function visitFstring(ctx) {
   // Capture the start and end markers of the f-string
-  const start = "`"  // Get the start of the f-string (e.g., "f" or "f'")
-  const end = "`"      // Get the end of the f-string (e.g., '"' or "'")
+  const start = "`"    
+  const end = "`"
 
   // Process each part of the f-string, which could be text or expressions
   const middleParts = ctx.fstring_middle().map(middle => this.visit(middle));  // Get the middle parts (could be expressions or text)
