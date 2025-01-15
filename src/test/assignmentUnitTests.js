@@ -460,12 +460,12 @@ describe('Python', () => {
         expect(outputCode).to.equal('let a = 1, b = 2;');
       });
 
-      
+      // TODO ADD MORE TEST CASES FOR F STRING 
       it('should generate JavaScript from Python f-string', () => {
           const input = 'x = f"teste {value}"';
           
           const outputCode = parsePython(input);
-          expect(outputCode).to.equal('const x = `teste ${value}`;');
+          expect(outputCode).to.equal('let x = `teste ${ value }`;');
       });
 
 

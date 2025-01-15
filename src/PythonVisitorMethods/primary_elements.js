@@ -34,7 +34,6 @@ export function visitAtom(ctx) {
             // Handle the case for the Python None literal
             return 'null'; // Convert to JavaScript's null
     }	
-    console.log("HELLO");
     return ctx.getText(); // Default case
 }
 export function visitGroup(ctx) {

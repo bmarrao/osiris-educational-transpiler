@@ -9,26 +9,28 @@ fstring_full_format_spec
 
 
 export function visitFstring_replacement_field(ctx) {
+  
   // Handle the expression inside the curly braces
   const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
   let expressionConversion= ""
   // Check if there's a conversion (e.g., `!r` in Python)
   const conversion = ctx.fstring_conversion() ? ctx.fstring_conversion().getText() : '';
-  if (conversionType === 'r') {
+  if (conversion === 'r') {
     expressionConversion = `JSON.stringify(${expression})`;
-  } else if (conversionType === 's') {
+  } else if (conversion === 's') {
     expressionConversion = `String(${expression})`;
-  } else if (conversionType === 'a') {
+  } else if (conversion === 'a') {
     expressionConversion = `escape(${expression})`;
   }
   else{
     expressionConversion = expression; 
   }
   // Check if there is a full format spec (e.g., `:d` for formatting numbers)
-  const formatSpec = ctx.fstring_full_format_spec() ? this.visit(ctx.fstring_full_format_spec()) : '';
+  // TODO COMPLETE THIS 
+  // formatSepe = ctx.fstring_full_format_spec() ? this.visit(ctx.fstring_full_format_spec()) : '';
 
   // Return the formatted JavaScript expression for the f-string
-  return `${expression}${conversion}${formatSpec}`;
+  return "${ " + expressionConversion + " }";
 }
 
 export function visitFstring_format_spec(ctx) {
