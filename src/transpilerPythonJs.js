@@ -14,6 +14,7 @@ import * as PrimaryElements from './PythonVisitorMethods/primary_elements.js';
 import * as ExceptStatement from './PythonVisitorMethods/except_statement.js';
 import * as TryStatement from './PythonVisitorMethods/try_statement.js';
 import * as WhileStatement from './PythonVisitorMethods/while_statement.js'; 
+import * as ForStatement from'./PythonVisitorMethods/for_statement.js'; 
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -48,7 +49,11 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting eval');
         return StartingRules.visitEval.call(this, ctx);
     }
-
+    
+    visitFor_stmt(ctx) {
+        console.log("Visiting for");
+        return ForStatement.visitFor_stmt.call(this,ctx);
+    }
     visitFuncType(ctx) {
         console.log('Visiting func_type');
         return StartingRules.visitFuncType.call(this, ctx);
