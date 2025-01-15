@@ -1,27 +1,27 @@
-import PythonTranspiler from './dist/bundle.js';
 import antlr4 from 'antlr4';
 import PythonParser from './Python/PythonParser.js'; // Adjust the path as necessary
 import PythonLexer from './Python/PythonLexer.js'; // Adjust the path as necessary
 
+import PythonTranspiler from './index.js';
+
+
+function parsePython(input) {
+    const pythonTranspiler = new PythonTranspiler();
+    let result = pythonTranspiler.translatePython(input) 
+    console.log(result)
+    if (result.success) 
+    {
+      return result.code
+    }
+    else 
+    {
+      return result.errors[0]
+    }
+
+}
+
 const input = `while x < 10:\n\tx += 1`;
-const inputStream = new antlr4.InputStream(input);
-const lexer = new PythonLexer(inputStream);
-const tokens = new antlr4.CommonTokenStream(lexer);
-const parser = new PythonParser(tokens);
-
-    // Enable tracing to see rule enter/exit events
-parser.addParseListener({
-        enterEveryRule(ctx) {
-            console.log(`Enter Rule: ${ctx.constructor.name}`);
-        },
-        exitEveryRule(ctx) {
-            console.log(`Exit Rule: ${ctx.constructor.name}`);
-        }
-    });
-
 const pythonTranspiler = new PythonTranspiler();
 
+console.log(parsePython(input))
 
-
-
-console.log(pythonTranspiler.translatePython(input))
