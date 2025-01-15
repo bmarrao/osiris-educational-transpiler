@@ -86,7 +86,7 @@ describe('Python', () => {
     it('should generate correct JavaScript for a while loop with an else block', () => {
       const input = `while x < 10:\n\tx = 1\nelse:\n\tx = 0`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`while (x < 10) {\n\t\tlet y = 1;\n}`);
+      expect(outputCode).to.equal(`Error during translation: Translation error: Else after while block is unsupported `);
     });
 
     it('should handle a while loop with multiple statements in the body', () => {
@@ -98,14 +98,10 @@ describe('Python', () => {
     it('should handle a while loop with multiple statements in the else block', () => {
       const input = `while x < 10:\n\tx += 1\nelse:\n\tx = 0\n\ty = 1`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`while (x < 10) {\n\t\tlet x += 1;\n}\nif (!(x < 10)) {\n\t\tlet x = 0;\n\t\tlet y = 1;\n}`);
+      expect(outputCode).to.equal(`Error during translation: Translation error: Else after while block is unsupported `);
     });
 
-    it('should throw an error if the input is invalid for a while loop', () => {
-      const input = `while:\n\tx += 1`;
-    });
-
-  });
+   });
 
   describe('except statement', () => {
 

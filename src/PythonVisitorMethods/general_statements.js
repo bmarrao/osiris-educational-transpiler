@@ -1,17 +1,27 @@
 import { flatten } from '../tools/flatten.js';
 
-export function visitStatements(ctx) 
-{
-        let results = "";
 
-        // Iterate through each statement
-        for (const statementCtx of ctx.statement()) {
-            // Visit each statement and collect results
-            results += `${this.visit(statementCtx)}`
+export function visitStatements(ctx) {
+    const statements = ctx.statement();
+
+    let results = "";
+
+    // Iterate through each statement
+    for (let i = 0; i < statements.length; i++) {
+        const statementCtx = statements[i];
+        // Add the result of visiting the statement
+        results += this.visit(statementCtx);
+
+        // Add a newline if it's not the last statement
+        if (i < statements.length - 1) {
+            results += "\n";
         }
+    }
 
-        return results; // Return an array of results from each statement
+    return results; // Return the concatenated results
 }
+
+
 
 export function visitStatement(ctx) {
         // Check if the context has a compound statement
@@ -32,7 +42,7 @@ export function visitStatement_newline(ctx) {
         //TODO DECIDE ON "\n"
         return this.visit(ctx.compound_stmt()) + '\n';
     } else if (ctx.simple_stmts()) {
-        return this.visit(ctx.simple_stmts());
+        return this.visit(ctx.simple_stmts());;
     } else if (ctx.NEWLINE()) {
         return ''; // Empty line
     }else if (ctx.EOF()) {

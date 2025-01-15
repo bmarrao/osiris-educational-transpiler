@@ -20,7 +20,8 @@ function parsePython(input) {
 
 }
 
-const input = `while x < 10:\n\tx += 1`;
+
+const input = `while x < 10:\n\tx = 1\n\ty = 1`;
 const pythonTranspiler = new PythonTranspiler();
 
 console.log(parsePython(input))

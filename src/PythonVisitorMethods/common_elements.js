@@ -6,8 +6,8 @@
 export function visitBlock(ctx) {
         if (ctx.NEWLINE()) {
             const statements = this.visit(ctx.statements());
-            console.log("STATEMENTS");
             console.log(statements);
+            console.log("THOSE WERE THE STATEMENS");
             return statements.split('\n').map((line, index, array) => {
         return index === array.length - 1 && line === '' ? line : `\t\t${line}`;
     }).join('\n'); // Add \t to each line except the last empty one
