@@ -3,12 +3,7 @@ import antlr4 from 'antlr4';
 import PythonParser from './Python/PythonParser.js'; // Adjust the path as necessary
 import PythonLexer from './Python/PythonLexer.js'; // Adjust the path as necessary
 
-const input = `
-try:
-    # some code
-except ValueError as e:
-    error = e
-`;
+const input = `while x < 10:\n\tx += 1`;
 const inputStream = new antlr4.InputStream(input);
 const lexer = new PythonLexer(inputStream);
 const tokens = new antlr4.CommonTokenStream(lexer);
