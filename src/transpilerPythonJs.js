@@ -11,6 +11,9 @@ import * as CommonElements from './PythonVisitorMethods/common_elements.js';
 import * as Expressions from './PythonVisitorMethods/expressions.js';
 import * as Literals from './PythonVisitorMethods/literals.js';
 import * as PrimaryElements from './PythonVisitorMethods/primary_elements.js';
+import * as ExceptStatement from './PythonVisitorMethods/except_statement.js';
+import * as TryStatement from './PythonVisitorMethods/try_statement.js';
+import * as WhileStatement from './PythonVisitorMethods/while_statement.js'; 
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -83,10 +86,17 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return Expressions.visitStar_expression.call(this, ctx);
     }   
 
+
+    visitWhile_stmt(ctx){
+        console.log('Visiting global');
+        return WhileStatement.visitWhile_stmt.call(this, ctx);
+    }
     visitNonlocal_stmt(ctx) {
         console.log('Visiting non local');
         return SimpleStatements.visitNonlocal_stmt.call(this, ctx);
     }
+    
+
     visitGlobal_stmt(ctx){
         console.log('Visiting global');
         return SimpleStatements.visitGlobal_stmt.call(this, ctx);
@@ -283,6 +293,25 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitStar_target(ctx) {
         console.log('Visiting star_target');
         return GenericTargets.visitStar_target.call(this, ctx);
+    }
+    
+    visitTry_stmt(ctx) {
+        console.log('Visiting Try_stmt');
+        return TryStatement.visitTry_stmt.call(this, ctx);
+    }
+    visitExcept_block(ctx) {
+        console.log('Visiting Except Block');
+        return ExceptStatement.visitExcept_block.call(this, ctx);
+    }
+
+    visitExcept_star_block(ctx) {
+        console.log('Visiting Except star Block');
+        return ExceptStatement.visitExcept_star_block.call(this, ctx);
+    }
+
+    visitFinally_block(ctx) {
+        console.log('Visiting finally');
+        return ExceptStatement.visitFinally_block.call(this, ctx);
     }
 
     visitTarget_with_star_atom(ctx) {
