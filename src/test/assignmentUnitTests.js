@@ -460,6 +460,15 @@ describe('Python', () => {
         expect(outputCode).to.equal('let a = 1, b = 2;');
       });
 
+      
+      it('should generate JavaScript from Python f-string', () => {
+          const input = 'x = f"teste {value}"';
+          
+          const outputCode = parsePython(input);
+          expect(outputCode).to.equal('const x = `teste ${value}`;');
+      });
+
+
       // Test subscript assignment (list or dictionary-like assignment)
       it('should generate JavaScript from Python subscript assignment', () => {
         const input = 'my_list[0] = 5';

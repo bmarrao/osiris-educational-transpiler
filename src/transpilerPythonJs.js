@@ -337,7 +337,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     }
 
     visitStrings(ctx) {
-        console.log('Visiting String');
+        console.log('Visiting Strings');
         return Literals.visitStrings.call(this, ctx);
 
     }

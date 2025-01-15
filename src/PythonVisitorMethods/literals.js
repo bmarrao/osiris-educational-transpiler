@@ -5,10 +5,8 @@
 TODO THESE LAST ONES
 fstring_full_format_spec
     : ':' fstring_format_spec*;
-fstring_format_spec
-    : FSTRING_MIDDLE
-    | fstring_replacement_field;
 */
+
 
 export function visitFstring_replacement_field(ctx) {
   // Handle the expression inside the curly braces

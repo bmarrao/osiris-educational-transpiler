@@ -3,6 +3,7 @@ import PythonTranspiler from './dist/bundle.js';
 const pythonTranspiler = new PythonTranspiler();
 
 
-const input = 'raise ValueError("Something went wrong")';
+
+const input = 'x = f"teste {value}"';
 
 console.log(pythonTranspiler.translatePython(input))

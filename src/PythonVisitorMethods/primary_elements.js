@@ -13,6 +13,11 @@ export function visitAwait_primary(ctx) {
 export function visitAtom(ctx) {
     if (ctx.tuple() || ctx.group() || ctx.genexp()) {
         return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
+    }
+    else if (ctx.strings())
+    {
+        console.log("Visit Strings Atom");
+        return this.visit(ctx.strings())
     } else if (ctx.list() || ctx.listcomp()) {
         return this.visit(ctx.list() || ctx.listcomp());
     } else if (ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp()) {
@@ -29,6 +34,7 @@ export function visitAtom(ctx) {
             // Handle the case for the Python None literal
             return 'null'; // Convert to JavaScript's null
     }	
+    console.log("HELLO");
     return ctx.getText(); // Default case
 }
 export function visitGroup(ctx) {
