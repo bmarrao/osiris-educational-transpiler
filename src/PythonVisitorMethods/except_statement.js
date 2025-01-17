@@ -44,6 +44,6 @@ export function visitFinally_block(ctx) {
     // Translate the 'finally' block to the corresponding JavaScript 'finally' block
     const block = this.visit(ctx.block()); // Visit the block of code in the finally clause
 
-    return `finally { ${block} }`;
+    return `finally {\n${block}\n}`;
 }
 
