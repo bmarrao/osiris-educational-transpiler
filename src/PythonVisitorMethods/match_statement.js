@@ -123,6 +123,113 @@ export function visitOr_pattern(ctx) {
   return pattern;
 }
 
+
+export function visitClosed_pattern(ctx) {
+  if (ctx.literal_pattern()) {
+    return this.visit(ctx.literal_pattern());
+  } else if (ctx.capture_pattern()) {
+    return this.visit(ctx.capture_pattern());
+  } else if (ctx.wildcard_pattern()) {
+    return this.visit(ctx.wildcard_pattern());
+  } else if (ctx.value_pattern()) {
+    return this.visit(ctx.value_pattern());
+  } else if (ctx.group_pattern()) {
+    return this.visit(ctx.group_pattern());
+  } else if (ctx.sequence_pattern()) {
+    return this.visit(ctx.sequence_pattern());
+  } else if (ctx.mapping_pattern()) {
+    return this.visit(ctx.mapping_pattern());
+  } else if (ctx.class_pattern()) {
+    return this.visit(ctx.class_pattern());
+  } else {
+    throw new Error("Translation error: Unrecognized closed pattern");
+  }
+}
+
+export function visitLiteral_pattern(ctx) {
+  if (ctx.signed_number()) {
+    return this.visit(ctx.signed_number());
+  } else if (ctx.complex_number()) {
+    throw new Error("Translation error: Complex numbers are not supported in JavaScript");
+  } else if (ctx.strings()) {
+    return this.visit(ctx.strings());
+  } else if (ctx.getText() === "None") {
+    return "null"; // Translate Python's `None` to JavaScript's `null`
+  } else if (ctx.getText() === "True") {
+    return "true"; // Translate Python's `True` to JavaScript's `true`
+  } else if (ctx.getText() === "False") {
+    return "false"; // Translate Python's `False` to JavaScript's `false`
+  } else {
+    throw new Error("Translation error: Unrecognized literal pattern");
+  }
+}
+
+
+export function visitLiteral_expr(ctx) {
+  if (ctx.signed_number()) {
+    return this.visit(ctx.signed_number());
+  } else if (ctx.complex_number()) {
+    return this.visit(ctx.complex_number());
+  } else if (ctx.strings()) {
+    return this.visit(ctx.strings());
+  } else if (ctx.getText() === "None") {
+    return "null";
+  } else if (ctx.getText() === "True") {
+    return "true";
+  } else if (ctx.getText() === "False") {
+    return "false";
+  } else {
+    throw new Error(`Unknown literal expression: ${ctx.getText()}`);
+  }
+}
+
+export function visitReal_number(ctx) {
+  // A real number directly translates to itself as a numeric literal in JavaScript.
+  return ctx.NUMBER().getText();
+}
+
+export function visitImaginary_number(ctx) {
+  // JavaScript does not have native support for imaginary numbers.
+  // Translate it as a comment or throw an error depending on the use case.
+  const numberText = ctx.NUMBER().getText();
+  throw new Error(`Translation error: Imaginary number '${numberText}i' is not natively supported in JavaScript.`);
+}
+
+
+export function visitSigned_number(ctx) {
+  // Check if the number is preceded by a '-' (negative sign)
+  const isNegative = ctx.children && ctx.children[0].getText() === '-';
+  const number = ctx.NUMBER().getText();
+
+  // Prepend the negative sign if present
+  return isNegative ? `-${number}` : number;
+}
+
+export function visitSigned_real_number(ctx) {
+  // Check if the number is preceded by a '-' (negative sign)
+  const isNegative = ctx.children && ctx.children[0].getText() === '-';
+  const realNumber = this.visit(ctx.real_number());
+
+  // Prepend the negative sign if present
+  return isNegative ? `-${realNumber}` : realNumber;
+}
+
+export function visitComplex_number(ctx) {
+  throw new Error("Translation error: Complex numbers are not supported in JavaScript");
+}
+
+export function visitCapture_pattern(ctx) {
+  return this.visit(ctx.pattern_capture_target());
+}
+
+
+export function visitPattern_capture_target(ctx) {
+  // Extract the target name and return it
+  const targetName = ctx.soft_kw__not__wildcard().getText();
+  return targetName;
+}
+
+
 /*// Match statement
 // ---------------
 
@@ -138,58 +245,6 @@ as_pattern
 
 or_pattern
     : closed_pattern ('|' closed_pattern)*;
-
-closed_pattern
-    : literal_pattern
-    | capture_pattern
-    | wildcard_pattern
-    | value_pattern
-    | group_pattern
-    | sequence_pattern
-    | mapping_pattern
-    | class_pattern;
-
-// Literal patterns are used for equality and identity constraints
-literal_pattern
-    : signed_number
-    | complex_number
-    | strings
-    | 'None'
-    | 'True'
-    | 'False';
-
-// Literal expressions are used to restrict permitted mapping pattern keys
-literal_expr
-    : signed_number
-    | complex_number
-    | strings
-    | 'None'
-    | 'True'
-    | 'False';
-
-complex_number
-    : signed_real_number ('+' | '-') imaginary_number
-    ;
-
-signed_number
-    : '-'? NUMBER
-    ;
-
-signed_real_number
-    : '-'? real_number
-    ;
-
-real_number
-    : NUMBER;
-
-imaginary_number
-    : NUMBER;
-
-capture_pattern
-    : pattern_capture_target;
-
-pattern_capture_target
-    : soft_kw__not__wildcard;
 
 wildcard_pattern
     : soft_kw_wildcard;

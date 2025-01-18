@@ -1,3 +1,4 @@
 catch cant be specific like it is in python because errors arent the same - example except ZeroDivisionError as e:
 fstring there is no translation for the formatting it has in python after ":" 
+imaginary numbers are not supported in js
 no else in the while, for statement 
