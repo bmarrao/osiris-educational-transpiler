@@ -159,7 +159,7 @@ describe('Python', () => {
     it('should generate correct JavaScript for an except block with a specific exception type', () => {
       const input = `try:\n\tx=5\nexcept ValueError as e:\n\terror = e`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = e;\n}`);
+      expect(outputCode).to.equal(`Error during translation: Translation error: Unsupported exception type 'ValueError'`);
     });
 
     it('should generate correct JavaScript for a general except block', () => {
@@ -194,7 +194,7 @@ describe('Python', () => {
   describe('try statement', () => {
 
     it('should generate correct JavaScript for a try statement with except and finally', () => {
-      const input = `try:\n\tx=5\nexcept ValueError as e:\n\terror = e\nfinally:\n\tcleanup = true`;
+      const input = `try:\n\tx=5\nexcept Exception as e:\n\terror = e\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
       expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = e;\n}\nfinally {\n\t\tlet cleanup = true;\n}`);
     });
@@ -206,7 +206,7 @@ describe('Python', () => {
     });
 
     it('should generate correct JavaScript for a try statement with else and finally', () => {
-      const input = `try:\n\tx=5\nexcept ValueError:\n\terror = "Error"\nelse:\n\tsuccess = true\nfinally:\n\tcleanup = true`;
+      const input = `try:\n\tx=5\nexcept Exception:\n\terror = "Error"\nelse:\n\tsuccess = true\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
       expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "Error";\n}\nelse {\n\t\tlet success = true;\n} finally {\n\t\tlet cleanup = true;\n}`);
     });

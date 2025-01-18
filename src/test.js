@@ -21,7 +21,8 @@ function parsePython(input) {
 }
 
 
-const input = `while x < 10:\n\tx = 1\n\ty = 1`;
+
+const input = `try:\n\tx=5\nexcept Exception as e:\n\terror = e`;
 const pythonTranspiler = new PythonTranspiler();
 
 console.log(parsePython(input))
