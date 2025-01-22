@@ -46,7 +46,7 @@ export function visitElif_stmt(ctx) {
     return `else if (${condition}) {\n${body}\n}${elseV}`;
 }
 
-export function visitElse_stmt(ctx) {
+export function visitElse_block(ctx) {
     // Visit the block of code that follows the condition
     let body = this.visit(ctx.block());
    

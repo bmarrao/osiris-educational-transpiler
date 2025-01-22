@@ -21,14 +21,10 @@ export function visitTry_stmt(ctx) {
     // Check if the 'except' blocks exist
     if (ctx.except_block()) {
         // Handle one or more 'except' blocks
-        console.log("\n\n\n\n\n\nexcept\n\n\n\n");
         for (let block of ctx.except_block()) {
-            console.log(block);
             catchBlocks += this.visit(block) + '\n';  // Accumulate catch blocks
-            console.log(catchBlocks);
         }
-        console.log(catchBlocks);
-        jsCode += `\n${catchBlocks}`;
+        jsCode += `${catchBlocks}`;
     }
     // Check if the 'except*' blocks exist
     if (ctx.except_star_block()) {
@@ -42,11 +38,10 @@ export function visitTry_stmt(ctx) {
         elseBlock = this.visit(ctx.else_block());
         jsCode += `else {\n${elseBlock}\n}`;
     }
-
     // Check if the 'finally' block exists
     if (ctx.finally_block()) {
         finallyBlock = this.visit(ctx.finally_block());
-        jsCode += `\n${finallyBlock}`;
+        jsCode += `finally {\n${finallyBlock}\n}`;
     }
 
     return jsCode;

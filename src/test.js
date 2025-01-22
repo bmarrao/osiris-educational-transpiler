@@ -22,8 +22,11 @@ function parsePython(input) {
 
 
 
-const input = `try:\n\tx=5\nexcept Exception:\n\terror = "General error occurred"`;
+
+let input = `try:\n\tx=5\nfinally:\n\tcleanup = true`;
 const pythonTranspiler = new PythonTranspiler();
 
 console.log(parsePython(input))
 
+input = `try:\n\tx=5\nfinally:\n\tcleanup1 = true\n\tcleanup2 = false`;
+console.log(parsePython(input))
