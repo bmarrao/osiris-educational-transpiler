@@ -165,7 +165,7 @@ describe('Python', () => {
     it('should generate correct JavaScript for a general except block', () => {
       const input = `try:\n\tx=5\nexcept Exception:\n\terror = "General error occurred"`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "General error occurred";\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "General error occurred";\n}\n`);
     });
 
     it('should throw an error for unsupported exception types', () => {
@@ -181,13 +181,13 @@ describe('Python', () => {
     it('should generate correct JavaScript for a simple finally block', () => {
       const input = `try:\n\tx=5\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\nfinally {\n\t\tlet cleanup = true;\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\nfinally {\n\t\tlet cleanup = true;\n}\n`);
     });
 
     it('should generate correct JavaScript for a finally block with multiple statements', () => {
       const input = `try:\n\tx=5\nfinally:\n\tcleanup1 = true\n\tcleanup2 = false`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\nfinally {\n\t\tlet cleanup1 = true;\n\t\tlet cleanup2 = false;\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\nfinally {\n\t\tlet cleanup1 = true;\n\t\tlet cleanup2 = false;\n}\n`);
     });
 
   });
@@ -197,19 +197,19 @@ describe('Python', () => {
     it('should generate correct JavaScript for a try statement with except and finally', () => {
       const input = `try:\n\tx=5\nexcept Exception as e:\n\terror = e\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = e;\n}\nfinally {\n\t\tlet cleanup = true;\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = e;\n}\nfinally {\n\t\tlet cleanup = true;\n}\n`);
     });
 
     it('should generate correct JavaScript for a try statement with except* and finally', () => {
       const input = `try:\n\tx=5\nexcept *Exception as e:\n\terror = "General error"\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "General error";\n}\nfinally {\n\t\tlet cleanup = true;\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "General error";\n}\nfinally {\n\t\tlet cleanup = true;\n}\n`);
     });
 
     it('should generate correct JavaScript for a try statement with else and finally', () => {
       const input = `try:\n\tx=5\nexcept Exception:\n\terror = "Error"\nelse:\n\tsuccess = true\nfinally:\n\tcleanup = true`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "Error";\n}\nelse {\n\t\tlet success = true;\n} finally {\n\t\tlet cleanup = true;\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "Error";\n}\nelse {\n\t\tlet success = true;\n} finally {\n\t\tlet cleanup = true;\n}\n`);
     });
 
   });
