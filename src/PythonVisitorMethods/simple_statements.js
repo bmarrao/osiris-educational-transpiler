@@ -147,14 +147,22 @@ export function visitAugassign(ctx) {
     }
 }
 
+
 export function visitReturn_stmt(ctx) {
     // Check if there are star_expressions
     if (ctx.star_expressions()) {
-        const expression = this.visit(ctx.star_expressions());
+        let expression = this.visit(ctx.star_expressions());
+
+        // Test if the result contains commas but is not a list or tuple
+        if (expression.includes(',') && !/^[\[\(].*[\]\)]$/.test(expression)) {
+            expression = `[${expression}]`
+        }
+
         return `return ${expression};`;
     }
     return 'return;';
 }
+
 
 export function visitNonlocal_stmt(ctx) {
     return '';

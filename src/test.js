@@ -21,7 +21,7 @@ function parsePython(input) {
 
 
 
-const input = `try:\n\tx=5\nexcept Exception as e:\n\terror = e`;
+const input = 'nonlocal x\nx = 7'
 const pythonTranspiler = new PythonTranspiler();
 
 console.log(parsePython(input))

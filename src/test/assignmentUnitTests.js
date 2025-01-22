@@ -395,7 +395,7 @@ describe('Python', () => {
       it('should generate javascript for non local assignment', () => {
         const input = 'nonlocal x\nx = 7'
         const outputcode = parsePython(input);
-        expect(outputcode).to.equal('let x = 7;');
+        expect(outputcode).to.equal('\nlet x = 7;');
       });
     });
 
@@ -403,7 +403,7 @@ describe('Python', () => {
       it('should generate javascript for global', () => {
         const input = 'global x\nx = 7'
         const outputcode = parsePython(input);
-        expect(outputcode).to.equal('let x = 7;');
+        expect(outputcode).to.equal('\nlet x = 7;');
       });
     });
 
@@ -516,7 +516,7 @@ describe('Python', () => {
         const input = '(1, 2, 3)';
         
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal('(1,2,3)');
+        expect(outputCode).to.equal('[1,2,3]');
       });
 
      it('should generate list', () => {

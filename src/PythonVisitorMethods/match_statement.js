@@ -111,11 +111,15 @@ export function visitAs_pattern(ctx) {
 
 export function visitOr_pattern(ctx) {
   // Translate the first closed pattern
-  let pattern = this.visit(ctx.closed_pattern(0));
+  let pattern = "";
 
   // Create a JavaScript `case` statement for each subsequent pattern joined by `|`
-  for (let i = 1; i < ctx.closed_pattern().length; i++) {
+  for (let i = 0; i < ctx.closed_pattern().length; i++) {
     const nextPattern = this.visit(ctx.closed_pattern(i));
+    if (nextPattern == "_") 
+    {
+      
+    }
     // Combine the patterns into JavaScript `case` syntax
     pattern += `\n\tcase ${nextPattern}:`;
   }
@@ -239,12 +243,6 @@ subject_expr
 
 case_block
     : soft_kw_case patterns guard? ':' block;
-
-as_pattern
-    : or_pattern 'as' pattern_capture_target;
-
-or_pattern
-    : closed_pattern ('|' closed_pattern)*;
 
 wildcard_pattern
     : soft_kw_wildcard;

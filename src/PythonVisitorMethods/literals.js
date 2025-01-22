@@ -111,7 +111,7 @@ export function visitTuple(ctx) {
         elements += this.visit(ctx.star_named_expressions());
     }
     elements = elements.replace(/\s*,\s*/g, ',').replace(/,+/g, ',').trim();
-    return `(${elements})`; // Wrap the elements in parentheses for a JavaScript tuple
+    return `[${elements}]`; // Wrap the elements in parentheses for a JavaScript tuple
 }
 export function visitSet(ctx) {
     let elements = this.visit(ctx.star_named_expressions());
