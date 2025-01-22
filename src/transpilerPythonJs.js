@@ -24,10 +24,11 @@ import { flatten } from './tools/flatten.js';
 //TODO ADD HANDLING FOR PRINT 
 
 export default class PythonCodeGenerator extends PythonParserVisitor {
-    constructor(context = {}) {
+    constructor() {
         super();
-        this.context = context;
-        this.context.vars = [];
+        this.globalvars = []; 
+        this.localVars = []
+        this.inFunc = false ;
     }
 
     visitFile_input(ctx) {

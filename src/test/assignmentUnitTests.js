@@ -643,7 +643,7 @@ describe('Python', () => {
         const input = 'x += 5\nx+=6';
         
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal('let x += 5;\nlet x += 6');
+        expect(outputCode).to.equal('let x += 5;\nx += 6;');
       });
       // Test augmented assignment (e.g., -=)
       it('should generate JavaScript from Python augmented assignment (-=)', () => {

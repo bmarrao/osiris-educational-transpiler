@@ -20,13 +20,13 @@ export function visitAssignment(ctx) {
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
         
-        if (this.context.vars.includes(variableName))
+        if (this.localVars.includes(variableName))
         {
             return `${variableName} = ${String(annotatedRhs).trim()};`
         }
         else 
         {
-            this.context.vars.push(variableName);
+            this.localVars.push(variableName);
             return annotatedRhs
             ? `let ${variableName} = ${String(annotatedRhs).trim()};`
             : `let ${variableName};`;
@@ -38,11 +38,19 @@ export function visitAssignment(ctx) {
 	console.log("SND");
         const expression = this.visit(ctx.expression());
         const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
-
-        // Return the JavaScript equivalent of assignment with parenthesis or subscript
-        return annotatedRhs
+        if (this.localVars.includes(target))
+        {
+            return `let ${target} ;`;
+        }
+        else 
+        {
+            this.localVars.push(target);
+                    // Return the JavaScript equivalent of assignment with parenthesis or subscript
+            return annotatedRhs
             ? `let ${target} = ${annotatedRhs};`
             : `let ${target} ;`;
+         }
+        // Return the JavaScript equivalent of assignment with parenthesis or subscript
     }
 
     // Handle assignments with multiple star targets (star_targets '=')
@@ -51,15 +59,14 @@ export function visitAssignment(ctx) {
         const value = this.visit(ctx.star_expressions());
         // Return the JavaScript equivalent for multiple star targets
         let ret = `${targets} = ${value};`;
-        console.log(this.context.vars)
         // TODO HANDLE CASE WHERE  x = 7; x,y = 7,6
-        if (this.context.vars.includes(targets))
+        if (this.localVars.includes(targets))
         {
             return ret;
         }
         else if (ret != null)
         {
-            this.context.vars.push(targets);
+            this.localVars.push(targets);
             return `let ${ret}`;
         }
     }
@@ -79,15 +86,15 @@ export function visitAssignment(ctx) {
         } else {
             // For floor division (//=), use Math.floor to simulate the operation in JavaScript
             ret = `${target} = Math.floor(${target} / ${expression});`;
-        }
-        console.log(this.context.vars)
-        if (this.context.vars.includes(target) && ret != null)
+       }
+        
+        if (this.localVars.includes(target) && ret != null)
         {
             return ret;
         }
         else if (ret != null)
         {
-            this.context.vars.push(target);
+            this.localVars.push(target);
             return `let ${ret}`;
         }
     } 
