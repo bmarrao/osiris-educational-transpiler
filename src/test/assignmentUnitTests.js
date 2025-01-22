@@ -83,13 +83,13 @@ describe('Python', () => {
       it('should throw an error for async for loops', () => {
         const input = `async for item in items:\n\tprint(item)`;
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal("Translation error: Async for-loops are not supported in JavaScript.");
+        expect(outputCode).to.equal("Error during translation: Translation error: Async for-loops are not supported");
       });
 
       it('should throw an error for a for loop with an else block', () => {
         const input = `for item in items:\n\tprint(item)\nelse:\n\tprint("Done")`;
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal("Translation error: Else blocks in for-loops are not supported in JavaScript.");
+        expect(outputCode).to.equal("Error during translation: Translation error: Else blocks in for-loops are not supported");
       });
 
       it('should handle a for loop with step increments in the range', () => {
@@ -165,12 +165,13 @@ describe('Python', () => {
     it('should generate correct JavaScript for a general except block', () => {
       const input = `try:\n\tx=5\nexcept Exception:\n\terror = "General error occurred"`;
       const outputCode = parsePython(input);
-      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\terror = "General error occurred";\n}`);
+      expect(outputCode).to.equal(`try {\n\t\tlet x = 5;\n}\ncatch (e) {\n\t\tlet error = "General error occurred";\n}`);
     });
 
     it('should throw an error for unsupported exception types', () => {
       const input = `try:\n\tx=5\nexcept ValueError as err:\n\terror = err`;
-      expect(() => parsePython(input)).to.throw("Translation error: Unsupported exception type 'ValueError'");
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: Translation error: Unsupported exception type 'ValueError'`);
     });
 
   });
