@@ -4,7 +4,6 @@ import PythonLexer from './Python/PythonLexer.js'; // Adjust the path as necessa
 
 import PythonTranspiler from './index.js';
 
-
 function parsePython(input) {
     const pythonTranspiler = new PythonTranspiler();
     let result = pythonTranspiler.translatePython(input) 
