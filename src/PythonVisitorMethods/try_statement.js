@@ -36,7 +36,7 @@ export function visitTry_stmt(ctx) {
     // Check if the 'else' block exists
     if (ctx.else_block()) {
         elseBlock = this.visit(ctx.else_block());
-        jsCode += `else {\n${elseBlock}\n}`;
+        jsCode += `${elseBlock}\n}`;
     }
     // Check if the 'finally' block exists
     if (ctx.finally_block()) {
