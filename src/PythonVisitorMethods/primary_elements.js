@@ -48,17 +48,20 @@ export function visitGroup(ctx) {
     return "( " + inside + " )"; // Return formatted group
 }
 
-/*
-TODO FINISH THESE 
+
 export function visitPrimary(ctx) {
     if (ctx.primary()) {
-        const primary = this.visit(ctx.primary());
+        let primary = this.visit(ctx.primary());
         if (ctx.NAME()) {
             return `${primary}.${ctx.NAME().getText()}`; // obj.property
         } else if (ctx.genexp()) {
             return `${primary}.map(${this.visit(ctx.genexp())})`; // Generators map/forEach
         } else if (ctx.arguments()) {
-            return `${primary}(${this.visit(ctx.arguments())})`; // Function calls
+            if (primary == "print")
+            {
+                return `console.log${this.visit(ctx.arguments())};`; // Function calls
+            }
+            return `${primary}${this.visit(ctx.arguments())}`; // Function calls
         } else if (ctx.slices()) {
             return `${primary}.slice(${this.visit(ctx.slices())})`; // Array slicing
         }
@@ -67,6 +70,7 @@ export function visitPrimary(ctx) {
     }
 }
 
+/*
 export function visitSlices(ctx) {
     if (ctx.slice()) {
         return this.visit(ctx.slice());

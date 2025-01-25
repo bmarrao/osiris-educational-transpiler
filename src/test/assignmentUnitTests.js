@@ -105,16 +105,17 @@ describe('Python', () => {
       });
 
       it('should handle a for loop with multiple statements in the body', () => {
-        const input = `for item in items:\n\tprint(item)\n\tcount += 1`;
+        const input = `count = 0\nfor item in items:\n\tprint(item)\n\tcount += 1`;
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal(`for (const item of items) {\n\t\tconsole.log(item);\n\t\tcount += 1;\n}`);
+        expect(outputCode).to.equal(`let count = 0\nfor (const item of items) {\n\t\tconsole.log(item);\n\t\tcount += 1;\n}`);
       });
 
+  
       it('should handle nested for loops', () => {
         const input = `for i in range(3):\n\tfor j in range(2):\n\t\tprint(i, j)`;
         const outputCode = parsePython(input);
         expect(outputCode).to.equal(
-          `for (const i of range(3)) {\n\t\tfor (const j of range(2)) {\n\t\t\tconsole.log(i, j);\n\t\t}\n\t}`
+          `for (let i = 0; i < 3; i += 1) {\n\t\tfor (let j = 0; j < 2; j += 1) {\n\t\t\t\tconsole.log(i, j);\n\t\t}\n}`
         );
       });
 

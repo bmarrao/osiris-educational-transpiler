@@ -23,14 +23,11 @@ function parsePython(input) {
 
 
 
+let input = `return foo(5)`;
 
-let input = `try:\n\tx=5\nexcept Exception:\n\terror = "Error"\nelse:\n\tsuccess = true\nfinally:\n\tcleanup = true`;
 const pythonTranspiler = new PythonTranspiler();
 
 let one = parsePython(input)
 
-input = `try:\n\tx=5\nexcept Exception:\n\terror = "Error"\nelse:\n\tsuccess = true\nfinally:\n\tcleanup = true`;
-let two = parsePython(input)
 console.log(one);
-console.log(two);
 

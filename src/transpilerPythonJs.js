@@ -15,6 +15,7 @@ import * as ExceptStatement from './PythonVisitorMethods/except_statement.js';
 import * as TryStatement from './PythonVisitorMethods/try_statement.js';
 import * as WhileStatement from './PythonVisitorMethods/while_statement.js'; 
 import * as ForStatement from'./PythonVisitorMethods/for_statement.js'; 
+import * as FunctionArgs from './PythonVisitorMethods/function_call_args.js'
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -91,6 +92,32 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting star expression');
         return Expressions.visitStar_expression.call(this, ctx);
     }   
+
+    visitArguments(ctx) {
+      console.log('Visiting arguments');
+      return FunctionArgs.visitArguments.call(this, ctx);
+    }
+    visitArgs(ctx) {
+        console.log('Visiting args'); 
+        return FunctionArgs.visitArgs.call(this, ctx);
+    }
+    visitStarred_expression(ctx) {
+      console.log('Visiting starred_expression');
+      return FunctionArgs.visitStarred_expression.call(this, ctx);
+    }
+    visitKwarg_or_starred(ctx) {
+      console.log('Visiting kwarg_or_starred');
+      return FunctionArgs.visitKwarg_or_starred.call(this, ctx);
+    }
+
+    visitKwarg_or_double_starred(ctx) {
+      console.log('Visiting kwarg_or_double_starred');
+      return FunctionArgs.visitKwarg_or_double_starred.call(this, ctx);
+    }
+    visitKwargs(ctx) {
+      console.log('Visiting kwargs');
+      return FunctionArgs.visitKwargs.call(this, ctx);
+    }
 
 
     visitWhile_stmt(ctx){
@@ -257,7 +284,10 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting await_primary');
         return PrimaryElements.visitAwait_primary.call(this, ctx);
     }
-
+    visitPrimary(ctx) {
+        console.log('Visiting primary');
+        return PrimaryElements.visitPrimary.call(this, ctx);
+    }
     visitAtom(ctx) {
         console.log('Visiting atom');
         return PrimaryElements.visitAtom.call(this, ctx);
