@@ -20,15 +20,6 @@ export function visitDefault_assignment(ctx) {
    return `= ${expression}`;
 }
 
-// Visitor for param_no_default
-export function visitParam_no_default(ctx) {
-    // Get the parameter from the `param` child
-    const paramText = this.visit(ctx.param());
-
-    // Return the parameter text (JavaScript/TypeScript-compatible)
-    return paramText;
-}
-
 export function visitParam_with_default(ctx) {
     const paramText = this.visit(ctx.param());
     const paramDefault = this.visit(ctx.default_assignment())
@@ -41,10 +32,6 @@ export function visitParam_maybe_default(ctx) {
     return `${paramText} ${paramDefault}`;
 }
 
-export function visitParam_no_default_star_annotation(ctx) {
-    const paramText = this.visit(ctx.param_star_annotation());
-    return paramText 
-}
 
 export function visitAnnotation(ctx) {
     // Extract the type expression from the context
@@ -69,35 +56,79 @@ export function visitAnnotation(ctx) {
 }
 
 
-/*
-parameters
-    : slash_no_default param_no_default* param_with_default* star_etc?
-    | slash_with_default param_with_default* star_etc?
-    | param_no_default+ param_with_default* star_etc?
-    | param_with_default+ star_etc?
-    | star_etc;
 
-slash_no_default
-    : param_no_default+ '/' ','?
-    ;
-slash_with_default
-    : param_no_default* param_with_default+ '/' ','?
-    ;
+export function visitParameters(ctx) {
+    const params = [];
 
-star_etc
-    : '*' param_no_default param_maybe_default* kwds?
-    | '*' param_no_default_star_annotation param_maybe_default* kwds?
-    | '*' ',' param_maybe_default+ kwds?
-    | kwds;
+    // Visit parameters before the '/' (slash_no_default)
+    if (ctx.slash_no_default()) {
+        params.push(this.visit(ctx.slash_no_default()));
+    }
+    
+    // Visit parameters with defaults before the '/' (slash_with_default)
+    if (ctx.slash_with_default()) {
+        params.push(this.visit(ctx.slash_with_default()));
+    }
+    
+    // Visit parameters with default assignments (param_with_default)
+    if (ctx.param_with_default()) {
+        params.push(
+            ctx.param_with_default().map(param => this.visit(param)).join(', ')
+        );
+    }
+    
+    // Visit the star arguments (e.g., *args, **kwargs)
+    if (ctx.star_etc()) {
+        params.push(this.visit(ctx.star_etc()));
+    }
+    
+    // Return the joined parameters as a string
+    return params.join(', ');
+}
 
-kwds
-    : '**' param_no_default;
-param_no_default_star_annotation
-    : param_star_annotation ','? TYPE_COMMENT?
-    ;
+export function visitSlash_no_default(ctx) {
+    // Visit each param_no_default and return as a comma-separated string
+    return ctx.param_no_default().map(param => this.visit(param)).join(', ');
+}
 
-param_star_annotation: NAME star_annotation;
-star_annotation: ':' star_expression;
+export function visitSlash_with_default(ctx) {
+    const params = [];
+
+    // Visit param_no_default (without defaults)
+    params.push(...ctx.param_no_default().map(param => this.visit(param)));
+    
+    // Visit param_with_default (with defaults)
+    params.push(...ctx.param_with_default().map(param => this.visit(param)));
+
+    // Return the combined parameters as a comma-separated string
+    return params.join(', ');
+}
+
+export function visitParam_no_default_star_annotation(ctx) {
+    throw new Error("Star annotation (e.g., *args: int) is not supported");
+}
+
+export function visitKwds(ctx) {
+    throw new Error("**kwargs is not supported.");
+}
 
 
-*/
+export function visitStar_etc(ctx) {
+    if (ctx.kwds) {
+        return this.visitKwds(ctx.kwds); // Throws an error
+    }
+    if (ctx.param_maybe_default) {
+        throw new Error("Parameters after *args are not supported in JavaScript.");
+    }
+
+    if (ctx.param_no_default) {
+        return `...${this.visit(ctx.param_no_default)}`;
+    }
+
+    if (ctx.param_no_default_star_annotation) {
+        return `...${this.visit(ctx.param_no_default_star_annotation)}`;
+    }
+
+    return "";
+}
+

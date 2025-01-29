@@ -15,7 +15,9 @@ import * as ExceptStatement from './PythonVisitorMethods/except_statement.js';
 import * as TryStatement from './PythonVisitorMethods/try_statement.js';
 import * as WhileStatement from './PythonVisitorMethods/while_statement.js'; 
 import * as ForStatement from'./PythonVisitorMethods/for_statement.js'; 
-import * as FunctionArgs from './PythonVisitorMethods/function_call_args.js'
+import * as FunctionArgs from './PythonVisitorMethods/function_call_args.js';
+import * as FunctionDefs from './PythonVisitorMethods/function_definitions.js';
+import * as FunctionParams from './PythonVisitorMethods/function_parameters.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -75,6 +77,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting statement_newline');
         return GeneralStatements.visitStatement_newline.call(this, ctx);
     }
+
     visitImport_stmts(ctx)
     {
         throw new Error('Transpiler Error: Import statements are not supported.');
@@ -92,6 +95,81 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         console.log('Visiting star expression');
         return Expressions.visitStar_expression.call(this, ctx);
     }   
+
+    visitFunction_def(ctx) {
+      console.log('Visiting function_def');
+      return FunctionDefs.visitFunction_def.call(this, ctx);
+    }
+
+    visitFunction_def_raw(ctx) {
+      console.log('Visiting function_def_raw');
+      return FunctionDefs.visitFunction_def_raw.call(this, ctx);
+    }
+    
+    visitParams(ctx) {
+        console.log('Visiting Params');
+        return FunctionParams.visitParams.call(this, ctx);
+    }
+    
+    visitParam_no_default(ctx) {
+        console.log('Visiting param_no_default');
+        return FunctionParams.visitParam_no_default.call(this, ctx);
+    }
+    
+    visitParam(ctx) {
+        console.log('Visiting param');
+        return FunctionParams.visitParam.call(this, ctx);
+    }
+    
+    visitDefault_assignment(ctx) {
+        console.log('Visiting default_assignment');
+        return FunctionParams.visitDefault_assignment.call(this, ctx);
+    }
+    
+    visitParam_with_default(ctx) {
+        console.log('Visiting param_with_default');
+        return FunctionParams.visitParam_with_default.call(this, ctx);
+    }
+    
+    visitParam_maybe_default(ctx) {
+        console.log('Visiting param_maybe_default');
+        return FunctionParams.visitParam_maybe_default.call(this, ctx);
+    }
+    
+    visitParam_no_default_star_annotation(ctx) {
+        console.log('Visiting param_no_default_star_annotation');
+        return FunctionParams.visitParam_no_default_star_annotation.call(this, ctx);
+    }
+    
+    visitAnnotation(ctx) {
+        console.log('Visiting annotation');
+        return FunctionParams.visitAnnotation.call(this, ctx);
+    }
+    
+    visitParameters(ctx) {
+        console.log('Visiting parameters');
+        return FunctionParams.visitParameters.call(this, ctx);
+    }
+    
+    visitSlash_no_default(ctx) {
+        console.log('Visiting slash_no_default');
+        return FunctionParams.visitSlash_no_default.call(this, ctx);
+    }
+    
+    visitSlash_with_default(ctx) {
+        console.log('Visiting slash_with_default');
+        return FunctionParams.visitSlash_with_default.call(this, ctx);
+    }
+    
+    visitKwds(ctx) {
+        console.log('Visiting kwds');
+        return FunctionParams.visitKwds.call(this, ctx);
+    }
+    
+    visitStar_etc(ctx) {
+        console.log('Visiting star_etc');
+        return FunctionParams.visitStar_etc.call(this, ctx);
+    }
 
     visitArguments(ctx) {
       console.log('Visiting arguments');
@@ -173,6 +251,10 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitBlock(ctx) {
         console.log('Visiting block');
         return CommonElements.visitBlock.call(this, ctx);
+    }
+    visitDecorators(ctx) {
+        console.log('Visiting Decorators');
+        return CommonElements.visitDecorators.call(this, ctx);
     }
 
     visitComparison(ctx) {

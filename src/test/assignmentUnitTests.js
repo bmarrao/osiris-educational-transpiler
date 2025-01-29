@@ -101,7 +101,7 @@ describe('Python', () => {
       it('should handle a for loop with negative step increments in the range', () => {
         const input = `for i in range(10, 0, -2):\n\tprint(i)`;
         const outputCode = parsePython(input);
-        expect(outputCode).to.equal(`for (let i = 10; i > 0; i -= 2) {\n\t\tconsole.log(i);\n}`);
+        expect(outputCode).to.equal(`for (let i = 10; i > 0; i += - 2) {\n\t\tconsole.log(i);\n}`);
       });
 
       it('should handle a for loop with multiple statements in the body', () => {

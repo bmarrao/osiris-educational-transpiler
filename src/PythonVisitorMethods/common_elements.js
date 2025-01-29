@@ -4,7 +4,6 @@
 // TODO decorators: ('@' named_expression NEWLINE )+;
 
 export function visitBlock(ctx) {
-    
     let vars = [...this.localVars];  // Create a shallow copy of the array
     this.localVars.length = 0;       // Empty the original array
     if (ctx.NEWLINE()) {
@@ -22,3 +21,9 @@ export function visitBlock(ctx) {
     }).join('\n'); // Add \t to each line except the last empty one
          }
 }
+
+
+export function visitDecorators(ctx) {
+    throw new Error("Decorators are not supported.");
+}
+

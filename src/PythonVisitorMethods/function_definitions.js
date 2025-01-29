@@ -15,6 +15,21 @@ export function visitFunction_def(ctx) {
 
     // Visit the raw function definition
     return this.visit(ctx.function_def_raw());
-  }
 
+}
 
+export function visitFunction_def_raw(ctx) {
+      const functionName = ctx.NAME().getText();
+      const params = this.visit(ctx.params()); // Visit the parameters
+      const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
+      const body = this.visit(ctx.block()); // Visit the function body
+      
+      let functionStr = `function ${functionName}(${params}) {${body}}`;
+      
+      if (ctx.ASYNC()) {
+          // If it's an async function
+          functionStr = `async ${functionStr}`;
+      }
+      
+      return functionStr;
+    }
