@@ -126,7 +126,57 @@ describe('Python', () => {
       });
   });
 
-    
+   describe('Python to JavaScript translation: function definitions', () => {
+  
+    it('should translate simple function with positional parameters', () => {
+      const input = `def add(a, b):\n\treturn a + b`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`function add(a, b) {\n\t\treturn a + b;\n}`);
+    });
+  
+    it('should translate function with default parameters', () => {
+      const input = `def greet(name="world"):\n\tprint("Hello, " + name)`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`function greet(name = "world") {\n\t\tconsole.log("Hello, " + name);\n}`);
+    });
+  
+    it('should error on functions with **kwargs parameters', () => {
+      const input = `def process_data(**kwargs):\n\tpass`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: **kwargs is not supported.`);
+    });
+  
+    it('should error on functions with mixed parameters and **kwargs', () => {
+      const input = `def mixed(a, b=0, **kwargs):\n\treturn a + b`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: **kwargs is not supported.`);
+    });
+  
+    it('should error on functions with *args parameters', () => {
+      const input = `def sum_all(*args):\n\treturn sum(args)`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: **kwargs is not supported.`);
+    });
+  
+    it('should error on keyword-only parameters (using *)', () => {
+      const input = `def key_func(a, *, b):\n\treturn a + b`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: **kwargs is not supported.`);
+    });
+  
+    it('should handle void function with multiple statements', () => {
+      const input = `def log_message(msg):\n\tprint("Log:")\n\tprint(msg)`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`function log_message(msg) {\n\t\tconsole.log("Log:");\n\t\tconsole.log(msg);\n}`);
+    });
+  
+    it('should error on nested function definitions', () => {
+      const input = `def outer():\n\tdef inner():\n\t\tpass`;
+      const outputCode = parsePython(input);
+      expect(outputCode).to.equal(`Error during translation: Translation error: Nested function definitions are not supported`);
+    });
+  
+  });   
   describe('Python to JavaScript translation: while statement', () => {
 
     it('should generate correct JavaScript for a simple while loop', () => {

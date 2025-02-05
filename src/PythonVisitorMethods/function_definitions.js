@@ -24,7 +24,7 @@ export function visitFunction_def_raw(ctx) {
       const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
       const body = this.visit(ctx.block()); // Visit the function body
       
-      let functionStr = `function ${functionName}(${params}) {${body}}`;
+      let functionStr = `function ${functionName}(${params}) {\n${body}\n}`;
       
       if (ctx.ASYNC()) {
           // If it's an async function

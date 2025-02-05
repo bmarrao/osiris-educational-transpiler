@@ -21,6 +21,7 @@ export function visitDefault_assignment(ctx) {
 }
 
 export function visitParam_with_default(ctx) {
+    console.log("IM IN PARAM WITH DEFAULT")
     const paramText = this.visit(ctx.param());
     const paramDefault = this.visit(ctx.default_assignment())
     return `${paramText} ${paramDefault}`;
@@ -58,32 +59,49 @@ export function visitAnnotation(ctx) {
 
 
 export function visitParameters(ctx) {
+    console.log("IN PARAMETERS\n\n\n\n")
     const params = [];
 
     // Visit parameters before the '/' (slash_no_default)
     if (ctx.slash_no_default()) {
+        
+        console.log("1")
         params.push(this.visit(ctx.slash_no_default()));
     }
     
     // Visit parameters with defaults before the '/' (slash_with_default)
     if (ctx.slash_with_default()) {
+        console.log("2")
         params.push(this.visit(ctx.slash_with_default()));
     }
     
     // Visit parameters with default assignments (param_with_default)
     if (ctx.param_with_default()) {
+        console.log("3")
         params.push(
             ctx.param_with_default().map(param => this.visit(param)).join(', ')
         );
     }
-    
+    if (ctx.param_no_default()) {
+        const vars = ctx.param_no_default().map(param => this.visit(param)).join(', ')
+        console.log(`vars inside no default ${vars}`)
+        params.push(
+            ctx.param_no_default().map(param => this.visit(param)).join(', ')
+        );
+    }
     // Visit the star arguments (e.g., *args, **kwargs)
     if (ctx.star_etc()) {
+        console.log("5")
+        
         params.push(this.visit(ctx.star_etc()));
     }
-    
+    for(let i = 0 ; i < params.lenght; i+=1)
+    {
+        console.log(`on ${i}${params[i]}`) 
+    }
     // Return the joined parameters as a string
-    return params.join(', ');
+
+    return params.filter(param => param.trim() !== '').join(', ');
 }
 
 export function visitSlash_no_default(ctx) {

@@ -19,11 +19,7 @@ function parsePython(input) {
 
 }
 
-
-
-
-
-let input = `return foo(5)`;
+const input = `def log_message(msg):\n\tprint("Log:")\n\tprint(msg)`;
 
 const pythonTranspiler = new PythonTranspiler();
 
