@@ -8,28 +8,43 @@ function_def_raw
 */
 
 export function visitFunction_def(ctx) {
+    console.log(1)
     // Check if there are decorators
+    let pre_function = "";
     if (ctx.decorators()) {
-      this.visit(ctx.decorators()); // Visit the decorators
+        pre_function= this.visit(ctx.decorators()); //Throws error
+        
     }
 
+    console.log(2)
     // Visit the raw function definition
-    return this.visit(ctx.function_def_raw());
+    return `${pre_function}${this.visit(ctx.function_def_raw())}`;
 
 }
 
+
 export function visitFunction_def_raw(ctx) {
-      const functionName = ctx.NAME().getText();
-      const params = this.visit(ctx.params()); // Visit the parameters
-      const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
-      const body = this.visit(ctx.block()); // Visit the function body
-      
-      let functionStr = `function ${functionName}(${params}) {\n${body}\n}`;
-      
-      if (ctx.ASYNC()) {
-          // If it's an async function
-          functionStr = `async ${functionStr}`;
-      }
-      
-      return functionStr;
+    let functionName = ctx.NAME().getText();
+    let params = this.visit(ctx.params()); // Visit the parameters
+    const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
+    const body = this.visit(ctx.block()); // Visit the function body
+    console.log(2)
+    // Convert __init__ to constructor and remove the first parameter
+    if (functionName === "__init__") {
+        functionName = "constructor";
+        const paramList = params.split(",").map(p => p.trim()).filter(p => p); // Handle possible empty string
+        paramList.shift(); // Remove first parameter
+        params = paramList.join(", ");
     }
+
+    console.log(3)
+    let functionStr = `function ${functionName}(${params}) {\n${body}\n}`;
+
+    if (ctx.ASYNC()) {
+        functionStr = `async ${functionStr}`;
+    }
+
+    console.log(4)
+    return functionStr;
+}
+

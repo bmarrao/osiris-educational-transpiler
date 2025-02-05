@@ -4,10 +4,6 @@
 
 /*
 TODO TRANSLATE ALL OF THESE
-expressions
-    : expression (',' expression )* ','?
-    ;
-
 
 expression
     : disjunction ('if' disjunction 'else' expression)?
@@ -22,15 +18,33 @@ star_named_expression
     : '*' bitwise_or
     | named_expression;
 
-assignment_expression
-    : NAME ':=' expression;
-
-named_expression
-    : assignment_expression
-    | expression;
-
 */
+//TODO MAYBE NEED TO FIX THIS LATER BECAUSE JS DONT SUPPORT x = 5,6 ... 
+export function visitExpressions(ctx) {
+    const expressions = [];
+    for (let i = 0; i < ctx.expression().length; i++) {
+      const expr = this.visit(ctx.expression(i));  // Visit each expression
+      expressions.push(expr);
+    }
 
+    return expressions.join(", ");  // Join them with commas for JavaScript
+}
+export function visitAssignmentExpression(ctx) {
+    const name = ctx.NAME().getText();  // Get the name (variable)
+    const expression = this.visit(ctx.expression());  // Visit the expression part
+
+    return `${name} = ${expression}`;  // Translate to JavaScript assignment
+}
+
+export function visitNamed_expression(ctx) {
+    if (ctx.assignment_expression()) {
+      this.visit(ctx.assignment_expression());
+    } else if (ctx.expression()) {
+      this.visit(ctx.expression());
+    } else {
+      throw new Error("Invalid named expression");
+    }
+}
 
 export function visitStar_expressions(ctx) {
     // Process each star_expression

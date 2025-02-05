@@ -24,6 +24,24 @@ export function visitBlock(ctx) {
 
 
 export function visitDecorators(ctx) {
-    throw new Error("Decorators are not supported.");
+    const decorator = this.visit(ctx.named_expression())
+    console.log("DECORATOR")
+    console.log(decorator)
+    if (decorator === "property")
+    {
+        pre_function="get "
+    }
+    else if (decorator === "value.setter")
+    {
+        pre_function="set "
+    }
+    else if (decorator === "staticmethod")
+    {
+        pre_function="static "
+    }
+    else 
+    {
+        throw new Error("Decorators are not supported.");
+    }
 }
 

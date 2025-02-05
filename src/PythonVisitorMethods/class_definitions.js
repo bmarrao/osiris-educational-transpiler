@@ -26,9 +26,14 @@ export function visitClass_def_raw(ctx) {
 
     // Extract base classes (if any)
     let baseClass = null;
+    
     if (ctx.arguments()) {
-      baseClass = ctx.arguments().getText(); // Get parent classes
+        baseClass = ctx.arguments().getText(); // Get parent classes
+        if (baseClass.includes(",")) {
+            throw new Error("Multiple Inheritance not supported");
+        }
     }
+
 
     // Process the class body (block)
     const body = this.visit(ctx.block());

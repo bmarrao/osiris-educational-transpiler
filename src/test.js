@@ -19,7 +19,7 @@ function parsePython(input) {
 
 }
 
-const input = `def log_message(msg):\n\tprint("Log:")\n\tprint(msg)`;
+const input = "class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn \"Hello\"";
 
 const pythonTranspiler = new PythonTranspiler();
 

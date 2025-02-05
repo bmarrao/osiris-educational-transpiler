@@ -18,6 +18,7 @@ import * as ForStatement from'./PythonVisitorMethods/for_statement.js';
 import * as FunctionArgs from './PythonVisitorMethods/function_call_args.js';
 import * as FunctionDefs from './PythonVisitorMethods/function_definitions.js';
 import * as FunctionParams from './PythonVisitorMethods/function_parameters.js';
+import * as ClassDefs from './PythonVisitorMethods/class_definitions.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -197,7 +198,15 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
       return FunctionArgs.visitKwargs.call(this, ctx);
     }
 
+    visitClass_def(ctx) {
+      //console.log('Visiting function_def');
+      return ClassDefs.visitClass_def.call(this, ctx);
+    }
 
+    visitClass_def_raw(ctx) {
+      //console.log('Visiting Class_def_raw');
+      return ClassDefs.visitClass_def_raw.call(this, ctx);
+    }
     visitWhile_stmt(ctx){
         //console.log('Visiting global');
         return WhileStatement.visitWhile_stmt.call(this, ctx);
@@ -342,11 +351,29 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return ArithmeticOperators.visitPower.call(this, ctx);
     }
 
+    visitAssignmentExpressions(ctx) {
+        console.log('Visiting Assignment Expressions');
+        return Expressions.visitAssignmentExpressions.call(this, ctx);
+    }
+ 
+    visitExpressions(ctx) {
+        console.log('Visiting Expressions');
+        return Expressions.visitExpressions.call(this, ctx);
+    }
     visitDisjunction(ctx) {
         //console.log('Visiting disjunction');
         return Expressions.visitDisjunction.call(this, ctx);
     }
 
+    visitNamed_expression(ctx) {
+        console.log('Visiting Named Expressions');
+        return Expressions.visitNamed_expression.call(this, ctx);
+    }
+
+    visitStarExpressions(ctx) {
+        console.log('Visiting Star Expressions');
+        return Expressions.visitStarExpressions.call(this, ctx);
+    }
     visitConjunction(ctx) {
         //console.log('Visiting conjunction');
         return Expressions.visitConjunction.call(this, ctx);
