@@ -13,12 +13,16 @@ export function visitFunction_def(ctx) {
     let pre_function = "";
     if (ctx.decorators()) {
         pre_function= this.visit(ctx.decorators()); //Throws error
-        
+        console.log(pre_function);
+        console.log("PREFUNCTION");
     }
 
-    console.log(2)
+    console.log(this.visit(ctx.function_def_raw()))
+    const ret = `${pre_function}${this.visit(ctx.function_def_raw())}`;
+    console.log(ret)
     // Visit the raw function definition
-    return `${pre_function}${this.visit(ctx.function_def_raw())}`;
+    return ret; 
+ 
 
 }
 

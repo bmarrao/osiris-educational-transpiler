@@ -356,12 +356,16 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return Expressions.visitAssignmentExpressions.call(this, ctx);
     }
  
+    visitExpression(ctx) {
+        console.log('Visiting Expression');
+        return Expressions.visitExpression.call(this, ctx);
+    }
     visitExpressions(ctx) {
         console.log('Visiting Expressions');
         return Expressions.visitExpressions.call(this, ctx);
     }
     visitDisjunction(ctx) {
-        //console.log('Visiting disjunction');
+        console.log('Visiting disjunction');
         return Expressions.visitDisjunction.call(this, ctx);
     }
 

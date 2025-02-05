@@ -19,6 +19,33 @@ star_named_expression
     | named_expression;
 
 */
+
+export function visitExpression(ctx) {
+    console.log(1)
+    if (ctx.lambdef()) {
+      return this.visit(ctx.lambdef()); // Handle lambda function
+    }
+
+    const disjunctions = ctx.disjunction();
+    if (disjunctions.length === 1) {
+        console.log(3)
+        const disj = this.visit(disjunctions[0]);
+        console.log("TESTE");
+        console.log(disj);
+        return disj; // Just a single disjunction
+    }
+
+    console.log(2)
+    // Translate Python ternary (x if y else z) to JavaScript (y ? x : z)
+    const condition = this.visit(disjunctions[1]);
+    const trueExpr = this.visit(disjunctions[0]);
+    const falseExpr = this.visit(ctx.expression());
+
+    return `${condition} ? ${trueExpr} : ${falseExpr}`;
+}
+
+
+
 //TODO MAYBE NEED TO FIX THIS LATER BECAUSE JS DONT SUPPORT x = 5,6 ... 
 export function visitExpressions(ctx) {
     const expressions = [];
@@ -29,7 +56,7 @@ export function visitExpressions(ctx) {
 
     return expressions.join(", ");  // Join them with commas for JavaScript
 }
-export function visitAssignmentExpression(ctx) {
+export function visitAssignment_expression(ctx) {
     const name = ctx.NAME().getText();  // Get the name (variable)
     const expression = this.visit(ctx.expression());  // Visit the expression part
 
@@ -38,9 +65,12 @@ export function visitAssignmentExpression(ctx) {
 
 export function visitNamed_expression(ctx) {
     if (ctx.assignment_expression()) {
-      this.visit(ctx.assignment_expression());
+      return this.visit(ctx.assignment_expression());
     } else if (ctx.expression()) {
-      this.visit(ctx.expression());
+        const expr = this.visit(ctx.expression());
+        console.log("Testexxxx") 
+        console.log(expr) 
+        return expr;
     } else {
       throw new Error("Invalid named expression");
     }
@@ -81,7 +111,6 @@ export function visitDisjunction(ctx) {
         const right = this.visit(ctx.conjunction(i));      // Get the next conjunction
         left = `${left} || ${right}`;           // Combine with the 'or'
     }
-
     return left; // Return the final expression
 }
 

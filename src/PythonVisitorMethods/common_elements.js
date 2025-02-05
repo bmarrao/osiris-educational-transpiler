@@ -24,20 +24,21 @@ export function visitBlock(ctx) {
 
 
 export function visitDecorators(ctx) {
-    const decorator = this.visit(ctx.named_expression())
+    //This may break in the future
+    const decorator = this.visit(ctx.named_expression())[0]
     console.log("DECORATOR")
     console.log(decorator)
     if (decorator === "property")
     {
-        pre_function="get "
+        return "get "
     }
     else if (decorator === "value.setter")
     {
-        pre_function="set "
+        return "set "
     }
     else if (decorator === "staticmethod")
     {
-        pre_function="static "
+        return "static "
     }
     else 
     {
