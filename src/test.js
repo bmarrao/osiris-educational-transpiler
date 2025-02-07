@@ -19,7 +19,7 @@ function parsePython(input) {
 
 }
 
-const input = "class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn \"Hello\"";
+const input = 'class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn "Hello"';
 
 const pythonTranspiler = new PythonTranspiler();
 

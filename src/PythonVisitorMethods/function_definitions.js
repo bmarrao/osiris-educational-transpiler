@@ -18,6 +18,7 @@ export function visitFunction_def(ctx) {
     }
 
     console.log(this.visit(ctx.function_def_raw()))
+    console.log(123)
     const ret = `${pre_function}${this.visit(ctx.function_def_raw())}`;
     console.log(ret)
     // Visit the raw function definition
@@ -29,10 +30,13 @@ export function visitFunction_def(ctx) {
 
 export function visitFunction_def_raw(ctx) {
     let functionName = ctx.NAME().getText();
-    let params = this.visit(ctx.params()); // Visit the parameters
+    let params =""
+    if (ctx.params())
+    {
+        params = this.visit(ctx.params()); // Visit the parameters
+    }
     const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
     const body = this.visit(ctx.block()); // Visit the function body
-    console.log(2)
     // Convert __init__ to constructor and remove the first parameter
     if (functionName === "__init__") {
         functionName = "constructor";
