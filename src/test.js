@@ -19,7 +19,11 @@ function parsePython(input) {
 
 }
 
-const input = 'class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn "Hello"';
+let input = 'class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn "Hello"';
+
+input = "class Example:\n\tclass_var = 42  # Class variable (shared across all instances)\n\n\tdef __init__(self, value):\n\t\tself.value = value  # Instance variable"
+
+input = "class Example:\n\tdef __init__(self, value):\n\t\tself.__private = value  # Name mangling applied"
 
 const pythonTranspiler = new PythonTranspiler();
 

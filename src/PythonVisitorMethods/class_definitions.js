@@ -36,8 +36,31 @@ export function visitClass_def_raw(ctx) {
 
 
     // Process the class body (block)
-    const body = this.visit(ctx.block());
+    let body = this.visit(ctx.block());
 
+    body = body.replace(/\bself\./g, 'this.');
+    body = body.replace(
+    /^\s*(let|const)\s+(\w+)\s*=/gm,  // Matches let/const followed by a variable name
+    '\t\tstatic $2 ='
+);  
+    
+    // New code for handling private fields
+    const privateFields = new Set();
+
+    // Replace this.__name with this.#name and collect field names
+    body = body.replace(/\bthis\.__(\w+)/g, (match, name) => {
+        privateFields.add(name);
+        return `\t\tthis.#${name}`;
+    });
+
+    // Add private field declarations at the beginning of the body
+    if (privateFields.size > 0) {
+        const fieldDeclarations = Array.from(privateFields)
+            .map(name => `#${name};`)
+            .join('\n');
+            
+        body = fieldDeclarations + '\n' + body;
+    }
     // JavaScript class definition
     let jsClass = `class ${className}`;
     if (baseClass) {

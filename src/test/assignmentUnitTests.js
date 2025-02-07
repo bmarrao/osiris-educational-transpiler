@@ -42,6 +42,70 @@ describe('Python', () => {
         codeGenerator = new PythonCodeGenerator({});
     });
 
+  describe('Python to JavaScript translation: class definitions', () => {
+  // Basic class with static method
+  it('should translate class with static method', () => {
+    const input = 'class Example:\n\t@staticmethod\n\tdef greet():\n\t\treturn "Hello"';
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Example {\n\t\tstatic greet() {\n\t\t\treturn "Hello";\n\t\t}\n}`);
+  });
+
+  // Class with class variable and constructor
+  it('should translate class with class and instance variables', () => {
+    const input = "class Example:\n\tclass_var = 42  # Class variable (shared across all instances)\n\n\tdef __init__(self, value):\n\t\tself.value = value  # Instance variable";
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Example {\n\t\tstatic class_var = 42;\n\n\t\tconstructor(value) {\n\t\t\tthis.value = value;\n\t\t}\n}`);
+  });
+
+  // Private variable with name mangling
+  it('should handle private variables with name mangling', () => {
+    const input = "class Example:\n\tdef __init__(self, value):\n\t\tself.__private = value  # Name mangling applied";
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Example {\n\t\tconstructor(value) {\n\t\t\tthis._Example__private = value;\n\t\t}\n}`);
+  });
+
+  // Multiple methods in a class
+  it('should translate class with multiple methods', () => {
+    const input = `class Calculator:\n\tdef add(self, a, b):\n\t\treturn a + b\n\n\tdef subtract(self, a, b):\n\t\treturn a - b`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Calculator {\n\t\tadd(a, b) {\n\t\t\treturn a + b;\n\t\t}\n\n\t\tsubtract(a, b) {\n\t\t\treturn a - b;\n\t\t}\n}`);
+  });
+
+  // Inheritance
+  it('should handle basic class inheritance', () => {
+    const input = `class Animal:\n\tdef speak(self):\n\t\tpass\n\nclass Dog(Animal):\n\tdef bark(self):\n\t\tprint("Woof!")`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Animal {\n\t\tspeak() {\n\t\t\t/* pass */\n\t\t}\n}\n\nclass Dog extends Animal {\n\t\tbark() {\n\t\t\tconsole.log("Woof!");\n\t\t}\n}`);
+  });
+
+  // Class with classmethods
+  it('should translate class method', () => {
+    const input = `class MyClass:\n\t@classmethod\n\tdef from_string(cls, string):\n\t\treturn cls(string)`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class MyClass {\n\t\tstatic from_string(string) {\n\t\t\treturn new this(string);\n\t\t}\n}`);
+  });
+
+  // Class with properties
+  it('should handle class with property decorator', () => {
+    const input = `class Rectangle:\n\tdef __init__(self, width, height):\n\t\tself._width = width\n\t\tself._height = height\n\n\t@property\n\tdef area(self):\n\t\treturn self._width * self._height`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`class Rectangle {\n\t\tconstructor(width, height) {\n\t\t\tthis._width = width;\n\t\t\tthis._height = height;\n\t\t}\n\n\t\tget area() {\n\t\t\treturn this._width * this._height;\n\t\t}\n}`);
+  });
+
+  // Class with multiple constructors (not directly supported in JS)
+  it('should error on multiple constructor-like methods', () => {
+    const input = `class Example:\n\tdef __init__(self, a):\n\t\tself.a = a\n\tdef __init__(self, a, b):\n\t\tself.a = a\n\t\tself.b = b`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`Error during translation: Multiple __init__ methods are not supported`);
+  });
+
+  // Error handling for unsupported decorators
+  it('should error on unsupported decorators', () => {
+    const input = `class Example:\n\t@some_random_decorator\n\tdef method(self):\n\t\tpass`;
+    const outputCode = parsePython(input);
+    expect(outputCode).to.equal(`Error during translation: Unsupported decorator: some_random_decorator`);
+  });
+});
     describe('if statement', () => {
       it('should generate correct JavaScript for a simple if statement', () => {
         let input = "if x > 0:\n\tx= 5"
