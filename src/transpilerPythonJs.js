@@ -33,6 +33,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         this.globalvars = []; 
         this.localVars = []
         this.inFunc = false ;
+        this.inClass = false ;
     }
 
     visitFile_input(ctx) {

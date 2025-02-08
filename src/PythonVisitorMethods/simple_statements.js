@@ -20,7 +20,7 @@ export function visitAssignment(ctx) {
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
         
-        if (this.localVars.includes(variableName))
+        if (this.localVars.includes(variableName) || this.inClass)
         {
             return `${variableName} = ${String(annotatedRhs).trim()};`
         }
@@ -38,9 +38,9 @@ export function visitAssignment(ctx) {
 	console.log("SND");
         const expression = this.visit(ctx.expression());
         const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
-        if (this.localVars.includes(target))
+        if (this.localVars.includes(target) || this.inClass)
         {
-            return `let ${target} ;`;
+            return `${target} ;`;
         }
         else 
         {
@@ -60,7 +60,7 @@ export function visitAssignment(ctx) {
         // Return the JavaScript equivalent for multiple star targets
         let ret = `${targets} = ${value};`;
         // TODO HANDLE CASE WHERE  x = 7; x,y = 7,6
-        if (this.localVars.includes(targets))
+        if (this.localVars.includes(targets)|| this.inClass)
         {
             return ret;
         }
@@ -88,7 +88,7 @@ export function visitAssignment(ctx) {
             ret = `${target} = Math.floor(${target} / ${expression});`;
        }
         
-        if (this.localVars.includes(target) && ret != null)
+        if ((this.localVars.includes(target) && ret != null) || this.inClass)
         {
             return ret;
         }

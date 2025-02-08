@@ -23,7 +23,7 @@ export function visitClass_def(ctx) {
 
 export function visitClass_def_raw(ctx) {
     const className = ctx.NAME().getText(); // Extract class name
-
+    this.inClass = true ; 
     // Extract base classes (if any)
     let baseClass = null;
     
@@ -68,6 +68,7 @@ export function visitClass_def_raw(ctx) {
     }
     jsClass += ` {\n${body}\n}`;
 
+    this.inClass = false ; 
     return jsClass;
 }
 
