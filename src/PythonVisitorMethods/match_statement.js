@@ -1,16 +1,13 @@
 export function visitMatch_stmt(ctx) {
-  const subject = this.visit(ctx.subject_expr()); // The value being matched
+  this.visit(ctx.subject_expr()); // The value being matched
   const cases = ctx.case_block().map((caseBlock) => this.visit(caseBlock)); // Visit all cases
 
   // Generate the JavaScript code for the switch statement
-  let jsCode = `switch (${subject}) {\n`;
 
   for (const caseCode of cases) {
     jsCode += caseCode;
   }
-
-  jsCode += "}\n"; // Close the switch statement
-
+  this.case = {}
   return jsCode;
 }
 
@@ -22,13 +19,13 @@ export function visitSubject_expr(ctx) {
     const otherExprs = ctx.star_named_expressions()
       .map((expr) => this.visit(expr))
       .join(", ");
-    return `[${firstExpr}, ${otherExprs}]`; // Return as an array for multiple expressions
-  } else if (ctx.star_named_expression()) {
+    this.case.var = [firstExpr, ...otherExprs];   }
+  else if (ctx.star_named_expression()) {
     // Case: Single star_named_expression
-    return this.visit(ctx.star_named_expression());
+    this.case.var= this.visit(ctx.star_named_expression());
   } else if (ctx.named_expression()) {
     // Case: Single named_expression
-    return this.visit(ctx.named_expression());
+    this.case.var= this.visit(ctx.named_expression());
   } else {
     throw new Error("Translation error: Unsupported subject expression");
   }
@@ -38,7 +35,7 @@ export function visitSubject_expr(ctx) {
 export function visitCase_block(ctx) {
   // Extract patterns
   const patterns = this.visit(ctx.patterns());
-
+  
   // Extract the guard if it exists
   const guard = ctx.guard() ? this.visit(ctx.guard()) : null;
 
@@ -74,10 +71,10 @@ export function visitGuard(ctx) {
 export function visitPatterns(ctx) {
   if (ctx.open_sequence_pattern()) {
     // Visit and translate open_sequence_pattern
-    return this.visit(ctx.open_sequence_pattern());
+    return {osp: true , ...this.visit(ctx.open_sequence_pattern())};
   } else if (ctx.pattern()) {
     // Visit and translate a single pattern
-    return this.visit(ctx.pattern());
+    return {osp: false , ...this.visit(ctx.pattern())};
   } else {
     throw new Error("Translation error: Invalid pattern structure");
   }
@@ -88,10 +85,10 @@ export function visitPatterns(ctx) {
 export function visitPattern(ctx) {
   if (ctx.as_pattern()) {
     // Visit and translate an `as_pattern`
-    return this.visit(ctx.as_pattern());
+    return {as: true , ...this.visit(ctx.as_pattern())};
   } else if (ctx.or_pattern()) {
     // Visit and translate an `or_pattern`
-    return this.visit(ctx.or_pattern());
+    return {as: false , ...this.visit(ctx.or_pattern())};
   } else {
     throw new Error("Translation error: Invalid pattern structure");
   }
@@ -105,26 +102,22 @@ export function visitAs_pattern(ctx) {
   const alias = this.visit(ctx.pattern_capture_target());
 
   // In JavaScript, we can capture the value with a variable assignment inside the case block
-  return `case ${basePattern}: {\n\tlet ${alias} = ${basePattern};\n\tbreak;\n}`;
+  return {...basePattern, alias: alias};
 }
 
 
 export function visitOr_pattern(ctx) {
   // Translate the first closed pattern
-  let pattern = "";
+  let pattern = [];
 
   // Create a JavaScript `case` statement for each subsequent pattern joined by `|`
   for (let i = 0; i < ctx.closed_pattern().length; i++) {
     const nextPattern = this.visit(ctx.closed_pattern(i));
-    if (nextPattern == "_") 
-    {
-      
-    }
-    // Combine the patterns into JavaScript `case` syntax
-    pattern += `\n\tcase ${nextPattern}:`;
+    pattern.push(nextPattern); // Use push instead of append
   }
 
-  return pattern;
+  return {pattern: basePattern};
+;
 }
 
 
@@ -195,7 +188,6 @@ export function visitReal_number(ctx) {
 export function visitImaginary_number(ctx) {
   // JavaScript does not have native support for imaginary numbers.
   // Translate it as a comment or throw an error depending on the use case.
-  const numberText = ctx.NUMBER().getText();
   throw new Error(`Translation error: Imaginary number '${numberText}i' is not natively supported in JavaScript.`);
 }
 
@@ -233,46 +225,55 @@ export function visitPattern_capture_target(ctx) {
   return targetName;
 }
 
+export function visitWildcard_pattern(ctx) {
+  return '_'; 
+}
 
+export function visitValue_pattern(ctx)
+{
+  return this.visit(ctx.attr());
+}
+
+export function visitAttr(ctx)
+{
+  return ctx.NAME().map(name => name.getText()).join('.');
+}
+
+export function visitGroup_pattern(ctx)
+{
+  let group = this.visit(ctx.pattern())
+  return {pattern: group}
+}
+
+
+export function visitSequence_pattern(ctx) {
+  if (ctx.maybe_sequence_pattern()) return `[${this.visit(ctx.maybe_sequence_pattern())}]`;
+  if (ctx.open_sequence_pattern()) return `(${this.visit(ctx.open_sequence_pattern())})`;
+  if (ctx.children[0].getText() === '[') return '[]'; // Empty list case
+  if (ctx.children[0].getText() === '(') return '()'; // Empty tuple case
+}
+
+
+export function visitOpen_sequence_pattern(ctx) {
+  const first = this.visit(ctx.maybe_star_pattern(0));
+  const rest = ctx.maybe_sequence_pattern() ? this.visit(ctx.maybe_sequence_pattern()) : '';
+  return `${first},${rest}`.replace(/,$/, ''); // Ensures no trailing comma
+}
+
+export function visitMaybe_sequence_pattern(ctx) {
+  const elements = ctx.maybe_star_pattern().map(e => this.visit(e));
+  return elements.join(',') + (ctx.children[ctx.children.length - 1].getText() === ',' ? ',' : '');
+}
+
+
+export function visitMaybe_star_pattern(ctx) {
+  if (ctx.star_pattern()) {
+    return this.visit(ctx.star_pattern()); // Handles `star_pattern`
+  }
+  return this.visit(ctx.pattern()); // Handles regular `pattern`
+}
 /*// Match statement
 // ---------------
-
-subject_expr
-    : star_named_expression ',' star_named_expressions?
-    | named_expression;
-
-case_block
-    : soft_kw_case patterns guard? ':' block;
-
-wildcard_pattern
-    : soft_kw_wildcard;
-
-value_pattern
-    : attr;
-
-attr
-    : NAME ('.' NAME)+
-    ;
-name_or_attr
-    : NAME ('.' NAME)*
-    ;
-
-group_pattern
-    : '(' pattern ')';
-
-sequence_pattern
-    : '[' maybe_sequence_pattern? ']'
-    | '(' open_sequence_pattern? ')';
-
-open_sequence_pattern
-    : maybe_star_pattern ',' maybe_sequence_pattern?;
-
-maybe_sequence_pattern
-    : maybe_star_pattern (',' maybe_star_pattern)* ','?;
-
-maybe_star_pattern
-    : star_pattern
-    | pattern;
 
 star_pattern
     : '*' pattern_capture_target
@@ -296,8 +297,6 @@ double_star_pattern
 class_pattern
     : name_or_attr '(' ((positional_patterns (',' keyword_patterns)? | keyword_patterns) ','?)? ')'
     ;
-
-
 
 positional_patterns
     : pattern (',' pattern)*;

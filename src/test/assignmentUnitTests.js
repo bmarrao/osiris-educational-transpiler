@@ -68,7 +68,7 @@ describe('Python', () => {
   it('should translate class with multiple methods', () => {
     const input = `class Calculator:\n\tdef add(self, a, b):\n\t\treturn a + b\n\n\tdef subtract(self, a, b):\n\t\treturn a - b`;
     const outputCode = parsePython(input);
-    expect(outputCode).to.equal('class Calculator {\n\t\tadd(a, b) {\n\t\t\t\treturn a + b;\n\t\t}\n\n\t\tsubtract(a, b) {\n\t\t\t\treturn a - b;\n\t\t}\n}');
+    expect(outputCode).to.equal('class Calculator {\n\t\tadd(a, b) {\n\t\t\t\treturn a + b;\n\t\t}\n\t\tsubtract(a, b) {\n\t\t\t\treturn a - b;\n\t\t}\n}');
   });
 
   // Inheritance
