@@ -1,0 +1,37 @@
+{
+  "name": "python3_12",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "### About files:  - PythonParser.g4    is the ANTLR4 parser grammar that based on the official [Python PEG grammar](https://docs.python.org/3.12/reference/grammar.html)",
+  "main": "Python3Parser.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "http-server -c-1 -o",
+    "dev": "http-server -c-1 -o -p 8080",
+    "dev:watch": "http-server -c-1 -o -p 8080 -a localhost",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "acorn": "^8.14.0",
+    "antlr4": "^4.13.2",
+    "eval5": "^1.4.8",
+    "js-interpreter": "^5.2.1",
+    "transpiler": "^1.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "chai": "^5.1.1",
+    "http-server": "^14.1.1",
+    "mocha": "^10.7.3",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "worker-loader": "^3.0.8"
+  }
+}

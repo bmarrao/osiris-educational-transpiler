@@ -9,6 +9,10 @@
 !PythonVisitorMethods/
 !PythonVisitorMethods/**
 
+!package.json 
+!webpack.config.mjs 
+!package-lock.json
+!index.js
 !dist/
 !dist/**
 
