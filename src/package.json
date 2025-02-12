@@ -18,10 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "acorn": "^8.14.0",
-    "antlr4": "^4.13.2",
-    "eval5": "^1.4.8",
-    "js-interpreter": "^5.2.1",
-    "transpiler": "^1.2.0"
+    "antlr4": "^4.13.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
