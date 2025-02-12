@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Except these files/directories
+!.gitignore
+!PythonVisitorMethods
+!dist/
+!Python/
+!transpilerPythonJs.js
