@@ -1,9 +1,19 @@
+
 # Ignore everything
 *
 
-# Except these files/directories
+# Allow .gitignore itself
 !.gitignore
+
+# Allow specific directories and files
 !PythonVisitorMethods/
+!PythonVisitorMethods/**
+
 !dist/
+!dist/**
+
 !Python/
+!Python/**
+
 !transpilerPythonJs.js
+
