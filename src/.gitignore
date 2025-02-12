@@ -8,6 +8,9 @@
 # Allow specific directories and files
 !PythonVisitorMethods/
 !PythonVisitorMethods/**
+!tools/
+!tools/**
+
 
 !package.json 
 !webpack.config.mjs 
