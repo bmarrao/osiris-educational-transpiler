@@ -1,1 +1,8 @@
-node_modules/
+# Ignore everything
+*
+
+# Except the .gitignore file
+!.gitignore
+
+# Except the src directory
+!src/
