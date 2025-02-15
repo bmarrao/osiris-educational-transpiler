@@ -3,7 +3,6 @@ import PythonParser from './Python/PythonParser.js';
 import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
-
 var code_suffix = `
 // Utility to wait for input from the main thread
 async function waitForInput(message) {
@@ -84,23 +83,23 @@ class PythonTranspiler {
     parsePython(input) {
         const inputStream = new antlr4.InputStream(input);
         const lexer = new PythonLexer(inputStream);
-        
+
         // Create an error collector and assign it to the lexer
         const errorCollector = new ErrorCollector();
         lexer.removeErrorListeners();
         lexer.addErrorListener(errorCollector);
-        
+
         const tokens = new antlr4.CommonTokenStream(lexer);
         const parser = new PythonParser(tokens);
-        
+
         // Assign the same error collector to the parser
         parser.removeErrorListeners();
         parser.addErrorListener(errorCollector);
-        
+
         try {
             const tree = parser.file_input();
             const errors = errorCollector.getErrors();
-            
+
             if (errors.length > 0) {
                 // If there are syntax errors, return them in a structured format
                 return {

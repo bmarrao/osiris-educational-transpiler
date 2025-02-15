@@ -56,31 +56,32 @@ export function visitPrimary(ctx) {
             return `${primary}.${ctx.NAME().getText()}`; // obj.property
         } else if (ctx.genexp()) {
             return `${primary}.map(${this.visit(ctx.genexp())})`; // Generators map/forEach
-        } else if (ctx.arguments()) {
-            if (primary == "print")
-            {
-                if (this.runOnBrowser == true)
-                {
-                    return `postMessage${this.visit(ctx.arguments())};`; // Function calls
+        } 
+        else if (ctx.arguments()) {
+            if (primary === "print") {
+                if (this.runOnBrowser === true) {
+                    return `postMessage${this.visit(ctx.arguments())};`;
+                } else {
+                    return `console.log${this.visit(ctx.arguments())};`;
                 }
-                else 
-                {
-                    return `console.log${this.visit(ctx.arguments())};`; // Function calls
+            } else if (primary === "input") {
+                if (this.runOnBrowser === true) {
+                    return `await waitForInput${this.visit(ctx.arguments())};`;
+                } else {
+                    return `prompt${this.visit(ctx.arguments())};`;
                 }
+            } else if (primary === "int") {
+                return `parseInt${this.visit(ctx.arguments())}`;
+            } else if (primary === "float") {
+                return `parseFloat${this.visit(ctx.arguments())}`;
+            } else if (primary === "str") {
+                return `String${this.visit(ctx.arguments())}`;
+            } else if (primary === "bool") {
+                return `Boolean${this.visit(ctx.arguments())}`;
+            } else if (primary === "list" || primary === "tuple") {
+                return `Array.from${this.visit(ctx.arguments())}`;
             }
-            else if (primary == "input")
-            {
-                if (this.runOnBrowser == true)
-                {
-                    //TODO ADD HANDLING FOR THIS
-                    return `await waitForInput${this.visit(ctx.arguments())};`; // Function calls
-                }
-                else 
-                {
-                    return `prompt${this.visit(ctx.arguments())};`; // Function calls
-                }
-            }
-            return `${primary}${this.visit(ctx.arguments())}`; // Function calls
+            return `${primary}${this.visit(ctx.arguments())}`;
         } else if (ctx.slices()) {
             return `${primary}.slice(${this.visit(ctx.slices())})`; // Array slicing
         }
