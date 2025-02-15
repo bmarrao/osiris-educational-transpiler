@@ -28,13 +28,14 @@ import { flatten } from './tools/flatten.js';
 //TODO ADD HANDLING FOR PRINT 
 
 export default class PythonCodeGenerator extends PythonParserVisitor {
-    constructor() {
+    constructor(runOnBrowser=false) {
         super();
         this.globalvars = []; 
         this.localVars = []
         this.inFunc = false ;
         this.inClass = false ;
         this.case= {}
+        this.runOnBrowser = runOnBrowser
     }
 
     visitFile_input(ctx) {

@@ -59,7 +59,26 @@ export function visitPrimary(ctx) {
         } else if (ctx.arguments()) {
             if (primary == "print")
             {
-                return `console.log${this.visit(ctx.arguments())};`; // Function calls
+                if (this.runOnBrowser == true)
+                {
+                    return `postMessage${this.visit(ctx.arguments())};`; // Function calls
+                }
+                else 
+                {
+                    return `console.log${this.visit(ctx.arguments())};`; // Function calls
+                }
+            }
+            else if (primary == "input")
+            {
+                if (this.runOnBrowser == true)
+                {
+                    //TODO ADD HANDLING FOR THIS
+                    return `await waitForInput${this.visit(ctx.arguments())};`; // Function calls
+                }
+                else 
+                {
+                    return `prompt${this.visit(ctx.arguments())};`; // Function calls
+                }
             }
             return `${primary}${this.visit(ctx.arguments())}`; // Function calls
         } else if (ctx.slices()) {

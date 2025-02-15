@@ -6,7 +6,8 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 var code_suffix = `
 // Utility to wait for input from the main thread
-async function waitForInput() {
+async function waitForInput(message) {
+    postMessage(message)
     return new Promise((resolve) => {
         const inputListener = (event) => {
             if (event.data.type === "input") {
@@ -39,9 +40,10 @@ class ErrorCollector {
 }
 
 class PythonTranspiler {
-    constructor(language) {
+    constructor(language, runOnBrowser) {
         this.language = language;
         this.code = "";
+        this.runOnBrowser= runOnBrowser
         this.transpiledCode = ""
         this.worker = null;
     }
@@ -50,25 +52,26 @@ class PythonTranspiler {
     {
         this.code=code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
-        this.transpiledCode = translatePython(this.code);
+        this.transpiledCode = translatePython(this.code,this.runOnBrowser);
         return this.transpiledCode;
     }
 
+
+    //TODO REMOVE THIS 
     sendIO(input)
     {
         console.log(this.worker)
         this.worker.postMessage({ type: "input", input: input });
     }
 
-    runCode(code, appendToTerminal,timeout)
+    runCode(appendToTerminal,timeout)
     {
         let Worker = window.Worker;
         let runCode = `async function main() {
-        ${code}
+        ${this.transpiledCode}
         };
         ${code_suffix}
         `
-        console.log(runCode)
         // Create a Blob with the Web Worker code
         const blob = new Blob([runCode], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
@@ -118,9 +121,9 @@ class PythonTranspiler {
         }
     }
 
-    translatePython(input) {
+    translatePython(input, runOnBrowser) {
         try {
-            const codeGenerator = new PythonCodeGenerator(this.options);
+            const codeGenerator = new PythonCodeGenerator(this.runOnBrowser);
             const parseResult = this.parsePython(input);
             
             if (!parseResult.success) {
