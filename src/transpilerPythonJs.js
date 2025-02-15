@@ -353,9 +353,9 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return ArithmeticOperators.visitPower.call(this, ctx);
     }
 
-    visitAssignmentExpressions(ctx) {
+    visitAssignment_expression(ctx) {
         console.log('Visiting Assignment Expressions');
-        return Expressions.visitAssignmentExpressions.call(this, ctx);
+        return Expressions.visitAssignment_expression.call(this, ctx);
     }
  
     visitExpression(ctx) {
@@ -376,9 +376,9 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return Expressions.visitNamed_expression.call(this, ctx);
     }
 
-    visitStarExpressions(ctx) {
+    visitStar_expressions(ctx) {
         console.log('Visiting Star Expressions');
-        return Expressions.visitStarExpressions.call(this, ctx);
+        return Expressions.visitStar_expressions.call(this, ctx);
     }
     visitConjunction(ctx) {
         //console.log('Visiting conjunction');
