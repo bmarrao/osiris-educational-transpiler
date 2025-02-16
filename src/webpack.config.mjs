@@ -18,6 +18,9 @@ export default {
     outputModule: true,
   },
   mode: 'development',
+  optimization: {
+    usedExports: false, // Prevents tree shaking
+  },
   resolve: {
     extensions: ['.js']
   },
