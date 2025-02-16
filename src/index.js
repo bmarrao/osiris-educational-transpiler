@@ -65,10 +65,10 @@ function parsePython(input) {
     }
 }
 
-function translatePython(input) {
+function translatePython(input,runOnBrowser) {
     try {
-        const codeGenerator = new PythonCodeGenerator(this.runOnBrowser);
-        const parseResult = this.parsePython(input);
+        const codeGenerator = new PythonCodeGenerator(runOnBrowser);
+        const parseResult = parsePython(input);
         
         if (!parseResult.success) {
             // If parsing was unsuccessful, return the errors
@@ -125,7 +125,7 @@ class PythonTranspiler {
     {
         this.code=code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
-        this.transpiledCode = translatePython(this.code);
+        this.transpiledCode = translatePython(this.code, this.runOnBrowser);
         return this.transpiledCode;
     }
 
