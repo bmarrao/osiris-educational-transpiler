@@ -95,7 +95,7 @@ function translatePython(input,runOnBrowser) {
 // Custom error collector to store syntax errors
 class ErrorCollector {
     constructor() {
-        console.log("DEBUG")
+        // console.log("DEBUG")
         this.errors = [];
     }
 
@@ -127,7 +127,7 @@ class PythonTranspiler {
 
     sendIO(input)
     {
-        console.log(this.worker)
+        // console.log(this.worker)
         this.worker.postMessage({ type: "input", input: input });
     }
 
@@ -141,14 +141,14 @@ class PythonTranspiler {
           ${insideCode.code}
         };
         ${code_suffix}`;
-        console.log(`CODE: ${runCodeStr}`);
+        // console.log(`CODE: ${runCodeStr}`);
         const blob = new Blob([runCodeStr], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
         this.worker.postMessage({ type: "start" });
         this.worker.onmessage = (event) => {
           appendToTerminal(event);
         };
-        console.log("FINISHED RUNNING");
+        // console.log("FINISHED RUNNING");
       } catch (error) {
         console.error("Error in runCode:", error);
       }
