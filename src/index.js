@@ -121,7 +121,7 @@ class PythonTranspiler {
     {
         this.code=code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
-        this.transpiledCode = translatePython(this.code, this.runOnBrowser);
+        this.transpiledCode = translatePython(this.code, false);
         return this.transpiledCode;
     }
 
@@ -134,9 +134,9 @@ class PythonTranspiler {
 
     runCode(appendToTerminal, timeout) {
       try {
-        console.log(`This is the transpiled code ${this.transpiledCode.code}`);
         let Worker = window.Worker;
 
+        let insideCode = translatePython(this.code, true);
         let runCodeStr = `async function main() {
           ${this.transpiledCode.code}
         };
