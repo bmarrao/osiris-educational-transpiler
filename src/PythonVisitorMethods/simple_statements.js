@@ -68,15 +68,18 @@ export function visitAssignment(ctx) {
       
       let ret = '';
       
-      for (let i = 0; i < targets.length; i++) {
-        let assignment = `${targets[i]} = ${values[i]};`;
-        if (this.localVars.includes(targets[i]) || this.inClass) {
-          ret += assignment + '\n';
-        } else {
-          this.localVars.push(targets[i]);
-          ret += `let ${assignment}\n`;
+      
+        for (let i = 0; i < targets.length; i++) {
+          let assignment = `${targets[i]} = ${values[i]};`;
+          if (this.localVars.includes(targets[i]) || this.inClass) {
+            ret += assignment;
+          } else {
+            this.localVars.push(targets[i]);
+            ret += `let ${assignment}`;
+          }
+          if (i < targets.length - 1) ret += '\n';
         }
-      }
+
       return ret;
     }
 

@@ -62,7 +62,7 @@ export function visitPrimary(ctx) {
                 if (this.runOnBrowser === true) {
                     return `postMessage${this.visit(ctx.arguments())}`;
                 } else {
-                    return `console.log${this.visit(ctx.arguments())}`;
+                    return `console.log${this.visit(ctx.arguments())};`;
                 }
             } else if (primary === "input") {
                 if (this.runOnBrowser === true) {
