@@ -21,21 +21,21 @@ star_named_expression
 */
 
 export function visitExpression(ctx) {
-    console.log(1)
+    // console.log(1)
     if (ctx.lambdef()) {
       return this.visit(ctx.lambdef()); // Handle lambda function
     }
 
     const disjunctions = ctx.disjunction();
     if (disjunctions.length === 1) {
-        console.log(3)
+        // console.log(3)
         const disj = this.visit(disjunctions[0]);
-        console.log("TESTE");
-        console.log(disj);
+        // console.log("TESTE");
+        // console.log(disj);
         return disj; // Just a single disjunction
     }
 
-    console.log(2)
+    // console.log(2)
     // Translate Python ternary (x if y else z) to JavaScript (y ? x : z)
     const condition = this.visit(disjunctions[1]);
     const trueExpr = this.visit(disjunctions[0]);
@@ -68,8 +68,8 @@ export function visitNamed_expression(ctx) {
       return this.visit(ctx.assignment_expression());
     } else if (ctx.expression()) {
         const expr = this.visit(ctx.expression());
-        console.log("Testexxxx") 
-        console.log(expr) 
+        // console.log("Testexxxx") 
+        // console.log(expr) 
         return expr;
     } else {
       throw new Error("Invalid named expression");
@@ -82,8 +82,8 @@ export function visitStar_expressions(ctx) {
     
     // Handle trailing comma
     const hasTrailingComma = ctx.getText().trim().endsWith(',');
-    console.log("TESTE\n\n\n\n\n")
-    console.log(expressions.join(', '))
+    // console.log("TESTE\n\n\n\n\n")
+    // console.log(expressions.join(', '))
     // Return as a comma-separated string or an array depending on the parent context
     return hasTrailingComma 
         ? `${expressions.join(', ')}` 

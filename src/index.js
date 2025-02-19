@@ -69,7 +69,7 @@ function translatePython(input,runOnBrowser) {
     try {
         const codeGenerator = new PythonCodeGenerator(runOnBrowser);
         const parseResult = parsePython(input);
-        
+
         if (!parseResult.success) {
             // If parsing was unsuccessful, return the errors
             return {
@@ -77,10 +77,10 @@ function translatePython(input,runOnBrowser) {
                 errors: parseResult.errors
             };
         }
-        
+
         // Proceed with code generation if parsing succeeded
         const generatedCode = codeGenerator.visit(parseResult.tree);
-        
+
         return {
             success: true,
             code: generatedCode
@@ -117,11 +117,7 @@ class PythonTranspiler {
         this.worker = null;
     }
 
-    test()
-    {
-        console.log("TEST")
-    }
-    passCode(code)
+   passCode(code)
     {
         this.code=code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
@@ -138,11 +134,11 @@ class PythonTranspiler {
 
     runCode(appendToTerminal, timeout) {
       try {
-        console.log(`This is the transpiled code ${this.transpiledCode}`);
+        console.log(`This is the transpiled code ${this.transpiledCode.code}`);
         let Worker = window.Worker;
-        
+
         let runCodeStr = `async function main() {
-          ${this.transpiledCode}
+          ${this.transpiledCode.code}
         };
         ${code_suffix}`;
         console.log(`CODE: ${runCodeStr}`);

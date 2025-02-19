@@ -1,5 +1,5 @@
 export function visitShift_expr(ctx) {
-        console.log('visitShift_expr');
+        // console.log('visitShift_expr');
         if (ctx.shift_expr()) {
             // Case: shift_expr ('<<' | '>>') sum
             const left = this.visit(ctx.shift_expr());
@@ -13,7 +13,7 @@ export function visitShift_expr(ctx) {
     }
 
 export function visitBitwise_or(ctx) {
-    console.log('visitBitwise_or');
+    // console.log('visitBitwise_or');
     if (ctx.bitwise_or()) {
         // Recursive case: `bitwise_or '|' bitwise_xor`
         const left = this.visit(ctx.bitwise_or());
@@ -26,7 +26,7 @@ export function visitBitwise_or(ctx) {
 }
 
 export function visitBitwise_xor(ctx) {
-    console.log('visitBitwise_xor');
+    // console.log('visitBitwise_xor');
     if (ctx.bitwise_xor()) {
         // Recursive case: `bitwise_xor '^' bitwise_and`
         const left = this.visit(ctx.bitwise_xor());
@@ -39,7 +39,7 @@ export function visitBitwise_xor(ctx) {
 }
 
 export function visitBitwise_and(ctx) {
-    console.log('visitBitwise_and');
+    // console.log('visitBitwise_and');
     if (ctx.bitwise_and()) {
         // Recursive case: `bitwise_and '&' shift_expr`
         const left = this.visit(ctx.bitwise_and());

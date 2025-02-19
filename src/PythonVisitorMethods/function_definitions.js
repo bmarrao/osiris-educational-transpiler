@@ -8,7 +8,7 @@ function_def_raw
 */
 
 export function visitFunction_def(ctx) {
-    console.log(1)
+    // console.log(1)
     // Check if there are decorators
     let pre_function = "";
     if (ctx.decorators()) {
@@ -51,7 +51,7 @@ export function visitFunction_def_raw(ctx) {
         functionStr = `async ${functionStr}`;
     }
 
-    console.log(4)
+    // console.log(4)
     return functionStr;
 }
 

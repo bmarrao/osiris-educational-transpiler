@@ -355,30 +355,30 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     }
 
     visitAssignment_expression(ctx) {
-        console.log('Visiting Assignment Expressions');
+        // console.log('Visiting Assignment Expressions');
         return Expressions.visitAssignment_expression.call(this, ctx);
     }
  
     visitExpression(ctx) {
-        console.log('Visiting Expression');
+        // console.log('Visiting Expression');
         return Expressions.visitExpression.call(this, ctx);
     }
     visitExpressions(ctx) {
-        console.log('Visiting Expressions');
+        // console.log('Visiting Expressions');
         return Expressions.visitExpressions.call(this, ctx);
     }
     visitDisjunction(ctx) {
-        console.log('Visiting disjunction');
+        // console.log('Visiting disjunction');
         return Expressions.visitDisjunction.call(this, ctx);
     }
 
     visitNamed_expression(ctx) {
-        console.log('Visiting Named Expressions');
+        // console.log('Visiting Named Expressions');
         return Expressions.visitNamed_expression.call(this, ctx);
     }
 
     visitStar_expressions(ctx) {
-        console.log('Visiting Star Expressions');
+        // console.log('Visiting Star Expressions');
         return Expressions.visitStar_expressions.call(this, ctx);
     }
     visitConjunction(ctx) {
@@ -428,7 +428,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return IfStmt.visitElse_block.call(this, ctx);
     }
     visitStar_targets(ctx) {
-        //console.log('Visiting star_targets');
+        console.log('Visiting star_targets');
         return GenericTargets.visitStar_targets.call(this, ctx);
     }
 

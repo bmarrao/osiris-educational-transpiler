@@ -16,7 +16,7 @@ export function visitAtom(ctx) {
     }
     else if (ctx.strings())
     {
-        console.log("Visit Strings Atom");
+        // console.log("Visit Strings Atom");
         return this.visit(ctx.strings())
     } else if (ctx.list() || ctx.listcomp()) {
         return this.visit(ctx.list() || ctx.listcomp());
@@ -60,15 +60,15 @@ export function visitPrimary(ctx) {
         else if (ctx.arguments()) {
             if (primary === "print") {
                 if (this.runOnBrowser === true) {
-                    return `postMessage${this.visit(ctx.arguments())};`;
+                    return `postMessage${this.visit(ctx.arguments())}`;
                 } else {
-                    return `console.log${this.visit(ctx.arguments())};`;
+                    return `console.log${this.visit(ctx.arguments())}`;
                 }
             } else if (primary === "input") {
                 if (this.runOnBrowser === true) {
-                    return `await waitForInput${this.visit(ctx.arguments())};`;
+                    return `await waitForInput${this.visit(ctx.arguments())}`;
                 } else {
-                    return `prompt${this.visit(ctx.arguments())};`;
+                    return `prompt${this.visit(ctx.arguments())}`;
                 }
             } else if (primary === "int") {
                 return `parseInt${this.visit(ctx.arguments())}`;

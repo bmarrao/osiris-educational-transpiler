@@ -1,6 +1,6 @@
 export function visitArgs(ctx) {
   let args = [];
-  console.log(1);
+  // console.log(1);
 
   // Check if there are arguments in the first group
   const starredExpressions = ctx.starred_expression ? ctx.starred_expression() : [];
@@ -27,7 +27,7 @@ export function visitArgs(ctx) {
     if (arg !== null) args.push(arg);
   }
 
-  console.log(2);
+  // console.log(2);
 
   // Handle `kwargs` part
   if (ctx.kwargs) {
@@ -37,7 +37,7 @@ export function visitArgs(ctx) {
     }
   }
 
-  console.log(`args returning ${args.join(', ')}`);
+  // console.log(`args returning ${args.join(', ')}`);
   return args.join(', ');
 }
 

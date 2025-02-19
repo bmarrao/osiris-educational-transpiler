@@ -66,7 +66,7 @@ export function visitSimple_stmts(ctx) {
         
         result += this.visit(stmt);
     }
-    console.log(`RESULT\n\n\n\n\n\n${result}`)
+    // console.log(`RESULT\n\n\n\n\n\n${result}`)
     return result;
 }
 

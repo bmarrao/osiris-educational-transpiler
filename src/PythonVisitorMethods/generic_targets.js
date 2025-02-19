@@ -1,4 +1,6 @@
 export function visitStar_targets(ctx) {
+    
+    console.log('Visiting star_targets');
     // Grammar Rule: star_targets
     // star_targets: star_target (',' star_target )* ','?
     //
@@ -11,6 +13,7 @@ export function visitStar_targets(ctx) {
     // `...a, ...b`
     const targets = ctx.star_target().map(target => this.visit(target));
     console.log(`${targets.join(', ')}`)
+    // console.log(`${targets.join(', ')}`)
     return `${targets.join(', ')}`; // Spread syntax for multiple star targets
 }
 

@@ -1,3 +1,5 @@
+import { flatten }  from "../tools/flatten.js"
+
 /*TODO ADD HANDLING FOR THE CASE IN WICH  
 
 func() : 
@@ -11,7 +13,7 @@ let x = 5
 let x = 7 
 */
 export function visitAssignment(ctx) {
-    console.log("visitAssignment\n");
+    console.log(`In assignment with variables ${this.localVars}\n`);
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
         console.log("FIRST");
@@ -35,7 +37,7 @@ export function visitAssignment(ctx) {
     // TODO ADD TUPLE HANDLING IN HEREHandle assignment with parentheses (single_target or single_subscript_attribute_target): expression '=' annotated_rhs
     if (ctx.single_target() && ctx.expression()) {
         const target = this.visit(ctx.single_target());
-	console.log("SND");
+	 console.log("SND");
         const expression = this.visit(ctx.expression());
         const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
         if (this.localVars.includes(target) || this.inClass)
@@ -54,26 +56,36 @@ export function visitAssignment(ctx) {
     }
 
     // Handle assignments with multiple star targets (star_targets '=')
+    
+    
     if (ctx.star_targets() && !ctx.augassign()) {
-	const targets = this.visit(ctx.star_targets());
-        const value = this.visit(ctx.star_expressions());
-        // Return the JavaScript equivalent for multiple star targets
-        let ret = `${targets} = ${value};`;
-        // TODO HANDLE CASE WHERE  x = 7; x,y = 7,6
-        if (this.localVars.includes(targets)|| this.inClass)
-        {
-            return ret;
+      const targetsStr = flatten(this.visit(ctx.star_targets()))[0];
+      console.log(targetsStr)
+      const valuesStr = this.visit(ctx.star_expressions());
+      
+      const targets = targetsStr.split(',').map(t => t.trim());
+      const values = valuesStr.split(',').map(v => v.trim());
+      
+      let ret = '';
+      
+      for (let i = 0; i < targets.length; i++) {
+        let assignment = `${targets[i]} = ${values[i]};`;
+        if (this.localVars.includes(targets[i]) || this.inClass) {
+          ret += assignment + '\n';
+        } else {
+          this.localVars.push(targets[i]);
+          ret += `let ${assignment}\n`;
         }
-        else if (ret != null)
-        {
-            this.localVars.push(targets);
-            return `let ${ret}`;
-        }
+      }
+      return ret;
     }
+
+
 
     // Handle augmented assignment (single_target augassign (yield_expr | star_expressions))
     if (ctx.single_target() && ctx.augassign()) {
 	
+	 console.log("FTH");
         // Visit the target and expression nodes
         const target = this.visit(ctx.single_target());
         const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
@@ -103,7 +115,7 @@ export function visitAssignment(ctx) {
 }
 
 export function visitAnnotatedRhs(ctx) {
-    console.log("visitAnnotatedRhs");
+    // console.log("visitAnnotatedRhs");
     // Check for 'yield_expr' first
     if (ctx.yield_expr()) {
         return this.visit(ctx.yield_expr()); // Visit the yield expression
@@ -119,10 +131,10 @@ export function visitAnnotatedRhs(ctx) {
 }
 
 export function visitAugassign(ctx) {
-    console.log("visitAugassign");
-    console.log("AUGASSIGN");
+    // console.log("visitAugassign");
+    // console.log("AUGASSIGN");
     const operator = ctx.getText(); // Get the operator (e.g., +=, -=, etc.)
-    console.log(operator); 
+    // console.log(operator); 
     // Return the operator if it's valid in JavaScript, or its equivalent
     switch (operator) {
         case '+=':
