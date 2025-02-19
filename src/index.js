@@ -138,7 +138,7 @@ class PythonTranspiler {
 
         let insideCode = translatePython(this.code, true);
         let runCodeStr = `async function main() {
-          ${this.transpiledCode.code}
+          ${insideCode.code}
         };
         ${code_suffix}`;
         console.log(`CODE: ${runCodeStr}`);
