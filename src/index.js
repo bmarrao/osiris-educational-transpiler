@@ -26,6 +26,7 @@ main()
 
 
 function parsePython(input) {
+    console.log("Before parse")
     const inputStream = new antlr4.InputStream(input);
     const lexer = new PythonLexer(inputStream);
 
@@ -65,11 +66,12 @@ function parsePython(input) {
     }
 }
 
-function translatePython(input,runOnBrowser) {
+export function translatePython(input,runOnBrowser) {
     try {
         const codeGenerator = new PythonCodeGenerator(runOnBrowser);
         const parseResult = parsePython(input);
 
+    console.log("Before parse")
         if (!parseResult.success) {
             // If parsing was unsuccessful, return the errors
             return {

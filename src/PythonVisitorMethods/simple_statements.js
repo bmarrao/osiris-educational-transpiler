@@ -1,5 +1,49 @@
 import { flatten }  from "../tools/flatten.js"
 
+function splitByTopLevelCommas(str) {
+  let result = [];
+  let current = '';
+  let bracketCount = 0;
+  let parenCount = 0;
+  let inQuotes = false;
+  let quoteChar = '';
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (inQuotes) {
+      current += char;
+      if (char === quoteChar && str[i - 1] !== '\\') {
+        inQuotes = false;
+      }
+    } else {
+      if (char === '"' || char === "'" || char === '`') {
+        inQuotes = true;
+        quoteChar = char;
+        current += char;
+      } else if (char === '[') {
+        bracketCount++;
+        current += char;
+      } else if (char === ']') {
+        bracketCount--;
+        current += char;
+      } else if (char === '(') {
+        parenCount++;
+        current += char;
+      } else if (char === ')') {
+        parenCount--;
+        current += char;
+      } else if (char === ',' && bracketCount === 0 && parenCount === 0) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+  }
+  if (current.trim()) result.push(current.trim());
+  return result;
+}
+
 /*TODO ADD HANDLING FOR THE CASE IN WICH  
 
 func() : 
@@ -13,15 +57,12 @@ let x = 5
 let x = 7 
 */
 export function visitAssignment(ctx) {
-    console.log(`In assignment with variables ${this.localVars}\n`);
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
-        console.log("FIRST");
         const variableName = ctx.NAME().getText();
         const expression = this.visit(ctx.expression());
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
-        
         if (this.localVars.includes(variableName) || this.inClass)
         {
             return `${variableName} = ${String(annotatedRhs).trim()};`
@@ -37,7 +78,6 @@ export function visitAssignment(ctx) {
     // TODO ADD TUPLE HANDLING IN HEREHandle assignment with parentheses (single_target or single_subscript_attribute_target): expression '=' annotated_rhs
     if (ctx.single_target() && ctx.expression()) {
         const target = this.visit(ctx.single_target());
-	 console.log("SND");
         const expression = this.visit(ctx.expression());
         const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
         if (this.localVars.includes(target) || this.inClass)
@@ -47,7 +87,7 @@ export function visitAssignment(ctx) {
         else 
         {
             this.localVars.push(target);
-                    // Return the JavaScript equivalent of assignment with parenthesis or subscript
+            // Return the JavaScript equivalent of assignment with parenthesis or subscript
             return annotatedRhs
             ? `let ${target} = ${annotatedRhs};`
             : `let ${target} ;`;
@@ -60,14 +100,13 @@ export function visitAssignment(ctx) {
     
     if (ctx.star_targets() && !ctx.augassign()) {
       const targetsStr = flatten(this.visit(ctx.star_targets()))[0];
-      console.log(targetsStr)
       const valuesStr = this.visit(ctx.star_expressions());
-      
       const targets = targetsStr.split(',').map(t => t.trim());
-      const values = valuesStr.split(',').map(v => v.trim());
+      const values = splitByTopLevelCommas(valuesStr);
       
       let ret = '';
       
+
       
         for (let i = 0; i < targets.length; i++) {
           let assignment = `${targets[i]} = ${values[i]};`;
@@ -79,7 +118,7 @@ export function visitAssignment(ctx) {
           }
           if (i < targets.length - 1) ret += '\n';
         }
-
+    
       return ret;
     }
 

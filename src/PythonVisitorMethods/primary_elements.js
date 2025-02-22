@@ -10,6 +10,7 @@ export function visitAwait_primary(ctx) {
         return this.visit(ctx.primary());
     }
 }
+
 export function visitAtom(ctx) {
     if (ctx.tuple() || ctx.group() || ctx.genexp()) {
         return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
@@ -18,7 +19,19 @@ export function visitAtom(ctx) {
     {
         // console.log("Visit Strings Atom");
         return this.visit(ctx.strings())
-    } else if (ctx.list() || ctx.listcomp()) {
+    } 
+    else if (ctx.list() || ctx.listcomp()) 
+    {
+        if(ctx.list())
+        {
+            const list = this.visit(ctx.list())
+            console.log(`list var is : ${list}`)
+            return list ; 
+        }
+        else 
+        {
+            return this.visit(ctx.listcomp());
+        }
         return this.visit(ctx.list() || ctx.listcomp());
     } else if (ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp()) {
         return this.visit(ctx.dict() || ctx.set() || ctx.dictcomp() || ctx.setcomp());
@@ -85,8 +98,12 @@ export function visitPrimary(ctx) {
         } else if (ctx.slices()) {
             return `${primary}.slice(${this.visit(ctx.slices())})`; // Array slicing
         }
-    } else {
-        return this.visit(ctx.atom());
+    }
+    else 
+    {
+        const atomResult = this.visit(ctx.atom())
+        console.log(`atom result ${atomResult}`);
+        return atomResult
     }
 }
 

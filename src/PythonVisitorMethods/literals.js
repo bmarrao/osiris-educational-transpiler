@@ -93,7 +93,6 @@ export function visitList(ctx) {
     let namedExpressions = ctx.star_named_expressions() 
         ? this.visit(ctx.star_named_expressions()) 
         : '';
-    namedExpressions = String(namedExpressions).replace(/,+/g, ',').trim();
     return `[${namedExpressions}]`; // Wrap the named expressions in brackets for a JavaScript array
 }
 
