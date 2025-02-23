@@ -24,14 +24,40 @@ postMessage("Execution started")
 main()
 `;
 
+class CustomErrorListener extends antlr4.error.ErrorListener {
+    constructor() {
+        super();
+        this.errors = [];
+    }
+
+    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+        this.errors.push(`Syntax error at line ${line}, column ${column}: ${msg}`);
+    }
+
+    reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs) {
+        console.log("Ambiguity detected but resolved.");
+    }
+
+    reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) {
+        console.log("Attempting full context but continuing.");
+    }
+
+    reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
+        console.log("Context sensitivity detected but resolved.");
+    }
+
+    getErrors() {
+        return this.errors;
+    }
+}
 
 function parsePython(input) {
-    console.log("Before parse")
+    console.log("Before parse");
     const inputStream = new antlr4.InputStream(input);
     const lexer = new PythonLexer(inputStream);
 
     // Create an error collector and assign it to the lexer
-    const errorCollector = new ErrorCollector();
+    const errorCollector = new CustomErrorListener();
     lexer.removeErrorListeners();
     lexer.addErrorListener(errorCollector);
 
@@ -47,16 +73,15 @@ function parsePython(input) {
         const errors = errorCollector.getErrors();
 
         if (errors.length > 0) {
-            // If there are syntax errors, return them in a structured format
             return {
                 success: false,
                 errors: errors
             };
         }
-        
+
         return {
             success: true,
-            tree: tree // Return the parse tree if there are no errors
+            tree: tree
         };
     } catch (error) {
         return {
@@ -65,6 +90,7 @@ function parsePython(input) {
         };
     }
 }
+
 
 export function translatePython(input,runOnBrowser) {
     try {
