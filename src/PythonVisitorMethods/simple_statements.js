@@ -1,10 +1,12 @@
 import { flatten }  from "../tools/flatten.js"
 
+
 function splitByTopLevelCommas(str) {
   let result = [];
   let current = '';
   let bracketCount = 0;
   let parenCount = 0;
+  let curlyCount = 0;
   let inQuotes = false;
   let quoteChar = '';
 
@@ -32,7 +34,13 @@ function splitByTopLevelCommas(str) {
       } else if (char === ')') {
         parenCount--;
         current += char;
-      } else if (char === ',' && bracketCount === 0 && parenCount === 0) {
+      } else if (char === '{') {
+        curlyCount++;
+        current += char;
+      } else if (char === '}') {
+        curlyCount--;
+        current += char;
+      } else if (char === ',' && bracketCount === 0 && parenCount === 0 && curlyCount === 0) {
         result.push(current.trim());
         current = '';
       } else {
@@ -43,6 +51,7 @@ function splitByTopLevelCommas(str) {
   if (current.trim()) result.push(current.trim());
   return result;
 }
+
 
 /*TODO ADD HANDLING FOR THE CASE IN WICH  
 
