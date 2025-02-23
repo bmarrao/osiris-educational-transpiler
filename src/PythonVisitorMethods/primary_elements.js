@@ -96,7 +96,7 @@ export function visitPrimary(ctx) {
             }
             return `${primary}${this.visit(ctx.arguments())}`;
         } else if (ctx.slices()) {
-            return `${primary}.slice(${this.visit(ctx.slices())})`; // Array slicing
+            return `${primary}${this.visit(ctx.slices())}`; // Array slicing
         }
     }
     else 
@@ -107,48 +107,61 @@ export function visitPrimary(ctx) {
     }
 }
 
-/*
-export function visitSlices(ctx) {
-    if (ctx.slice()) {
-        return this.visit(ctx.slice());
-    } else {
-        const slices = ctx.children.map(child => this.visit(child)).filter(Boolean);
-        return slices.join(', ');
+function convertSlice(parts) {
+    let [start, stop, step] = ["", "", "1"];
+    const indices = parts.filter(p => p !== ":");
+
+    if (indices.length === 1) {
+      stop = indices[0];
+    } else if (indices.length === 2) {
+      [start, stop] = indices;
+    } else if (indices.length === 3) {
+      [start, stop, step] = indices;
     }
-}
+
+    return `array.slice(${start || "0"}, ${stop || "array.length"}).filter((_, i) => i % ${step} === 0)`;
+} 
+
+
+
+export function visitSlices(ctx) {
+    const sliceNodes = ctx.slice();
+    const starredNodes = ctx.starred_expression();
+    
+    // If only one type of node exists, use the explicit visit for each.
+    if (sliceNodes.length && !starredNodes.length) {
+      return sliceNodes.map(node => this.visit(node)).join(", ");
+    } else if (starredNodes.length && !sliceNodes.length) {
+      return starredNodes.map(node => this.visit(node)).join(", ");
+    }
+    
+    // Mixed case: preserve order by iterating over children.
+    let result = [];
+    for (let i = 0; i < ctx.getChildCount(); i++) {
+      const child = ctx.getChild(i);
+      if (child.getText() === ",") continue;
+      // Use explicit rule checks:
+      if (child.ruleIndex === this.parser.RULE_slice) {
+        result.push(this.visit(child)); // calls visitSlice
+      } else if (child.ruleIndex === this.parser.RULE_starred_expression) {
+        result.push(this.visit(child)); // calls visitStarred_expression
+      }
+    }
+    return result.join(", ");
+  }
 
 export function visitSlice(ctx) {
-    if (ctx.named_expression()) {
-        // Handle named expression directly
-        return this.visit(ctx.named_expression());
+    // The slice rule: either [expression? ':' expression? (':' expression?)?] or [named_expression].
+    if (ctx.getText().includes(":")) {
+      // This is a slice with colons.
+      const expressions = ctx.expression();
+      const start = expressions.length > 0 ? this.visit(expressions[0]) : "0";
+      const stop  = expressions.length > 1 ? this.visit(expressions[1]) : "array.length";
+      const step  = expressions.length > 2 ? this.visit(expressions[2]) : "1";
+      return `array.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+    } else if (ctx.named_expression()) {
+      // Explicitly delegate to the named_expression visitor.
+      return `[${this.visit(ctx.named_expression())}]`;
     }
-
-    const start = ctx.expression(0) ? this.visit(ctx.expression(0)) : '0';
-    const end = ctx.expression(1) ? this.visit(ctx.expression(1)) : '';
-    const step = ctx.expression(2) ? this.visit(ctx.expression(2)) : '';
-
-    if (step) {
-        // Include step in slicing
-        return `${start}, ${end}, ${step}`;
-    } else {
-        return `${start}, ${end}`;
-    }
-}
-
-*/
-/*
-
-primary
-    : primary ('.' NAME | genexp | '(' arguments? ')' | '[' slices ']')
-    | atom
-    ;
-
-slices
-    : slice
-    | (slice | starred_expression) (',' (slice | starred_expression))* ','?;
-
-slice
-    : expression? ':' expression? (':' expression? )?
-    | named_expression;
-
-*/
+    return ctx.getText();
+  }

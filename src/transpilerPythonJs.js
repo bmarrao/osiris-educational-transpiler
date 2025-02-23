@@ -408,12 +408,18 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         //console.log('Visiting atom');
         return PrimaryElements.visitAtom.call(this, ctx);
     }
-
+    visitSlice(ctx) {
+        //console.log('Visiting group');
+        return PrimaryElements.visitSlice.call(this, ctx);
+    }
     visitGroup(ctx) {
         //console.log('Visiting group');
         return PrimaryElements.visitGroup.call(this, ctx);
     }
-
+    visitSlices(ctx) {
+        //console.log('Visiting group');
+        return PrimaryElements.visitSlices.call(this, ctx);
+    }
     visitIf_stmt(ctx) {
         //console.log('Visiting if_stmt');
         return IfStmt.visitIf_stmt.call(this, ctx);
