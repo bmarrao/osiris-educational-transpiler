@@ -62,51 +62,91 @@ export function visitGroup(ctx) {
 }
 
 
+
+
+
 export function visitPrimary(ctx) {
-    if (ctx.primary()) {
-        let primary = this.visit(ctx.primary());
-        if (ctx.NAME()) {
-            return `${primary}.${ctx.NAME().getText()}`; // obj.property
-        } else if (ctx.genexp()) {
-            return `${primary}.map(${this.visit(ctx.genexp())})`; // Generators map/forEach
-        } 
-        else if (ctx.arguments()) {
-            if (primary === "print") {
-                if (this.runOnBrowser === true) {
-                    return `postMessage${this.visit(ctx.arguments())}`;
-                } else {
-                    return `console.log${this.visit(ctx.arguments())};`;
-                }
-            } else if (primary === "input") {
-                if (this.runOnBrowser === true) {
-                    return `await waitForInput${this.visit(ctx.arguments())}`;
-                } else {
-                    return `prompt${this.visit(ctx.arguments())}`;
-                }
-            } else if (primary === "int") {
-                return `parseInt${this.visit(ctx.arguments())}`;
-            } else if (primary === "float") {
-                return `parseFloat${this.visit(ctx.arguments())}`;
-            } else if (primary === "str") {
-                return `String${this.visit(ctx.arguments())}`;
-            } else if (primary === "bool") {
-                return `Boolean${this.visit(ctx.arguments())}`;
-            } else if (primary === "list" || primary === "tuple") {
-                return `Array.from${this.visit(ctx.arguments())}`;
-            }
-            return `${primary}${this.visit(ctx.arguments())}`;
-        } else if (ctx.slices()) {
-            return `${primary}${this.visit(ctx.slices())}`; // Array slicing
+  if (ctx.primary()) {
+    let primary = this.visit(ctx.primary());
+
+    if (ctx.NAME()) {
+      return `${primary}.${ctx.NAME().getText()}`;
+    } else if (ctx.genexp()) {
+      return `${primary}.map(${this.visit(ctx.genexp())})`;
+    } else if (ctx.arguments()) {
+      let argsText = this.visit(ctx.arguments()).slice(1, -1).trim();
+
+      if (primary === "print") {
+        let argsList = splitArguments(argsText);
+
+        if (argsList.length > 1) {
+          const parts = argsList.map(arg => {
+            arg = arg.trim();
+            return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
+          }).join("");
+
+          let template = `\`${parts}\``;
+          return this.runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
+        } else {
+          return this.runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
         }
+      } else if (primary === "input") {
+        return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+      } else if (primary === "int") {
+        return `parseInt(${argsText})`;
+      } else if (primary === "float") {
+        return `parseFloat(${argsText})`;
+      } else if (primary === "str") {
+        return `String(${argsText})`;
+      } else if (primary === "bool") {
+        return `Boolean(${argsText})`;
+      } else if (primary === "list" || primary === "tuple") {
+        return `Array.from(${argsText})`;
+      }
+      return `${primary}(${argsText})`;
+    } else if (ctx.slices()) {
+      return `${primary}${this.visit(ctx.slices())}`;
     }
-    else 
-    {
-        const atomResult = this.visit(ctx.atom())
-        console.log(`atom result ${atomResult}`);
-        return atomResult
-    }
+  } else {
+    return this.visit(ctx.atom());
+  }
 }
 
+// New function to properly split arguments while keeping string literals intact
+function splitArguments(argsText) {
+  let result = [];
+  let current = "";
+  let insideString = false;
+  let quoteType = "";
+
+  for (let i = 0; i < argsText.length; i++) {
+    let char = argsText[i];
+
+    if (insideString) {
+      current += char;
+      if (char === quoteType) {
+        insideString = false;
+      }
+    } else {
+      if (char === '"' || char === "'" || char === "`") {
+        insideString = true;
+        quoteType = char;
+        current += char;
+      } else if (char === ",") {
+        result.push(current.trim());
+        current = "";
+        continue;
+      } else {
+        current += char;
+      }
+    }
+  }
+  if (current) {
+    result.push(current.trim());
+  }
+
+  return result;
+}
 export function visitSlices(ctx) {
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();
