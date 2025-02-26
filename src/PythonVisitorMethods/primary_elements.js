@@ -134,40 +134,51 @@ export function visitSlices(ctx) {
   }
 
 
+
+
 export function visitSlice(ctx) {
-  // The slice rule: either [expression? ':' expression? (':' expression? )?] or [named_expression].
+  // If the slice text contains a colon, process it as a slice expression.
   if (ctx.getText().includes(":")) {
-    let start = "0", stop = "array.length", step = "1";
-    const children = ctx.children;
-    let index = 0;
+    const exprs = ctx.expression();
     
-    // If the first child is not a colon, then it is the start expression.
-    if (children[index].getText() !== ":") {
-      start = this.visit(children[index]);
-      index++;
+    // Two expressions: a[start:stop]
+    if (exprs.length === 2) {
+      const start = this.visit(exprs[0]);
+      const stop  = this.visit(exprs[1]);
+      return `.slice(${start}, ${stop})`;
     }
-    // Next child should be the colon token; skip it.
-    index++;
-    
-    // If the next child is not a colon, then it is the stop expression.
-    if (index < children.length && children[index].getText() !== ":") {
-      stop = this.visit(children[index]);
-      index++;
-    }
-    
-    // If there's another colon, skip it and assign the step expression.
-    if (index < children.length && children[index].getText() === ":") {
-      index++;
-      if (index < children.length) {
-        step = this.visit(children[index]);
+    // One expression: either omitted start (a[:stop]) or omitted stop (a[start:])
+    else if (exprs.length === 1) {
+      // Check the first child token: if it's a colon, then start was omitted.
+      if (ctx.getChild(0).getText() === ":") {
+        const stop = this.visit(exprs[0]);
+        return `.slice(0, ${stop})`;
+      } else {
+        const start = this.visit(exprs[0]);
+        return `.slice(${start})`;
       }
     }
-    
-    return `[array.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)]`;
-  } else if (ctx.named_expression()) {
-    // Delegate to the named_expression visitor.
+    // Three expressions: a[start:stop:step]
+    else if (exprs.length === 3) {
+      const start = this.visit(exprs[0]);
+      const stop  = this.visit(exprs[1]);
+      const step  = this.visit(exprs[2]);
+      if (step === "1") {
+        return `.slice(${start}, ${stop})`;
+      }
+      return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+    }
+    // If no expressions are provided (a[:] for example), return full slice.
+    else {
+      return `.slice(0)`;
+    }
+  }
+  // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
+  // delegate explicitly and wrap the result in square brackets.
+  else if (ctx.named_expression()) {
     return `[${this.visit(ctx.named_expression())}]`;
   }
+  
   return ctx.getText();
 }
 
