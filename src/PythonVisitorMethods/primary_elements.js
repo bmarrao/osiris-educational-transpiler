@@ -117,18 +117,21 @@ export function visitPrimary(ctx) {
 
 
 // New function to properly split arguments while keeping string literals intact
+
 function splitArguments(argsText) {
   let result = [];
   let current = "";
   let insideString = false;
   let quoteType = "";
-
+  let bracketStack = [];
+  
   for (let i = 0; i < argsText.length; i++) {
     let char = argsText[i];
-
+    
     if (insideString) {
       current += char;
-      if (char === quoteType) {
+      // End string if we see the matching quote and it isn’t escaped
+      if (char === quoteType && argsText[i - 1] !== '\\') {
         insideString = false;
       }
     } else {
@@ -136,21 +139,40 @@ function splitArguments(argsText) {
         insideString = true;
         quoteType = char;
         current += char;
-      } else if (char === ",") {
-        result.push(current.trim());
-        current = "";
-        continue;
+      } else if (char === '(' || char === '[' || char === '{') {
+        bracketStack.push(char);
+        current += char;
+      } else if (char === ')' || char === ']' || char === '}') {
+        if (bracketStack.length > 0) {
+          let last = bracketStack[bracketStack.length - 1];
+          if ((last === '(' && char === ')') ||
+              (last === '[' && char === ']') ||
+              (last === '{' && char === '}')) {
+            bracketStack.pop();
+          }
+        }
+        current += char;
+      } else if (char === ',') {
+        // Only split on comma if not inside a nested structure
+        if (bracketStack.length === 0) {
+          result.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
       } else {
         current += char;
       }
     }
   }
+  
   if (current) {
     result.push(current.trim());
   }
-
+  
   return result;
 }
+
 export function visitSlices(ctx) {
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();
