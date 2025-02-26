@@ -64,7 +64,6 @@ export function visitGroup(ctx) {
 
 
 
-
 export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
@@ -73,8 +72,11 @@ export function visitPrimary(ctx) {
       return `${primary}.${ctx.NAME().getText()}`;
     } else if (ctx.genexp()) {
       return `${primary}.map(${this.visit(ctx.genexp())})`;
-    } else if (ctx.arguments()) {
-      let argsText = this.visit(ctx.arguments()).slice(1, -1).trim();
+    } else if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
+      // Even if ctx.arguments() is null, we know this is a function call.
+      let argsText = ctx.arguments()
+        ? this.visit(ctx.arguments()).slice(1, -1).trim()
+        : "";
 
       if (primary === "print") {
         let argsList = splitArguments(argsText);
@@ -82,16 +84,24 @@ export function visitPrimary(ctx) {
         if (argsList.length > 1) {
           const parts = argsList.map(arg => {
             arg = arg.trim();
-            return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
+            return /^['"`].*['"`]$/.test(arg)
+              ? arg.slice(1, -1)
+              : `\${${arg}}`;
           }).join("");
 
           let template = `\`${parts}\``;
-          return this.runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
+          return this.runOnBrowser
+            ? `postMessage(${template})`
+            : `console.log(${template});`;
         } else {
-          return this.runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
+          return this.runOnBrowser
+            ? `postMessage(${argsText})`
+            : `console.log(${argsText});`;
         }
       } else if (primary === "input") {
-        return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+        return this.runOnBrowser
+          ? `await waitForInput(${argsText})`
+          : `prompt(${argsText})`;
       } else if (primary === "int") {
         return `parseInt(${argsText})`;
       } else if (primary === "float") {
