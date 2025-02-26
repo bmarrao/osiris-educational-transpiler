@@ -63,7 +63,6 @@ export function visitGroup(ctx) {
 
 
 
-
 export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
@@ -73,35 +72,29 @@ export function visitPrimary(ctx) {
     } else if (ctx.genexp()) {
       return `${primary}.map(${this.visit(ctx.genexp())})`;
     } else if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
-      // Even if ctx.arguments() is null, we know this is a function call.
+      // Even if ctx.arguments() is null, we know it's a function call.
       let argsText = ctx.arguments()
         ? this.visit(ctx.arguments()).slice(1, -1).trim()
         : "";
 
       if (primary === "print") {
+        // If no arguments, default to "\n"
+        if (!argsText) {
+          return this.runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+        }
         let argsList = splitArguments(argsText);
-
         if (argsList.length > 1) {
           const parts = argsList.map(arg => {
             arg = arg.trim();
-            return /^['"`].*['"`]$/.test(arg)
-              ? arg.slice(1, -1)
-              : `\${${arg}}`;
+            return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
           }).join("");
-
           let template = `\`${parts}\``;
-          return this.runOnBrowser
-            ? `postMessage(${template})`
-            : `console.log(${template});`;
+          return this.runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
         } else {
-          return this.runOnBrowser
-            ? `postMessage(${argsText})`
-            : `console.log(${argsText});`;
+          return this.runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
         }
       } else if (primary === "input") {
-        return this.runOnBrowser
-          ? `await waitForInput(${argsText})`
-          : `prompt(${argsText})`;
+        return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
       } else if (primary === "int") {
         return `parseInt(${argsText})`;
       } else if (primary === "float") {
@@ -121,6 +114,7 @@ export function visitPrimary(ctx) {
     return this.visit(ctx.atom());
   }
 }
+
 
 // New function to properly split arguments while keeping string literals intact
 function splitArguments(argsText) {
