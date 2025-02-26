@@ -3,6 +3,7 @@ import PythonParser from './Python/PythonParser.js';
 import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
+const supportedLangs = ["Python"]
 var code_suffix = `
 // Utility to wait for input from the main thread
 async function waitForInput(message) {
@@ -136,7 +137,9 @@ class ErrorCollector {
     }
 }
 
-class PythonTranspiler {
+class PythonTranspiler 
+{
+
     constructor(language, runOnBrowser) {
         this.language = language;
         this.code = "";
@@ -144,7 +147,11 @@ class PythonTranspiler {
         this.transpiledCode = ""
         this.worker = null;
     }
-
+    
+   supporteLanguages()
+    {
+        return supportedLangs;
+    }
    passCode(code)
     {
         this.code=code;
