@@ -107,23 +107,6 @@ export function visitPrimary(ctx) {
     }
 }
 
-function convertSlice(parts) {
-    let [start, stop, step] = ["", "", "1"];
-    const indices = parts.filter(p => p !== ":");
-
-    if (indices.length === 1) {
-      stop = indices[0];
-    } else if (indices.length === 2) {
-      [start, stop] = indices;
-    } else if (indices.length === 3) {
-      [start, stop, step] = indices;
-    }
-
-    return `array.slice(${start || "0"}, ${stop || "array.length"}).filter((_, i) => i % ${step} === 0)`;
-} 
-
-
-
 export function visitSlices(ctx) {
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();
@@ -147,21 +130,44 @@ export function visitSlices(ctx) {
         result.push(this.visit(child)); // calls visitStarred_expression
       }
     }
-    return result.join(", ");
+    return `[${result.join(", ")}]`;
   }
 
+
 export function visitSlice(ctx) {
-    // The slice rule: either [expression? ':' expression? (':' expression?)?] or [named_expression].
-    if (ctx.getText().includes(":")) {
-      // This is a slice with colons.
-      const expressions = ctx.expression();
-      const start = expressions.length > 0 ? this.visit(expressions[0]) : "0";
-      const stop  = expressions.length > 1 ? this.visit(expressions[1]) : "array.length";
-      const step  = expressions.length > 2 ? this.visit(expressions[2]) : "1";
-      return `array.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
-    } else if (ctx.named_expression()) {
-      // Explicitly delegate to the named_expression visitor.
-      return `[${this.visit(ctx.named_expression())}]`;
+  // The slice rule: either [expression? ':' expression? (':' expression? )?] or [named_expression].
+  if (ctx.getText().includes(":")) {
+    let start = "0", stop = "array.length", step = "1";
+    const children = ctx.children;
+    let index = 0;
+    
+    // If the first child is not a colon, then it is the start expression.
+    if (children[index].getText() !== ":") {
+      start = this.visit(children[index]);
+      index++;
     }
-    return ctx.getText();
+    // Next child should be the colon token; skip it.
+    index++;
+    
+    // If the next child is not a colon, then it is the stop expression.
+    if (index < children.length && children[index].getText() !== ":") {
+      stop = this.visit(children[index]);
+      index++;
+    }
+    
+    // If there's another colon, skip it and assign the step expression.
+    if (index < children.length && children[index].getText() === ":") {
+      index++;
+      if (index < children.length) {
+        step = this.visit(children[index]);
+      }
+    }
+    
+    return `[array.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)]`;
+  } else if (ctx.named_expression()) {
+    // Delegate to the named_expression visitor.
+    return `[${this.visit(ctx.named_expression())}]`;
   }
+  return ctx.getText();
+}
+
