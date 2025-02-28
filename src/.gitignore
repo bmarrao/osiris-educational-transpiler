@@ -11,6 +11,7 @@
 !tools/
 !tools/**
 
+!docOsiris.html
 
 !package.json 
 !webpack.config.mjs 
