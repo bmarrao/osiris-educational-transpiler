@@ -302,5 +302,5 @@ class Osiris
     }
 }
 
-export default PythonTranspiler;
+export default Osiris;
 
