@@ -30,6 +30,26 @@ async function waitForInput(message) {
     });
 }
 
+function len(input) {
+  if (typeof input === "string" || Array.isArray(input)) {
+    return input.length;
+  }
+
+  if (input instanceof Set || input instanceof Map) {
+    return input.size;
+  }
+
+  if (input instanceof Object) {
+    return Object.keys(input).length;
+  }
+
+  if (typeof input === "function" && typeof input.length !== "undefined") {
+    return input.length; // Number of function parameters
+  }
+
+  throw new Error("Unsupported type for len function");
+}
+
 postMessage("Execution started")
 main()
 `;
