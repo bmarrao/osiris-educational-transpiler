@@ -5,6 +5,19 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function type(obj) {
+  if (obj === null) return "NoneType";
+  if (Array.isArray(obj)) return "list";
+  if (obj instanceof Function) return "function";
+  if (obj instanceof Map) return "dict";
+  if (obj instanceof Set) return "set";
+  if (typeof obj === "number") return Number.isInteger(obj) ? "int" : "float";
+  if (typeof obj === "string") return "str";
+  if (typeof obj === "boolean") return "bool";
+  return typeof obj; // fallback for other types
+}
+
+
 function sum(iterable, start = 0) {
   return iterable.reduce((acc, val) => acc + val, start);
 }
