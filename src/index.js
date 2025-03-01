@@ -59,12 +59,12 @@ async function waitForInput(message) {
                 self.removeEventListener("message", inputListener);
             }
         };
-${builtInPythonFuncs}
         self.addEventListener("message", inputListener);
     });
 }
 
 
+${builtInPythonFuncs}
 
 
 postMessage("Execution started")
@@ -326,7 +326,7 @@ class Osiris
           ${insideCode.code}
         };
         ${code_suffix}`;
-        // console.log(`CODE: ${runCodeStr}`);
+        console.log(`CODE: ${runCodeStr}`);
         const blob = new Blob([runCodeStr], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
         this.worker.postMessage({ type: "start" });
