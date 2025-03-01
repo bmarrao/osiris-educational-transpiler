@@ -105,6 +105,10 @@ export function visitPrimary(ctx) {
         return `Boolean(${argsText})`;
       } else if (primary === "list" || primary === "tuple") {
         return `Array.from(${argsText})`;
+      } else if (primary === "max") {
+        return `Math.max(${argsText})`;
+      } else if (primary === "min") {
+        return `Math.min(${argsText})`;
       }
       return `${primary}(${argsText})`;
     } else if (ctx.slices()) {
