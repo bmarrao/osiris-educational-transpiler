@@ -30,6 +30,11 @@ async function waitForInput(message) {
     });
 }
 
+
+function sum(iterable, start = 0) {
+  return iterable.reduce((acc, val) => acc + val, start);
+}
+
 function len(input) {
   if (typeof input === "string" || Array.isArray(input)) {
     return input.length;
