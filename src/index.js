@@ -298,7 +298,8 @@ class Osiris
     passCode(code) {
         this.code = code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
-        this.transpiledCode = `${translatePython(this.code, false)}${builtInPythonFuncs}`;
+        this.transpiledCode = translatePython(this.code, false);
+        this.transpiledCode.code += builtInPythonFuncs
         return this.transpiledCode;
     }
 
