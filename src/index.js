@@ -5,6 +5,25 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function sorted(iterable, key = null, reverse = false) {
+  let arr = [...iterable];
+  arr.sort((a, b) => {
+    let valA = key ? key(a) : a;
+    let valB = key ? key(b) : b;
+    return valA > valB ? 1 : valA < valB ? -1 : 0;
+  });
+  return reverse ? arr.reverse() : arr;
+}
+
+function max(iterable, key = x => x) {
+  if (!Array.isArray(iterable)) iterable = [...arguments]; // Allow separate args
+  return iterable.reduce((max, item) => (key(item) > key(max) ? item : max));
+}
+
+function min(iterable, key = x => x) {
+  if (!Array.isArray(iterable)) iterable = [...arguments];
+  return iterable.reduce((min, item) => (key(item) < key(min) ? item : min));
+}
 function type(obj) {
   if (obj === null) return "NoneType";
   if (Array.isArray(obj)) return "list";
