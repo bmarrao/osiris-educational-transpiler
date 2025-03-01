@@ -3,6 +3,40 @@ import PythonParser from './Python/PythonParser.js';
 import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
+
+const builtInPythonFuncs = `
+function sum(iterable, start = 0) {
+  return iterable.reduce((acc, val) => acc + val, start);
+}
+
+function range(start, stop, step = 1) {
+  if (stop === undefined) {
+    stop = start;
+    start = 0;
+  }
+  return Array.from({ length: Math.max(0, Math.ceil((stop - start) / step)) }, (_, i) => start + i * step);
+}
+
+function len(input) {
+  if (typeof input === "string" || Array.isArray(input)) {
+    return input.length;
+  }
+
+  if (input instanceof Set || input instanceof Map) {
+    return input.size;
+  }
+
+  if (input instanceof Object) {
+    return Object.keys(input).length;
+  }
+
+  if (typeof input === "function" && typeof input.length !== "undefined") {
+    return input.length; // Number of function parameters
+  }
+
+  throw new Error("Unsupported type for len function");
+}
+`
 /**
  * @constant {string[]} supportedLangs
  * @description List of supported programming languages.
@@ -25,35 +59,13 @@ async function waitForInput(message) {
                 self.removeEventListener("message", inputListener);
             }
         };
-
+${builtInPythonFuncs}
         self.addEventListener("message", inputListener);
     });
 }
 
 
-function sum(iterable, start = 0) {
-  return iterable.reduce((acc, val) => acc + val, start);
-}
 
-function len(input) {
-  if (typeof input === "string" || Array.isArray(input)) {
-    return input.length;
-  }
-
-  if (input instanceof Set || input instanceof Map) {
-    return input.size;
-  }
-
-  if (input instanceof Object) {
-    return Object.keys(input).length;
-  }
-
-  if (typeof input === "function" && typeof input.length !== "undefined") {
-    return input.length; // Number of function parameters
-  }
-
-  throw new Error("Unsupported type for len function");
-}
 
 postMessage("Execution started")
 main()
@@ -286,7 +298,7 @@ class Osiris
     passCode(code) {
         this.code = code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
-        this.transpiledCode = translatePython(this.code, false);
+        this.transpiledCode = `${translatePython(this.code, false)}${builtInPythonFuncs}`;
         return this.transpiledCode;
     }
 
