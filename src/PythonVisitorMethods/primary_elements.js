@@ -112,6 +112,7 @@ function handleFunctionCalls(primary, argsText,runOnBrowser) {
 function handleCollectionFunctions(primary, argsText) {
   let [objectName, method] = primary.split('.');
 
+  const reverse = argsText.includes("reverse");
   switch (method) {
     case "append":
       return `${objectName}.push(${argsText})`;
@@ -125,7 +126,8 @@ function handleCollectionFunctions(primary, argsText) {
     case "remove":
       return `${objectName}.splice(${objectName}.indexOf(${argsText}), 1)`;
     case "sort":
-      return `${objectName}.sort()`;
+      let sortStatement = `${objectName}.sort()`;
+      return reverse ? `${sortStatement}.reverse()` : sortStatement;
     case "reverse":
       return `${objectName}.reverse()`;
     case "index":
