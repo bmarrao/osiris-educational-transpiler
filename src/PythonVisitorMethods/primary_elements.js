@@ -67,8 +67,17 @@ export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
 
-    if (ctx.NAME()) {
-      return `${primary}.${ctx.NAME().getText()}`;
+    if (ctx.NAME()) 
+    {
+      console.log("Im here")
+      let dotNext = ctx.NAME().getText()
+      
+      console.log(dotNext);  // Check what the string contains
+      dotNext = dotNext.replace(/append/g, 'push');
+      console.log(dotNext);  // Check the result after replacement
+
+
+      return `${primary}.${dotNext}`;
     } else if (ctx.genexp()) {
       return `${primary}.map(${this.visit(ctx.genexp())})`;
     } else if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
@@ -134,6 +143,10 @@ export function visitPrimary(ctx) {
       } else if (primary === "list" || primary === "tuple") {
         return `Array.from(${argsText})`;
       }
+      else if (primary === "append") {
+        return `push(${argsText})`;
+      }
+
       return `${primary}(${argsText})`;
     } else if (ctx.slices()) {
       return `${primary}${this.visit(ctx.slices())}`;
