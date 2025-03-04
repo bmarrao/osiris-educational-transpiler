@@ -72,7 +72,6 @@ export function visitPrimary(ctx) {
     if (ctx.NAME()) {
       // Handle dot notation with NAME
       let dotNext = ctx.NAME().getText();
-      dotNext = dotNext.replace(/append/g, 'push');
       return `${primary}.${dotNext}`;
     }
 
@@ -100,15 +99,52 @@ export function visitPrimary(ctx) {
   }
 }
 
-function handleFunctionCalls(primary, argsText, runOnBrowser) {
+function handleFunctionCalls(primary, argsText) {
+  // Check if it's a method call on a collection (list, set, dictionary)
+  if (primary.includes('.')) {
+    return handleCollectionFunctions(primary, argsText);
+  } else {
+    // Handle other function calls (non-collection related)
+    return handleNonCollectionFunctionCalls(primary, argsText);
+  }
+}
+
+function handleCollectionFunctions(primary, argsText) {
+  let [objectName, method] = primary.split('.');
+
+  switch (method) {
+    case "append":
+      return `${objectName}.push(${argsText})`;
+    case "extend":
+      return `${objectName}.push(...${argsText})`;
+    case "insert":
+      return `${objectName}.splice(${argsText})`;
+    case "pop":
+      return `${objectName}.splice(${argsText}, 1)[0]`;
+    case "remove":
+      return `${objectName}.splice(${argsText}.indexOf(x), 1)`;
+    case "sort":
+      return `${objectName}.sort()`;
+    case "reverse":
+      return `${objectName}.reverse()`;
+    case "index":
+      return `${objectName}.indexOf(${argsText})`;
+    case "count":
+      return `${objectName}.filter(v => v === ${argsText}).length`;
+    default:
+      return `${primary}(${argsText})`;
+  }
+}
+
+function handleNonCollectionFunctionCalls(primary, argsText) {
   switch (primary) {
     case "print":
-      return handlePrint(argsText, runOnBrowser);
+      return handlePrint(argsText);
     case "min":
     case "max":
-      return handleMinMax(primary, argsText, runOnBrowser);
+      return handleMinMax(primary, argsText);
     case "input":
-      return runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+      return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
     case "int":
       return `parseInt(${argsText})`;
     case "float":
@@ -120,8 +156,6 @@ function handleFunctionCalls(primary, argsText, runOnBrowser) {
     case "list":
     case "tuple":
       return `Array.from(${argsText})`;
-    case "append":
-      return `push(${argsText})`;
     default:
       return `${primary}(${argsText})`;
   }
