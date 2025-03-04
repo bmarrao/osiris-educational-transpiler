@@ -99,13 +99,13 @@ export function visitPrimary(ctx) {
   }
 }
 
-function handleFunctionCalls(primary, argsText) {
+function handleFunctionCalls(primary, argsText,runOnBrowser) {
   // Check if it's a method call on a collection (list, set, dictionary)
   if (primary.includes('.')) {
     return handleCollectionFunctions(primary, argsText);
   } else {
     // Handle other function calls (non-collection related)
-    return handleNonCollectionFunctionCalls(primary, argsText);
+    return handleNonCollectionFunctionCalls(primary, argsText,runOnBrowser);
   }
 }
 
@@ -136,15 +136,15 @@ function handleCollectionFunctions(primary, argsText) {
   }
 }
 
-function handleNonCollectionFunctionCalls(primary, argsText) {
+function handleNonCollectionFunctionCalls(primary, argsText,runOnBrowser) {
   switch (primary) {
     case "print":
-      return handlePrint(argsText);
+      return handlePrint(argsText,runOnBrowser);
     case "min":
     case "max":
       return handleMinMax(primary, argsText);
     case "input":
-      return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+      return runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
     case "int":
       return `parseInt(${argsText})`;
     case "float":
