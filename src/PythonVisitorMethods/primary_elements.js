@@ -63,99 +63,113 @@ export function visitGroup(ctx) {
 
 
 
+
+
 export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
 
-    if (ctx.NAME()) 
-    {
-      console.log("Im here")
-      let dotNext = ctx.NAME().getText()
-      
-      console.log(dotNext);  // Check what the string contains
+    if (ctx.NAME()) {
+      // Handle dot notation with NAME
+      let dotNext = ctx.NAME().getText();
       dotNext = dotNext.replace(/append/g, 'push');
-      console.log(dotNext);  // Check the result after replacement
-
-
       return `${primary}.${dotNext}`;
-    } else if (ctx.genexp()) {
+    }
+
+    if (ctx.genexp()) {
+      // Handle generator expression
       return `${primary}.map(${this.visit(ctx.genexp())})`;
-    } else if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
-      // Even if ctx.arguments() is null, we know it's a function call.
+    }
+
+    if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
+      // Handle function call arguments
       let argsText = ctx.arguments()
         ? this.visit(ctx.arguments()).slice(1, -1).trim()
         : "";
 
-      if (primary === "print") {
-        // If no arguments, default to "\n"
-        if (!argsText) {
-          return this.runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
-        }
-        let argsList = splitArguments(argsText);
-        if (argsList.length > 1) {
-          const parts = argsList.map(arg => {
-            arg = arg.trim();
-            return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
-          }).join("");
-          let template = `\`${parts}\``;
-          return this.runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
-        } else {
-          return this.runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
-        }
-      }else if (primary === "min" || primary === "max") {
-         if (!argsText) return '';
+      return handleFunctionCalls(primary, argsText, this.runOnBrowser);
+    }
 
-         let argsList = splitArguments(argsText);
-         let keywordArg = null;
-
-         // Remove keyword argument if present
-         let lastArg = argsList[argsList.length - 1].trim();
-         if (/^\{.*\}$/.test(lastArg)) {
-           keywordArg = argsList.pop().trim();
-         }
-
-         let argsArray;
-         if (
-           argsList.length === 1 &&
-           !argsList[0].trim().startsWith('[') &&
-           !argsList[0].trim().endsWith(']')
-         ) {
-           // Single argument, assume it's a variable or expression, use it as is
-           argsArray = argsList[0].trim();
-         } else {
-           // Multiple arguments, wrap in an array
-           argsArray = `[${argsList.join(", ")}]`;
-         }
-
-         return keywordArg
-           ? `${primary}(${argsArray}, ${keywordArg})`
-           : `${primary}(${argsArray})`;
-      } else if (primary === "input") {
-        return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
-      } else if (primary === "int") {
-        return `parseInt(${argsText})`;
-      } else if (primary === "float") {
-        return `parseFloat(${argsText})`;
-      } else if (primary === "str") {
-        return `String(${argsText})`;
-      } else if (primary === "bool") {
-        return `Boolean(${argsText})`;
-      } else if (primary === "list" || primary === "tuple") {
-        return `Array.from(${argsText})`;
-      }
-      else if (primary === "append") {
-        return `push(${argsText})`;
-      }
-
-      return `${primary}(${argsText})`;
-    } else if (ctx.slices()) {
+    if (ctx.slices()) {
+      // Handle slicing
       return `${primary}${this.visit(ctx.slices())}`;
     }
   } else {
+    // Handle atom cases
     return this.visit(ctx.atom());
   }
 }
 
+function handleFunctionCalls(primary, argsText, runOnBrowser) {
+  switch (primary) {
+    case "print":
+      return handlePrint(argsText, runOnBrowser);
+    case "min":
+    case "max":
+      return handleMinMax(primary, argsText, runOnBrowser);
+    case "input":
+      return runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+    case "int":
+      return `parseInt(${argsText})`;
+    case "float":
+      return `parseFloat(${argsText})`;
+    case "str":
+      return `String(${argsText})`;
+    case "bool":
+      return `Boolean(${argsText})`;
+    case "list":
+    case "tuple":
+      return `Array.from(${argsText})`;
+    case "append":
+      return `push(${argsText})`;
+    default:
+      return `${primary}(${argsText})`;
+  }
+}
+
+function handlePrint(argsText, runOnBrowser) {
+  if (!argsText) {
+    return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+  }
+
+  let argsList = splitArguments(argsText);
+  if (argsList.length > 1) {
+    const parts = argsList.map(arg => {
+      arg = arg.trim();
+      return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
+    }).join("");
+    let template = `\`${parts}\``;
+    return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
+  }
+
+  return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
+}
+
+function handleMinMax(primary, argsText, runOnBrowser) {
+  if (!argsText) return '';
+
+  let argsList = splitArguments(argsText);
+  let keywordArg = null;
+
+  // Remove keyword argument if present
+  let lastArg = argsList[argsList.length - 1].trim();
+  if (/^\{.*\}$/.test(lastArg)) {
+    keywordArg = argsList.pop().trim();
+  }
+
+  let argsArray;
+  if (argsList.length === 1 && !argsList[0].trim().startsWith('[') && !argsList[0].trim().endsWith(']')) {
+    // Single argument, use as is
+    argsArray = argsList[0].trim();
+  } else {
+    // Multiple arguments, wrap in an array
+    argsArray = `[${argsList.join(", ")}]`;
+  }
+
+  return keywordArg
+    ? `${primary}(${argsArray}, ${keywordArg})`
+    : `${primary}(${argsArray})`;
+}
 
 // New function to properly split arguments while keeping string literals intact
 
@@ -213,7 +227,6 @@ function splitArguments(argsText) {
   
   return result;
 }
-
 export function visitSlices(ctx) {
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();

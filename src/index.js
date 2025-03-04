@@ -68,6 +68,11 @@ function len(input) {
 
   throw new Error("Unsupported type for len function");
 }
+
+function extend(arr, iterable) {
+  arr.push(...iterable);
+}
+
 `
 /**
  * @constant {string[]} supportedLangs
