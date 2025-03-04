@@ -122,7 +122,7 @@ function handleCollectionFunctions(primary, argsText) {
     case "pop":
       return `${objectName}.splice(${argsText}, 1)[0]`;
     case "remove":
-      return `${objectName}.splice(${argsText}.indexOf(x), 1)`;
+      return `${objectName}.splice(${objectName}.indexOf(${argsText}), 1)`;
     case "sort":
       return `${objectName}.sort()`;
     case "reverse":
