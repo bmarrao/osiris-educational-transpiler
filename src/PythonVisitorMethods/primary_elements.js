@@ -119,8 +119,8 @@ export function visitPrimary(ctx) {
          }
 
          return keywordArg
-           ? `${primary}(${argsArray}, ${keywordArg});`
-           : `${primary}(${argsArray});`;
+           ? `${primary}(${argsArray}, ${keywordArg})`
+           : `${primary}(${argsArray})`;
       } else if (primary === "input") {
         return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
       } else if (primary === "int") {
