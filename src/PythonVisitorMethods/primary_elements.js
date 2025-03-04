@@ -118,7 +118,8 @@ function handleCollectionFunctions(primary, argsText) {
     case "extend":
       return `${objectName}.push(...${argsText})`;
     case "insert":
-      return `${objectName}.splice(${argsText})`;
+      let [index, element] = argsText.split(',').map(arg => arg.trim());
+      return `${objectName}.splice(${index}, 0, ${element})`;
     case "pop":
       return `${objectName}.splice(${argsText}, 1)[0]`;
     case "remove":
