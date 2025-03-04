@@ -94,28 +94,33 @@ export function visitPrimary(ctx) {
           return this.runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
         }
       }else if (primary === "min" || primary === "max") {
-          if (!argsText) return '';
+         if (!argsText) return '';
 
-          let argsList = splitArguments(argsText);
-          let keywordArg = null;
-        
-          // Remove keyword argument if present
-          let lastArg = argsList[argsList.length - 1].trim();
-          if (/^\{.*\}$/.test(lastArg)) {
-            keywordArg = argsList.pop().trim();
-          }
-        
-          // If there's exactly one argument and it's an array literal, use it as is.
-          let argsArray;
-          if (argsList.length === 1 && argsList[0].trim().startsWith('[') && argsList[0].trim().endsWith(']')) {
-            argsArray = argsList[0].trim();
-          } else {
-            argsArray = `[${argsList.join(", ")}]`;
-          }
-        
-          return keywordArg
-            ? `${primary}(${argsArray}, ${keywordArg});`
-            : `${primary}(${argsArray});`;
+         let argsList = splitArguments(argsText);
+         let keywordArg = null;
+
+         // Remove keyword argument if present
+         let lastArg = argsList[argsList.length - 1].trim();
+         if (/^\{.*\}$/.test(lastArg)) {
+           keywordArg = argsList.pop().trim();
+         }
+
+         let argsArray;
+         if (
+           argsList.length === 1 &&
+           !argsList[0].trim().startsWith('[') &&
+           !argsList[0].trim().endsWith(']')
+         ) {
+           // Single argument, assume it's a variable or expression, use it as is
+           argsArray = argsList[0].trim();
+         } else {
+           // Multiple arguments, wrap in an array
+           argsArray = `[${argsList.join(", ")}]`;
+         }
+
+         return keywordArg
+           ? `${primary}(${argsArray}, ${keywordArg});`
+           : `${primary}(${argsArray});`;
       } else if (primary === "input") {
         return this.runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
       } else if (primary === "int") {
