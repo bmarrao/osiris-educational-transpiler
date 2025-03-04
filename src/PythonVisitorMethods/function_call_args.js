@@ -88,29 +88,26 @@ export function visitKwarg_or_double_starred(ctx) {
 }
 
 
+
 export function visitKwargs(ctx) {
   let kwargs = [];
 
-  // Handle the first kwarg_or_starred
-  kwargs.push(this.visit(ctx.kwarg_or_starred(0)));
-
-  // Handle additional kwarg_or_starred elements, if any
-  for (let i = 1; i < ctx.kwarg_or_starred().length; i++) {
-    kwargs.push(`, ${this.visit(ctx.kwarg_or_starred(i))}`);
+  const starred = ctx.kwarg_or_starred();
+  if (starred && starred.length > 0) {
+    kwargs.push(this.visit(starred[0]));
+    for (let i = 1; i < starred.length; i++) {
+      kwargs.push(`, ${this.visit(starred[i])}`);
+    }
   }
 
-  // Handle the kwarg_or_double_starred section
-  if (ctx.kwarg_or_double_starred()) {
-    // Handle the first kwarg_or_double_starred
-    kwargs.push(this.visit(ctx.kwarg_or_double_starred(0)));
-
-    // Handle additional kwarg_or_double_starred elements, if any
-    for (let i = 1; i < ctx.kwarg_or_double_starred().length; i++) {
-      kwargs.push(`, ${this.visit(ctx.kwarg_or_double_starred(i))}`);
+  const doubleStarred = ctx.kwarg_or_double_starred();
+  if (doubleStarred && doubleStarred.length > 0) {
+    kwargs.push(this.visit(doubleStarred[0]));
+    for (let i = 1; i < doubleStarred.length; i++) {
+      kwargs.push(`, ${this.visit(doubleStarred[i])}`);
     }
   }
 
   return kwargs.join('');
 }
-
 

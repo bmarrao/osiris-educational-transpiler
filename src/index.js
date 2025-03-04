@@ -260,6 +260,28 @@ export function translatePython(input, runOnBrowser) {
     }
 }
 
+
+export function translatePythonTest(input, runOnBrowser) {
+        const codeGenerator = new PythonCodeGenerator(runOnBrowser);
+        const parseResult = parsePython(input);
+
+        console.log("Before parse")
+        if (!parseResult.success) {
+            // If parsing was unsuccessful, return the errors
+            return {
+                success: false,
+                errors: parseResult.errors
+            };
+        }
+
+        // Proceed with code generation if parsing succeeded
+        const generatedCode = codeGenerator.visit(parseResult.tree);
+
+        return {
+            success: true,
+            code: generatedCode
+        };
+}
 /**
  * Custom error collector class for syntax errors.
  * @class
