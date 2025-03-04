@@ -108,6 +108,6 @@ export function visitKwargs(ctx) {
     }
   }
 
-  return kwargs.join('');
+  return `{${kwargs.join('')}}`;
 }
 

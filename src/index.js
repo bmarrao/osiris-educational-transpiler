@@ -5,7 +5,7 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
-function sorted(iterable, key = null, reverse = false) {
+function sorted(iterable, { key = null, reverse = false } = {}) {
   let arr = [...iterable];
   arr.sort((a, b) => {
     let valA = key ? key(a) : a;
