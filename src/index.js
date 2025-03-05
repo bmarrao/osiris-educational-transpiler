@@ -330,7 +330,7 @@ function parsePython(input) {
  * @param {boolean} runOnBrowser - Indicates if the code is meant to run on a web browser.
  * @returns {object} An object indicating success or failure. On success, returns the generated code; on failure, returns the errors.
  */
-export function translatePython(input, runOnBrowser) {
+export function translatePython(input,runOnBrowser) {
     try {
         const codeGenerator = new PythonCodeGenerator(runOnBrowser);
         const parseResult = parsePython(input);
@@ -360,8 +360,8 @@ export function translatePython(input, runOnBrowser) {
 }
 
 
-export function translatePythonTest(input, runOnBrowser) {
-        const codeGenerator = new PythonCodeGenerator(runOnBrowser);
+export function translatePythonTest(input)  {
+        const codeGenerator = new PythonCodeGenerator(false);
         const parseResult = parsePython(input);
 
         console.log("Before parse")
@@ -425,12 +425,10 @@ class Osiris
     /**
      * Creates an instance of Osiris.
      * @param {string} language - The target language.
-     * @param {boolean} runOnBrowser - Indicates if the code should run on a browser.
      */
-    constructor(language, runOnBrowser) {
+    constructor(language) {
         this.language = language;
         this.code = "";
-        this.runOnBrowser = runOnBrowser;
         this.transpiledCode = "";
         this.worker = null;
     }
