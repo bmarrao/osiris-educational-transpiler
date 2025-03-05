@@ -109,31 +109,36 @@ function handleFunctionCalls(primary, argsText,runOnBrowser) {
   }
 }
 
+
 function handleCollectionFunctions(primary, argsText) {
   let [objectName, method] = primary.split('.');
   const reverse = argsText.includes("reverse");
+
   switch (method) {
     // ----- List Functions -----
     case "append":
       return `${objectName}.push(${argsText})`;
     case "extend":
       return `${objectName}.push(...${argsText})`;
-    case "insert":
+    case "insert": {
       let [index, element] = argsText.split(',').map(arg => arg.trim());
       return `${objectName}.splice(${index}, 0, ${element})`;
+    }
     case "pop":
       return `myPop(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "remove":
       return `${objectName}.splice(${objectName}.indexOf(${argsText}), 1)`;
-    case "sort":
+    case "sort": {
       let sortStatement = `${objectName}.sort()`;
       return reverse ? `${sortStatement}.reverse()` : sortStatement;
+    }
     case "reverse":
       return `${objectName}.reverse()`;
     case "index":
       return `${objectName}.indexOf(${argsText})`;
     case "count":
       return `${objectName}.filter(v => v === ${argsText}).length`;
+
     // ----- Dictionary Functions -----
     case "keys":
       return `Object.keys(${objectName})`;
@@ -143,11 +148,7 @@ function handleCollectionFunctions(primary, argsText) {
       return `Object.entries(${objectName})`;
     case "get": {
       let parts = argsText.split(',').map(arg => arg.trim());
-      if (parts.length === 1) {
-        return `${objectName}[${parts[0]}]`;
-      } else {
-        return `${objectName}[${parts[0]}] ?? ${parts[1]}`;
-      }
+      return parts.length === 1 ? `${objectName}[${parts[0]}]` : `${objectName}[${parts[0]}] ?? ${parts[1]}`;
     }
     case "update":
       return `Object.assign(${objectName}, ${argsText})`;
@@ -155,10 +156,29 @@ function handleCollectionFunctions(primary, argsText) {
       let parts = argsText.split(',').map(arg => arg.trim());
       return `${objectName}[${parts[0]}] ??= ${parts[1]}`;
     }
+
+    // ----- Set Functions -----
+    case "add":
+      return `${objectName}.add(${argsText})`;
+    case "remove":
+    case "discard":
+      return `${objectName}.delete(${argsText})`;
+    case "pop":
+      return `Array.from(${objectName}).pop()`; // Não é ideal, mas simula `set.pop()`
+    case "union":
+      return `new Set([...${objectName}, ...${argsText}])`;
+    case "intersection":
+      return `new Set([...${objectName}].filter(x => ${argsText}.has(x)))`;
+    case "difference":
+      return `new Set([...${objectName}].filter(x => !${argsText}.has(x)))`;
+    case "symmetric_difference":
+      return `new Set([...${objectName}, ...${argsText}].filter(x => !(${objectName}.has(x) && ${argsText}.has(x))))`;
+
     default:
       return `${primary}(${argsText})`;
   }
 }
+
 
 
 function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
