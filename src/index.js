@@ -6,15 +6,32 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 const builtInPythonFuncs = `
 function zip(...arrays) {
-  const minLength = Math.min(...arrays.map(arr => arr.length));
-  const result = [];
+  // Check if the first argument is 'true' for unzipping
+  if (arrays[0] === true) {
+    const zipped = arrays.slice(1); // Remove the 'true' argument
+    const result = [];
 
-  for (let i = 0; i < minLength; i++) {
-    const tuple = arrays.map(arr => arr[i]);
-    result.push(tuple);
+    // Find the maximum length of the arrays
+    const maxLength = Math.max(...zipped.map(arr => arr.length));
+
+    // Unzip by grouping elements from each array
+    for (let i = 0; i < maxLength; i++) {
+      const tuple = zipped.map(arr => arr[i] !== undefined ? arr[i] : null);
+      result.push(tuple);
+    }
+
+    return result;
+  } else {
+    const minLength = Math.min(...arrays.map(arr => arr.length));
+    const result = [];
+
+    for (let i = 0; i < minLength; i++) {
+      const tuple = arrays.map(arr => arr[i]);
+      result.push(tuple);
+    }
+
+    return result;
   }
-
-  return result;
 }
 function myRemove(collection, value) {
   if (Array.isArray(collection)) {
