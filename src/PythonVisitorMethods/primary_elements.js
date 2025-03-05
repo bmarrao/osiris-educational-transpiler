@@ -165,15 +165,16 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.delete(${argsText})`;
     case "pop":
       return `Array.from(${objectName}).pop()`; // Não é ideal, mas simula `set.pop()`
+    
     case "union":
-      return `new Set([...${objectName}, ...${argsText}])`;
+      return `new Set([...${objectName}, ...${argsText}].sort((a, b) => a - b))`;
+
+    case "symmetric_difference":
+      return `new Set([...${objectName}, ...${argsText}].filter(x => !(${objectName}.has(x) && ${argsText}.has(x))).sort((a, b) => a - b))`;
     case "intersection":
       return `new Set([...${objectName}].filter(x => ${argsText}.has(x)))`;
     case "difference":
       return `new Set([...${objectName}].filter(x => !${argsText}.has(x)))`;
-    case "symmetric_difference":
-      return `new Set([...${objectName}, ...${argsText}].filter(x => !(${objectName}.has(x) && ${argsText}.has(x))))`;
-
     default:
       return `${primary}(${argsText})`;
   }
