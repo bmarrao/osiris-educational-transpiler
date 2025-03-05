@@ -9,10 +9,8 @@ function myPop(collection, ...args) {
   if (Array.isArray(collection)) {
     // Caso seja uma lista (array)
     if (args.length === 0) {
-      // Sem argumentos: remove e retorna o último elemento
       return collection.pop();
     } else if (args.length === 1) {
-      // Com um argumento: remove e retorna o elemento no índice informado
       const index = args[0];
       if (index < 0 || index >= collection.length) {
         throw new Error("IndexError: pop index out of range");
@@ -21,6 +19,18 @@ function myPop(collection, ...args) {
     } else {
       throw new Error("Invalid arguments for list pop: expects 0 or 1 argument.");
     }
+  } else if (collection instanceof Set) {
+    // Caso seja um conjunto (set)
+    if (args.length > 0) {
+      throw new Error("set.pop() takes no arguments");
+    }
+    if (collection.size === 0) {
+      throw new Error("KeyError: pop from an empty set");
+    }
+    const iterator = collection.values();
+    const firstValue = iterator.next().value;
+    collection.delete(firstValue);
+    return firstValue;
   } else if (collection !== null && typeof collection === "object") {
     // Caso seja um dicionário (objeto)
     if (args.length === 0) {
@@ -32,7 +42,6 @@ function myPop(collection, ...args) {
       delete collection[key];
       return value;
     } else {
-      // Se houver um segundo argumento, retorna o valor default
       if (args.length >= 2) {
         return args[1];
       } else {
@@ -40,9 +49,10 @@ function myPop(collection, ...args) {
       }
     }
   } else {
-    throw new Error("myPop: collection must be an array or an object");
+    throw new Error("myPop: collection must be an array, set, or object");
   }
 }
+
 
 function sorted(iterable, { key = null, reverse = false } = {}) {
   let arr = [...iterable];
