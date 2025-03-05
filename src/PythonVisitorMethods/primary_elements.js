@@ -161,11 +161,10 @@ function handleCollectionFunctions(primary, argsText) {
 }
 
 
-
-function handleNonCollectionFunctionCalls(primary, argsText,runOnBrowser) {
+function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
   switch (primary) {
     case "print":
-      return handlePrint(argsText,runOnBrowser);
+      return handlePrint(argsText, runOnBrowser);
     case "min":
     case "max":
       return handleMinMax(primary, argsText);
@@ -181,7 +180,9 @@ function handleNonCollectionFunctionCalls(primary, argsText,runOnBrowser) {
       return `Boolean(${argsText})`;
     case "list":
     case "tuple":
-      return `Array.from(${argsText})`;
+      return argsText.trim() === "" ? "[]" : `Array.from(${argsText})`;
+    case "dict":
+      return argsText.trim() === "" ? "{}" : `Object.assign({}, ${argsText})`;
     default:
       return `${primary}(${argsText})`;
   }
