@@ -5,6 +5,45 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function myPop(collection, ...args) {
+  if (Array.isArray(collection)) {
+    // Caso seja uma lista (array)
+    if (args.length === 0) {
+      // Sem argumentos: remove e retorna o último elemento
+      return collection.pop();
+    } else if (args.length === 1) {
+      // Com um argumento: remove e retorna o elemento no índice informado
+      const index = args[0];
+      if (index < 0 || index >= collection.length) {
+        throw new Error("IndexError: pop index out of range");
+      }
+      return collection.splice(index, 1)[0];
+    } else {
+      throw new Error("Invalid arguments for list pop: expects 0 or 1 argument.");
+    }
+  } else if (collection !== null && typeof collection === "object") {
+    // Caso seja um dicionário (objeto)
+    if (args.length === 0) {
+      throw new Error("dict.pop() requires at least one argument (the key)");
+    }
+    const key = args[0];
+    if (collection.hasOwnProperty(key)) {
+      const value = collection[key];
+      delete collection[key];
+      return value;
+    } else {
+      // Se houver um segundo argumento, retorna o valor default
+      if (args.length >= 2) {
+        return args[1];
+      } else {
+        throw new Error("KeyError");
+      }
+    }
+  } else {
+    throw new Error("myPop: collection must be an array or an object");
+  }
+}
+
 function sorted(iterable, { key = null, reverse = false } = {}) {
   let arr = [...iterable];
   arr.sort((a, b) => {
