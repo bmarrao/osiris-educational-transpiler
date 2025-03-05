@@ -111,9 +111,9 @@ function handleFunctionCalls(primary, argsText,runOnBrowser) {
 
 function handleCollectionFunctions(primary, argsText) {
   let [objectName, method] = primary.split('.');
-
   const reverse = argsText.includes("reverse");
   switch (method) {
+    // ----- List Functions -----
     case "append":
       return `${objectName}.push(${argsText})`;
     case "extend":
@@ -134,10 +134,33 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.indexOf(${argsText})`;
     case "count":
       return `${objectName}.filter(v => v === ${argsText}).length`;
+    // ----- Dictionary Functions -----
+    case "keys":
+      return `Object.keys(${objectName})`;
+    case "values":
+      return `Object.values(${objectName})`;
+    case "items":
+      return `Object.entries(${objectName})`;
+    case "get": {
+      let parts = argsText.split(',').map(arg => arg.trim());
+      if (parts.length === 1) {
+        return `${objectName}[${parts[0]}]`;
+      } else {
+        return `${objectName}[${parts[0]}] ?? ${parts[1]}`;
+      }
+    }
+    case "update":
+      return `Object.assign(${objectName}, ${argsText})`;
+    case "setdefault": {
+      let parts = argsText.split(',').map(arg => arg.trim());
+      return `${objectName}[${parts[0]}] ??= ${parts[1]}`;
+    }
     default:
       return `${primary}(${argsText})`;
   }
 }
+
+
 
 function handleNonCollectionFunctionCalls(primary, argsText,runOnBrowser) {
   switch (primary) {
