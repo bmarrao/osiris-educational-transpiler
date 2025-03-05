@@ -5,6 +5,17 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function zip(...arrays) {
+  const minLength = Math.min(...arrays.map(arr => arr.length));
+  const result = [];
+
+  for (let i = 0; i < minLength; i++) {
+    const tuple = arrays.map(arr => arr[i]);
+    result.push(tuple);
+  }
+
+  return result;
+}
 function myRemove(collection, value) {
   if (Array.isArray(collection)) {
     // If it's a list, remove the first occurrence of the value
