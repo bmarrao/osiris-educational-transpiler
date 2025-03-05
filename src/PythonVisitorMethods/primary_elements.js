@@ -198,6 +198,8 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
       return `String(${argsText})`;
     case "bool":
       return `Boolean(${argsText})`;
+    case "set":
+          return `new Set(${argsText})`;
     case "list":
     case "tuple":
       return argsText.trim() === "" ? "[]" : `Array.from(${argsText})`;
