@@ -122,7 +122,7 @@ function handleCollectionFunctions(primary, argsText) {
       let [index, element] = argsText.split(',').map(arg => arg.trim());
       return `${objectName}.splice(${index}, 0, ${element})`;
     case "pop":
-      return `${objectName}.splice(${argsText}, 1)[0]`;
+      return `myPop(${objectName},${argsText})`;
     case "remove":
       return `${objectName}.splice(${objectName}.indexOf(${argsText}), 1)`;
     case "sort":
