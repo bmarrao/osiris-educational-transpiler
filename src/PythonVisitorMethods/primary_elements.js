@@ -127,7 +127,7 @@ function handleCollectionFunctions(primary, argsText) {
     case "pop":
       return `myPop(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "remove":
-      return `${objectName}.splice(${objectName}.indexOf(${argsText}), 1)`;
+      return `myRemove(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "sort": {
       let sortStatement = `${objectName}.sort()`;
       return reverse ? `${sortStatement}.reverse()` : sortStatement;

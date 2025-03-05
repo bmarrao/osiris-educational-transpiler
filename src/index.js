@@ -5,6 +5,23 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function myRemove(collection, value) {
+  if (Array.isArray(collection)) {
+    // If it's a list, remove the first occurrence of the value
+    const index = collection.indexOf(value);
+    if (index !== -1) {
+      collection.splice(index, 1);
+    } else {
+      throw new Error("ValueError: list.remove(x): x not in list");
+    }
+  } else if (collection instanceof Set) {
+    // If it's a set, use delete()
+    collection.delete(value);
+  } else {
+    throw new Error("myRemove: collection must be an array or a set");
+  }
+}
+
 function myPop(collection, ...args) {
   if (Array.isArray(collection)) {
     // Caso seja uma lista (array)
