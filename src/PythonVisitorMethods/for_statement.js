@@ -82,9 +82,14 @@ export function visitFor_stmt(ctx) {
       // Handle positive step
       jsCode = `for (let ${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     }
-  } else {
-    // General case for for...of loops
-    jsCode = `for (const ${targets} of ${iterable}) {\n${body}\n}`;
+  } else 
+  {
+    jsCode = `if (typeof data[Symbol.iterator] === "function" && typeof data !== "string") {
+    // It's an iterable (Array, Set, Map, etc.), but not a string
+        for (const ${targets} of ${iterable}) {\n${body}\n}
+    } else if (typeof data === "object" && data !== null) {
+        for (const ${targets} in ${iterable}) {\n${body}\n}
+    }`;
   }
 
   return jsCode;
