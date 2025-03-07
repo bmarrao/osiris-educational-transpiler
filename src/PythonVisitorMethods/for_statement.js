@@ -84,10 +84,10 @@ export function visitFor_stmt(ctx) {
     }
   } else 
   {
-    jsCode = `if (typeof data[Symbol.iterator] === "function" && typeof data !== "string") {
+    jsCode = `if (typeof ${iterable}[Symbol.iterator] === "function" && typeof ${iterable} !== "string") {
     // It's an iterable (Array, Set, Map, etc.), but not a string
         for (const ${targets} of ${iterable}) {\n${body}\n}
-    } else if (typeof data === "object" && data !== null) {
+    } else if (typeof ${iterable} === "object" && ${iterable} !== null) {
         for (const ${targets} in ${iterable}) {\n${body}\n}
     }`;
   }
