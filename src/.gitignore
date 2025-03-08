@@ -15,6 +15,7 @@
 
 !package.json 
 !webpack.config.mjs 
+!webpack.configcjs.mjs 
 !package-lock.json
 !index.js
 !dist/
