@@ -20,6 +20,10 @@
 !dist/
 !dist/**
 
+!cjs/
+!cjs/**
+
+
 !Python/
 !Python/**
 
