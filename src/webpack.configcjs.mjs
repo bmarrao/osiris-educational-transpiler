@@ -5,7 +5,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-  entry: './index.js',
+  entry: './indexcjs.js',
   output: {
     filename: 'osiris.cjs',
     path: path.resolve(__dirname, 'cjs'),

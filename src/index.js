@@ -493,4 +493,3 @@ class Osiris
 
 export default Osiris;
 
-module.exports = Osiris;
