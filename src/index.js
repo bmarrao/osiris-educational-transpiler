@@ -5,7 +5,19 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function map(fn, ...iterables) {
+  const length = Math.max(...iterables.map(iterable => iterable.length));
+  const result = [];
+
+  for (let i = 0; i < length; i++) {
+    const args = iterables.map(iterable => iterable[i]);
+    result.push(fn(...args));
+  }
+
+  return result;
+}
 function enumerate(iterable, start=0) {
+
     const result = [];
     for (let index = start; index < iterable.length + start; index++) {
         result.push([index, iterable[index - start]]);
