@@ -14,14 +14,12 @@ function enumerate(iterable, start=0) {
 }
 
 function divmod(x, y) {
-  const q = Math.floor(x / y);
-  const r = x % y;
-  
-  // Adjust remainder to ensure it's in the correct range
-  if (r < 0) {
-    return [q - 1, r + Math.abs(y)];
+  if (y === 0) {
+    throw new Error("Division by zero");
   }
-  
+  // Python uses floor division (rounding down) for quotient.
+  const q = Math.floor(x / y);
+  const r = x - q * y;
   return [q, r];
 }
 function round(number, precision = 0) {
