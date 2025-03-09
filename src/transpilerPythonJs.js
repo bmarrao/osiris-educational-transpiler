@@ -17,6 +17,7 @@ import * as WhileStatement from './PythonVisitorMethods/while_statement.js';
 import * as ForStatement from'./PythonVisitorMethods/for_statement.js'; 
 import * as FunctionArgs from './PythonVisitorMethods/function_call_args.js';
 import * as FunctionDefs from './PythonVisitorMethods/function_definitions.js';
+import * as LambdaFunc from './PythonVisitorMethods/lambda_functions.js';
 import * as FunctionParams from './PythonVisitorMethods/function_parameters.js';
 import * as ClassDefs from './PythonVisitorMethods/class_definitions.js';
 import antlr4 from 'antlr4';
@@ -562,5 +563,36 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitKvpair(ctx) {
         //console.log('Visiting kvpair');
         return Dicts.visitKvpair.call(this, ctx);
+    }
+
+    visitLambdef(ctx) {
+        return LambdaFunc.Lambdef.call(this, ctx);
+    }
+
+    visitLambda_params(ctx) {
+        return LambdaFunc.Lambda_params.call(this, ctx);
+    }
+    visitLambda_parameters(ctx) {
+        return LambdaFunc.Lambda_parameters.call(this, ctx);
+    }
+
+    visitLambda_star_etc(ctx) {
+        return LambdaFunc.Lambda_star_etc.call(this, ctx);
+    }
+
+    visitLambda_kwds(ctx) {
+        return LambdaFunc.Lambda_kwds.call(this, ctx);
+    }
+
+    visitLambda_param_no_default(ctx) {
+        return LambdaFunc.Lambda_param_no_default.call(this, ctx);
+    }
+
+    visitLambda_param_with_default(ctx) {
+        return LambdaFunc.Lambda_param_with_default.call(this, ctx);
+    }
+
+    visitLambda_param_maybe_default(ctx) {
+        return LambdaFunc.Lambda_param_maybe_default.call(this, ctx);
     }
 }
