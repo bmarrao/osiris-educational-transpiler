@@ -5,6 +5,25 @@ import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
 const builtInPythonFuncs = `
+function enumerate(iterable, start=0) {
+    const result = [];
+    for (let index = start; index < iterable.length + start; index++) {
+        result.push([index, iterable[index - start]]);
+    }
+    return result;
+}
+
+function divmod(x, y) {
+  const q = Math.floor(x / y);
+  const r = x % y;
+  
+  // Adjust remainder to ensure it's in the correct range
+  if (r < 0) {
+    return [q - 1, r + Math.abs(y)];
+  }
+  
+  return [q, r];
+}
 function round(number, precision = 0) {
   const factor = Math.pow(10, precision);
   return (Math.round(number * factor) / factor);
