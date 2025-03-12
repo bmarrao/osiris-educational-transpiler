@@ -471,7 +471,7 @@ class Osiris
      * Returns a list of supported languages.
      * @returns {string[]} Array of supported languages.
      */
-    supporteLanguages() {
+    supportedLanguages() {
         return supportedLangs;
     }
 

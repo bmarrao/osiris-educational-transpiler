@@ -566,33 +566,35 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     }
 
     visitLambdef(ctx) {
-        return LambdaFunc.Lambdef.call(this, ctx);
+        return LambdaFunc.visitLambdef.call(this, ctx);
     }
-
+    visitLambda_param(ctx) {
+        return LambdaFunc.visitLambda_param.call(this, ctx);
+    }
     visitLambda_params(ctx) {
-        return LambdaFunc.Lambda_params.call(this, ctx);
+        return LambdaFunc.visitLambda_params.call(this, ctx);
     }
     visitLambda_parameters(ctx) {
-        return LambdaFunc.Lambda_parameters.call(this, ctx);
+        return LambdaFunc.visitLambda_parameters.call(this, ctx);
     }
 
     visitLambda_star_etc(ctx) {
-        return LambdaFunc.Lambda_star_etc.call(this, ctx);
+        return LambdaFunc.visitLambda_star_etc.call(this, ctx);
     }
 
     visitLambda_kwds(ctx) {
-        return LambdaFunc.Lambda_kwds.call(this, ctx);
+        return LambdaFunc.visitLambda_kwds.call(this, ctx);
     }
 
     visitLambda_param_no_default(ctx) {
-        return LambdaFunc.Lambda_param_no_default.call(this, ctx);
+        return LambdaFunc.visitLambda_param_no_default.call(this, ctx);
     }
 
     visitLambda_param_with_default(ctx) {
-        return LambdaFunc.Lambda_param_with_default.call(this, ctx);
+        return LambdaFunc.visitLambda_param_with_default.call(this, ctx);
     }
 
     visitLambda_param_maybe_default(ctx) {
-        return LambdaFunc.Lambda_param_maybe_default.call(this, ctx);
+        return LambdaFunc.visitLambda_param_maybe_default.call(this, ctx);
     }
 }

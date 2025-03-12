@@ -1,14 +1,16 @@
+
 export function visitLambdef(ctx) {
-    const params = ctx.lambda_params() ? this.visit(ctx.lambda_params()) : "";
-    const expr = this.visit(ctx.expression());
-    return `(${params}) => ${expr}`;
-  }
+  const params = ctx.lambda_params() ? this.visit(ctx.lambda_params()) : "";
+  const expr = this.visit(ctx.expression());
+  return `(${params}) => ${expr}`;
+}
 
 export function visitLambda_params(ctx) {
-    return this.visit(ctx.lambda_parameters());
-  }
+  return this.visit(ctx.lambda_parameters());
+}
 
-export function visiLambda_param(ctx) {
+// Correctly named so it's called by visitLambda_param_no_default, etc.
+export function visitLambda_param(ctx) {
   return ctx.NAME().getText();
 }
 
@@ -43,11 +45,12 @@ export function visitLambda_parameters(ctx) {
     params.push(this.visit(ctx.lambda_star_etc()));
   }
 
-  return params.filter(param => param.trim() !== '').join(', ');
+  // Join parameters with ", " and then remove a trailing comma, if any.
+  const joined = params.filter(param => String(param).trim() !== '').join(', ');
+  return joined.replace(/,\s*$/, '');
 }
 
 export function visitLambda_slash_no_default(ctx) {
-  // Returns comma-separated parameters (ignoring the '/' literal)
   return ctx.lambda_param_no_default()
     .map(param => this.visitLambda_param_no_default(param))
     .join(', ');
@@ -67,18 +70,16 @@ export function visitLambda_slash_with_default(ctx) {
   }
   return params.join(', ');
 }
-
 export function visitLambda_star_etc(ctx) {
-  // Handle the alternative: '*' lambda_param_no_default (and possibly lambda_kwds)
   if (ctx.lambda_kwds()) {
     return this.visit(ctx.lambda_kwds());
   }
   if (ctx.lambda_param_maybe_default() && ctx.lambda_param_maybe_default().length > 0) {
     throw new Error("Parameters after *args are not supported in JavaScript.");
   }
-  if (ctx.lambda_param_no_default() && ctx.lambda_param_no_default().length > 0) {
-    // Use only the first occurrence
-    return `...${this.visitLambda_param_no_default(ctx.lambda_param_no_default()[0])}`;
+  if (ctx.lambda_param_no_default()) 
+  {
+    return `...${this.visit(ctx.lambda_param_no_default())}`;
   }
   return "";
 }
@@ -88,59 +89,20 @@ export function visitLambda_kwds(ctx) {
 }
 
 export function visitLambda_param_no_default(ctx) {
-  // lambda_param_no_default : lambda_param ','?
   return this.visit(ctx.lambda_param());
 }
 
 export function visitLambda_param_with_default(ctx) {
-  // lambda_param_with_default : lambda_param default_assignment ','?
   const paramText = this.visit(ctx.lambda_param());
   const paramDefault = this.visitDefault_assignment(ctx.default_assignment());
   return `${paramText} ${paramDefault}`;
 }
 
 export function visitLambda_param_maybe_default(ctx) {
-  // lambda_param_maybe_default : lambda_param default_assignment? ','?
   const paramText = this.visit(ctx.lambda_param());
   const paramDefault = ctx.default_assignment()
     ? this.visitDefault_assignment(ctx.default_assignment())
     : "";
   return paramDefault ? `${paramText} ${paramDefault}` : paramText;
 }
-
-/*
-lambda_parameters
-    : lambda_slash_no_default lambda_param_no_default* lambda_param_with_default* lambda_star_etc?
-    | lambda_slash_with_default lambda_param_with_default* lambda_star_etc?
-    | lambda_param_no_default+ lambda_param_with_default* lambda_star_etc?
-    | lambda_param_with_default+ lambda_star_etc?
-    | lambda_star_etc;
-
-lambda_slash_no_default
-    : lambda_param_no_default+ '/' ','?
-    ;
-
-lambda_slash_with_default
-    : lambda_param_no_default* lambda_param_with_default+ '/' ','?
-    ;
-
-lambda_star_etc
-    : '*' lambda_param_no_default lambda_param_maybe_default* lambda_kwds?
-    | '*' ',' lambda_param_maybe_default+ lambda_kwds?
-    | lambda_kwds;
-
-lambda_kwds
-    : '**' lambda_param_no_default;
-
-lambda_param_no_default
-    : lambda_param ','?
-    ;
-lambda_param_with_default
-    : lambda_param default_assignment ','?
-    ;
-lambda_param_maybe_default
-    : lambda_param default_assignment? ','?
-    ;
-*/
-
 
