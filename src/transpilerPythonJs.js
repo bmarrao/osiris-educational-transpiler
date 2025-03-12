@@ -20,6 +20,7 @@ import * as FunctionDefs from './PythonVisitorMethods/function_definitions.js';
 import * as LambdaFunc from './PythonVisitorMethods/lambda_functions.js';
 import * as FunctionParams from './PythonVisitorMethods/function_parameters.js';
 import * as ClassDefs from './PythonVisitorMethods/class_definitions.js';
+import * as Comprehension_generators from './PythonVisitorMethods/comprehension_generators.js';
 import antlr4 from 'antlr4';
 import PythonParser  from './Python/PythonParser.js'; // Import the generated parser
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
@@ -597,4 +598,29 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitLambda_param_maybe_default(ctx) {
         return LambdaFunc.visitLambda_param_maybe_default.call(this, ctx);
     }
+
+    visitFor_if_clauses(ctx) {
+        return Comprehension_generators.visitFor_if_clauses.call(this, ctx);
+    }
+
+    visitFor_if_clause(ctx) {
+        return Comprehension_generators.visitFor_if_clause.call(this, ctx);
+    }
+
+    visitListcomp(ctx) {
+        return Comprehension_generators.visitListcomp.call(this, ctx);
+    }
+
+    visitSetcomp(ctx) {
+        return Comprehension_generators.visitSetcomp.call(this, ctx);
+    }
+
+    visitGenexp(ctx) {
+        return Comprehension_generators.visitGenexp.call(this, ctx);
+    }
+
+    visitDictcomp(ctx) {
+        return Comprehension_generators.visitDictcomp.call(this, ctx);
+    }
+
 }
