@@ -1,3 +1,5 @@
+import { dealTargets } from '../tools/targets.js';
+
 /*
   for_stmt
     : ASYNC? 'for' star_targets 'in' star_expressions ':' TYPE_COMMENT? block else_block?
@@ -41,7 +43,8 @@ export function visitFor_stmt(ctx) {
     throw new Error("Translation error: Else blocks in for-loops are not supported");
   }
 
-  const targets = this.visit(ctx.star_targets()); // Visit the targets (variables)
+  const targetsRet = this.visit(ctx.star_targets()); // Visit the targets (variables)
+  let targets = dealtargets(targetsRet)
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
 

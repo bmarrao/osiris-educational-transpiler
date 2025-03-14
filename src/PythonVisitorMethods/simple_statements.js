@@ -1,5 +1,5 @@
 import { flatten }  from "../tools/flatten.js"
-
+import { dealTargets }  from "../tools/targets.js"
 
 function splitByTopLevelCommas(str) {
   let result = [];
@@ -108,7 +108,7 @@ export function visitAssignment(ctx) {
     
     
     if (ctx.star_targets() && !ctx.augassign()) {
-      const targetsStr = flatten(this.visit(ctx.star_targets()))[0];
+      const targetsStr = dealTargets(this.visit(ctx.star_targets()));
       const valuesStr = this.visit(ctx.star_expressions());
       const targets = targetsStr.split(',').map(t => t.trim());
       const values = splitByTopLevelCommas(valuesStr);

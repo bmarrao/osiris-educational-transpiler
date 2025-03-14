@@ -1,3 +1,5 @@
+import { dealTargets } from '../tools/targets.js';
+
 // Comprehensions & Generators Visitor Functions
 // ---------------------------------------------
 
@@ -8,7 +10,7 @@ export function visitFor_if_clauses(ctx) {
 export function visitFor_if_clause(ctx) {
     return {
         async: !!ctx.ASYNC(),
-        targets: this.visit(ctx.star_targets()),
+        targets: dealTargets(this.visit(ctx.star_targets())),
         iterable: this.visit(ctx.disjunction(0)),
         conditions: ctx.disjunction().slice(1).map(cond => this.visit(cond))
     };
