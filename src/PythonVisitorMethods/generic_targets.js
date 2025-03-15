@@ -12,9 +12,8 @@ export function visitStar_targets(ctx) {
     // `...args`
     // `...a, ...b`
     const targets = ctx.star_target().map(target => this.visit(target));
-    console.log(`${targets.join(', ')}`)
     // console.log(`${targets.join(', ')}`)
-    return `${targets.join(', ')}`; // Spread syntax for multiple star targets
+    return targets; // Spread syntax for multiple star targets
 }
 
 

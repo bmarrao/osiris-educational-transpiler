@@ -1,58 +1,34 @@
 import { flatten }  from "../tools/flatten.js"
 import { dealTargets }  from "../tools/targets.js"
 
-function splitByTopLevelCommas(str) {
-  let result = [];
-  let current = '';
-  let bracketCount = 0;
-  let parenCount = 0;
-  let curlyCount = 0;
-  let inQuotes = false;
-  let quoteChar = '';
 
-  for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-    if (inQuotes) {
-      current += char;
-      if (char === quoteChar && str[i - 1] !== '\\') {
-        inQuotes = false;
-      }
+function multipleTargets(targets, valuesStr) {
+    let ret = "";
+    let unpack ; 
+    if (valuesStr.trim()[0] === "[") {
+        unpack = `osiris_iterable_unpacking = ${valuesStr};\n`;
     } else {
-      if (char === '"' || char === "'" || char === '`') {
-        inQuotes = true;
-        quoteChar = char;
-        current += char;
-      } else if (char === '[') {
-        bracketCount++;
-        current += char;
-      } else if (char === ']') {
-        bracketCount--;
-        current += char;
-      } else if (char === '(') {
-        parenCount++;
-        current += char;
-      } else if (char === ')') {
-        parenCount--;
-        current += char;
-      } else if (char === '{') {
-        curlyCount++;
-        current += char;
-      } else if (char === '}') {
-        curlyCount--;
-        current += char;
-      } else if (char === ',' && bracketCount === 0 && parenCount === 0 && curlyCount === 0) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += char;
-      }
+        unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
     }
-  }
-  if (current.trim()) result.push(current.trim());
-  return result;
+    if (this.localVars.includes("osiris_iterable_unpacking") || this.inClass) {
+            ret += assignment;
+    } else {
+            this.localVars.push("osiris_iterable_unpacking");
+            ret += `let ${unpack}`;
+    }
+    for (let i = 0; i < targets.length; i++) {
+        let assignment = `${targets[i]} = osiris_iterable_unpacking[${i}];`;
+        if (this.localVars.includes(targets[i]) || this.inClass) {
+            ret += assignment;
+        } else {
+            this.localVars.push(targets[i]);
+            ret += `let ${assignment}`;
+        }
+        if (i < targets.length - 1) ret += '\n';
+    }
+
+    return ret; // Adicionando retorno
 }
-
-
 /*TODO ADD HANDLING FOR THE CASE IN WICH  
 
 func() : 
@@ -108,26 +84,24 @@ export function visitAssignment(ctx) {
     
     
     if (ctx.star_targets() && !ctx.augassign()) {
-      const targetsStr = dealTargets(this.visit(ctx.star_targets()));
-      const valuesStr = this.visit(ctx.star_expressions());
-      const targets = targetsStr.split(',').map(t => t.trim());
-      const values = splitByTopLevelCommas(valuesStr);
-      
+      const targets = flatten(this.visit(ctx.star_targets()));
+      const values = this.visit(ctx.star_expressions());
       let ret = '';
-      
-
-      
-        for (let i = 0; i < targets.length; i++) {
-          let assignment = `${targets[i]} = ${values[i]};`;
-          if (this.localVars.includes(targets[i]) || this.inClass) {
+      console.log(targets)
+      if (targets.length > 1)
+      {
+         ret = multipleTargets.call(this,targets,values)
+      }
+      else 
+      {
+        let assignment = `${targets[0]} = ${values};`;
+        if (this.localVars.includes(targets[0]) || this.inClass) {
             ret += assignment;
           } else {
-            this.localVars.push(targets[i]);
+            this.localVars.push(targets[0]);
             ret += `let ${assignment}`;
           }
-          if (i < targets.length - 1) ret += '\n';
-        }
-    
+      }
       return ret;
     }
 
@@ -136,7 +110,6 @@ export function visitAssignment(ctx) {
     // Handle augmented assignment (single_target augassign (yield_expr | star_expressions))
     if (ctx.single_target() && ctx.augassign()) {
 	
-	 console.log("FTH");
         // Visit the target and expression nodes
         const target = this.visit(ctx.single_target());
         const expression = this.visit(ctx.yield_expr() || ctx.star_expressions());
