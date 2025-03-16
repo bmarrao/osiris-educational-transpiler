@@ -88,19 +88,30 @@ export function visitAssignment(ctx) {
       const values = this.visit(ctx.star_expressions());
       let ret = '';
       console.log(targets)
-      if (targets.length > 1)
+      if (targets.length > 1 && targets[0][0].notin("[("))
       {
+            
          ret = multipleTargets.call(this,targets,values)
       }
       else 
       {
-        let assignment = `${targets[0]} = ${values};`;
-        if (this.localVars.includes(targets[0]) || this.inClass) {
-            ret += assignment;
-          } else {
-            this.localVars.push(targets[0]);
-            ret += `let ${assignment}`;
-          }
+        if (targets.length > 1 && !"[(".includes(targets[0][0])) {
+            ret = multipleTargets.call(this, targets, values);
+        } else {
+            if (["[", "("].includes(targets[0][0])) {
+                let prep = targets[0].slice(1, -1);
+                ret = multipleTargets.call(this, prep.split(",").map(p => p.trim()), values);
+            } else {
+                let assignment = `${targets[0]} = ${values};`;
+                if (this.localVars.includes(targets[0]) || this.inClass) {
+                    ret += assignment;
+                } else {
+                    this.localVars.push(targets[0]);
+                    ret += `let ${assignment}`;
+                }
+            }
+        }
+        return ret;
       }
       return ret;
     }

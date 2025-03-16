@@ -44,7 +44,7 @@ export function visitFor_stmt(ctx) {
   }
 
   const targetsRet = this.visit(ctx.star_targets()); // Visit the targets (variables)
-  let targets = dealtargets(targetsRet)
+  let targets = dealTargets(targetsRet)
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
 
