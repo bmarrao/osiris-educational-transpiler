@@ -157,6 +157,23 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}[${parts[0]}] ??= ${parts[1]}`;
     }
 
+    // ----- String Functions -----
+    case "upper":
+      return `${objectName}.toUpperCase(${argsText})`;
+    case "lower":
+      return `${objectName}.toLowerCase(${argsText})`;
+    case "find":
+      return `${objectName}.indexOf(${argsText})`;
+    case "rfind":
+      return `${objectName}.lastIndexOf(${argsText})`;
+    case "strip":
+      return `${objectName}.trim(${argsText})`;
+    case "lstrip":
+      return `${objectName}.trimStart(${argsText})`;
+    case "rstrip":
+      return `${objectName}.trimEnd(${argsText})`;
+    case "splitlines":
+      return `${objectName}.split(/\r?\n/)`;
     // ----- Set Functions -----
     case "add":
       return `${objectName}.add(${argsText})`;
