@@ -1,5 +1,4 @@
 import { flatten }  from "../tools/flatten.js"
-import { dealTargets }  from "../tools/targets.js"
 
 
 function multipleTargets(targets, valuesStr) {
@@ -88,7 +87,7 @@ export function visitAssignment(ctx) {
       const values = this.visit(ctx.star_expressions());
       let ret = '';
       console.log(targets)
-      if (targets.length > 1 && targets[0][0].notin("[("))
+      if (targets.length > 1)
       {
             
          ret = multipleTargets.call(this,targets,values)

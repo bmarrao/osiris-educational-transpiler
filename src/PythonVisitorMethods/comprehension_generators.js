@@ -1,13 +1,12 @@
 import { dealTargets } from '../tools/targets.js';
 
-// Comprehensions & Generators Visitor Functions
-// ---------------------------------------------
-
 export function visitFor_if_clauses(ctx) {
     return ctx.for_if_clause().map(clause => this.visit(clause));
 }
 
 export function visitFor_if_clause(ctx) {
+    console.log(this.visit(ctx.star_targets()))
+    console.log(dealTargets(this.visit(ctx.star_targets())))
     return {
         async: !!ctx.ASYNC(),
         targets: dealTargets(this.visit(ctx.star_targets())),
