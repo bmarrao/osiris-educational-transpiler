@@ -1,0 +1,17 @@
+lst = [z for x, y in [(2, 3), (4, 5)] for z in (x, y)]
+print(lst)  # [2, 3, 4, 5]
+
+x lists comparison 
+print(x == [2, 3, 4])  # True
+Strings builtin funcs
+pairs = [(x, y) for x in range(2) for y in range(3)]
+print(pairs)  # [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
+
+
+letters = {char.upper() for char in "hello"} upper .
+
+genexp - next , list : implementar uma própria static function ? 
+
+dict comp testar novamente quando tiver  atribuicao dupla 
+
+
