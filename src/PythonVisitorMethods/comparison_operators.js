@@ -55,34 +55,30 @@ export function visitGt_bitwise_or(ctx) {
     return `> ${right}`;  // JavaScript "greater than"
 }
 
-/* TODO WHAT TO DO IN THESE CASES
-// Translate "not in" operator with bitwise OR
 export function visitNotin_bitwise_or(ctx) {
     // console.log('visitNotin_bitwise_or');
     const right = this.visitBitwise_or(ctx.bitwise_or);
-    return `!(${right} in ...)`;  // JavaScript equivalent of "not in"
+    return `not in ${right}`;  // JavaScript equivalent of "not in"
 }
 
-// Translate "in" operator with bitwise OR
 export function visitIn_bitwise_or(ctx) {
     // console.log('visitIn_bitwise_or');
     const right = this.visitBitwise_or(ctx.bitwise_or);
-    return `(${right} in ...)`;  // JavaScript "in" operator
+    return ` in ${right}`;  // JavaScript equivalent of "not in"
 }
-*/
 
 // Translate "is not" operator with bitwise OR
 export function visitIsnot_bitwise_or(ctx) {
     // console.log('visitIsnot_bitwise_or');
     const right = this.visit(ctx.bitwise_or());
-    return `!== ${right}`;  // JavaScript "is not"
+    return `is not ${right}`;  // JavaScript "is not"
 }
 
 // Translate "is" operator with bitwise OR
 export function visitIs_bitwise_or(ctx) {
     // console.log('visitIs_bitwise_or');
     const right = this.visit(ctx.bitwise_or());
-    return `=== ${right}`;  // JavaScript "is"
+    return `is ${right}`;  // JavaScript "is"
 }
 
 

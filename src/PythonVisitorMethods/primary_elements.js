@@ -125,9 +125,9 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.splice(${index}, 0, ${element})`;
     }
     case "pop":
-      return `myPop(${objectName}${argsText ? `, ${argsText}` : ''})`;
+      return `osiris_builtin_python_myPop(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "remove":
-      return `myRemove(${objectName}${argsText ? `, ${argsText}` : ''})`;
+      return `osiris_builtin_python_myRemove(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "sort": {
       let sortStatement = `${objectName}.sort()`;
       return reverse ? `${sortStatement}.reverse()` : sortStatement;
@@ -210,6 +210,26 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
       return runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
     case "abs":
       return `Math.abs(${argsText})`;
+    case "map":
+      return `osiris_builtin_python_map(${argsText})`;
+    case "enumerate":
+      return `osiris_builtin_python_enumerate(${argsText})`;
+    case "divmod":
+      return `osiris_builtin_python_divmod(${argsText})`;
+    case "round":
+      return `osiris_builtin_python_round(${argsText})`;
+    case "zip":
+      return `osiris_builtin_python_zip(${argsText})`;
+    case "sorted":
+      return `osiris_builtin_python_sorted(${argsText})`;
+    case "type":
+      return `osiris_builtin_python_type(${argsText})`;
+    case "sum":
+      return `osiris_builtin_python_sum(${argsText})`;
+    case "range":
+      return `osiris_builtin_python_range(${argsText})`;
+    case "len":
+      return `osiris_builtin_python_len(${argsText})`;
     case "int":
       return `parseInt(${argsText})`;
     case "float":
@@ -270,8 +290,8 @@ function handleMinMax(primary, argsText, runOnBrowser) {
   }
 
   return keywordArg
-    ? `${primary}(${argsArray}, ${keywordArg})`
-    : `${primary}(${argsArray})`;
+    ? `osiris_builtin_python_${primary}(${argsArray}, ${keywordArg})`
+    : `osiris_builtin_python_${primary}(${argsArray})`;
 }
 
 // New function to properly split arguments while keeping string literals intact
