@@ -26,7 +26,8 @@ export function visitClass_def_raw(ctx) {
     this.inClass = true ; 
     // Extract base classes (if any)
     let baseClass = null;
-    
+    this.classes.push(className)    
+    console.log(this.classes)    
     if (ctx.arguments()) {
         baseClass = ctx.arguments().getText(); // Get parent classes
         if (baseClass.includes(",")) {

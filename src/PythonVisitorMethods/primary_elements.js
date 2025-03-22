@@ -68,7 +68,9 @@ export function visitGroup(ctx) {
 export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
-
+    if (this.classes.includes(primary)) {
+        primary = `new ${primary}`;
+    }
     if (ctx.NAME()) {
       // Handle dot notation with NAME
       let dotNext = ctx.NAME().getText();
