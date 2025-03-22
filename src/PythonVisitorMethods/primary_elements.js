@@ -74,13 +74,16 @@ export function visitPrimary(ctx) {
       let dotNext = ctx.NAME().getText();
       return `${primary}.${dotNext}`;
     }
+
+    if (ctx.genexp()) 
+    {
+      return handleFunctionCalls(primary, this.visit(ctx.genexp()), this.runOnBrowser);
+    }
     if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
       // Handle function call arguments
-      
       let argsText = ctx.arguments()
-          ? this.visit(ctx.arguments()).slice(1, -1).trim()
-          : (ctx.genexp() ? this.visit(ctx.genexp()) : "");
-
+        ? this.visit(ctx.arguments()).slice(1, -1).trim()
+        : ""  ;
 
       return handleFunctionCalls(primary, argsText, this.runOnBrowser);
     }
