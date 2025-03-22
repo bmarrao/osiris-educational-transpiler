@@ -25,7 +25,7 @@ function osiris_builtin_python_evalPythonComparison(expr) {
         if (char === stringChar) {
           inString = false;
           stringChar = null;
-        } else if (char === '\\') {
+        } else if (char === '\\\\') {
           escape = true;
         }
       } else {
