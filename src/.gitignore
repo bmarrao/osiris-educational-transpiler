@@ -12,7 +12,7 @@
 !tools/**
 
 !docOsiris.html
-
+!pre-defined-funcs.js
 !toDO
 !README.md
 !package.json 
