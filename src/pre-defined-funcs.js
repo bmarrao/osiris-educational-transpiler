@@ -449,7 +449,19 @@ var lenFunc = `function osiris_builtin_python_len(input) {
 
 var extendFunc = `function osiris_builtin_python_extend(arr, iterable) {
   arr.push(...iterable);
-}`;
+}
+`
+var joinFunc = `function osiris_builtin_python_join(separator, iterable) {
+  if (!Array.isArray(iterable)) {
+    throw new TypeError('The second argument must be an array.');
+  }
+
+  return iterable.reduce((acc, curr, index) => {
+    if (index === 0) return curr;
+    return acc + separator + curr;
+  }, '');
+}
+`;
 
 export var builtInPythonFuncs = `
 ${isIn}
