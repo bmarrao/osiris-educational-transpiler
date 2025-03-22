@@ -31,8 +31,15 @@ export function visitFunction_def_raw(ctx) {
         params = this.visit(ctx.params()); // Visit the parameters
     }
     const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
+    
+    let paramList = params.split(",").map(param => param.trim()); // Trim every element in paramList
+    let length = this.localVars.length;
+    this.localVars.add(...paramList); // Spread operator to add all elements of paramList to localVars
+
     let body = this.visit(ctx.block()); // Visit the function body
+
     // Convert __init__ to constructor and remove the first parameter
+    this.localVars.length = length; // Restore the length of localVars
 
     if (functionName === "__init__") {
         functionName = "constructor";
@@ -43,7 +50,7 @@ export function visitFunction_def_raw(ctx) {
     {
         const paramList = params.split(",").map(p => p.trim()).filter(p => p && p !== "self");
         params = paramList.join(", ");
-
+    
         functionStr = `${functionName}(${params}) {\n${body}\n}`;
     }
 
