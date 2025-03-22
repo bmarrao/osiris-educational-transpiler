@@ -76,8 +76,7 @@ export function visitPrimary(ctx) {
     }
 
     if (ctx.genexp()) {
-      // Handle generator expression
-      return `${primary}.map(${this.visit(ctx.genexp())})`;
+      return `${primary}(${this.visit(ctx.genexp())})`;
     }
 
     if (ctx.getChild(1) && ctx.getChild(1).getText() === '(') {
