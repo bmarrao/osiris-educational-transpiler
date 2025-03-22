@@ -34,7 +34,7 @@ export function visitFunction_def_raw(ctx) {
     
     let paramList = params.split(",").map(param => param.trim()); // Trim every element in paramList
     let length = this.localVars.length;
-    this.localVars.add(...paramList); // Spread operator to add all elements of paramList to localVars
+    this.localVars.push(...paramList); // Spread operator to add all elements of paramList to localVars
 
     let body = this.visit(ctx.block()); // Visit the function body
 
