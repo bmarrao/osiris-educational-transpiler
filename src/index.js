@@ -4,10 +4,8 @@ import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
-const builtInPythonFuncs = `
+import { builtInPythonFuncs } from './pre-defined-funcs.js';
 
-
-`
 /**
  * @constant {string[]} supportedLangs
  * @description List of supported programming languages.
