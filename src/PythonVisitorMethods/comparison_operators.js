@@ -11,8 +11,14 @@ export function visitComparison(ctx) {
         const comparisonPair = String(this.visit(ctx.compare_op_bitwise_or_pair(i))).trim(); 
         comparisonPairs.push(comparisonPair); 
     }
-    // Join the comparison pairs and remove extra spaces
-    return `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
+    let evalString = `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
+    if(comparisonPairs.length >= 1 ) {
+        return `osiris_builtin_python_evalPythonComparison('${evalString}')`
+    }
+    else 
+    {
+        return evalString;
+    }
 }
 
 export function visitEq_bitwise_or(ctx) {

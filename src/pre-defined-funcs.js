@@ -1,3 +1,245 @@
+var evalComparFun = `
+function osiris_builtin_python_evalPythonComparison(expr) {
+  // Immediately return false if unsupported logical operators are found
+  if (/\b(and|or)\b/.test(expr)) {
+    return false;
+  }
+
+  // Helper: compute depths of nested structures
+  function getDepths(str) {
+    const depths = new Array(str.length).fill(0);
+    let currentDepth = 0;
+    let inString = false;
+    let stringChar = null;
+    let escape = false;
+
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i];
+
+      if (escape) {
+        escape = false;
+        continue;
+      }
+
+      if (inString) {
+        if (char === stringChar) {
+          inString = false;
+          stringChar = null;
+        } else if (char === '\\') {
+          escape = true;
+        }
+      } else {
+        switch (char) {
+          case '(': case '[': case '{':
+            currentDepth++;
+            break;
+          case ')': case ']': case '}':
+            currentDepth = Math.max(currentDepth - 1, 0);
+            break;
+          case '"': case "'": case '` + "`" + `':
+            inString = true;
+            stringChar = char;
+            break;
+        }
+      }
+
+      depths[i] = currentDepth;
+    }
+
+    return depths;
+  }
+
+  // Tokenize the expression considering nested structures
+  function tokenize(expr) {
+    const depths = getDepths(expr);
+    const operators = ['is not', 'not in', '==', '!=', '<=', '>=', '<', '>', 'is', 'in'];
+    const tokens = [];
+    let currentToken = '';
+    let i = 0;
+
+    while (i < expr.length) {
+      let foundOp = null;
+      for (const op of operators) {
+        if (expr.substr(i, op.length) === op) {
+          // Check if the operator is at depth 0
+          let isAtDepthZero = true;
+          for (let j = 0; j < op.length; j++) {
+            if (depths[i + j] !== 0) {
+              isAtDepthZero = false;
+              break;
+            }
+          }
+          if (isAtDepthZero) {
+            // Check surrounding characters to avoid partial matches
+            const before = i === 0 ? ' ' : expr[i - 1];
+            const after = i + op.length >= expr.length ? ' ' : expr[i + op.length];
+            if (/\s|[(]/.test(before) && /\s|[)]/.test(after)) {
+              foundOp = op;
+              break;
+            }
+          }
+        }
+      }
+
+      if (foundOp) {
+        if (currentToken.trim()) {
+          tokens.push(currentToken.trim());
+          currentToken = '';
+        }
+        tokens.push(foundOp.trim());
+        i += foundOp.length;
+      } else {
+        currentToken += expr[i];
+        i++;
+      }
+    }
+
+    if (currentToken.trim()) {
+      tokens.push(currentToken.trim());
+    }
+
+    return tokens;
+  }
+
+  // Helpers for comparison logic
+  function isIn(a, b) {
+    if (Array.isArray(b)) {
+      return b.some(item => deepEqual(a, item));
+    }
+    if (typeof b === "string") {
+      return b.includes(a);
+    }
+    if (b instanceof Set) {
+      for (const item of b) {
+        if (deepEqual(a, item)) return true;
+      }
+      return false;
+    }
+    if (typeof b === "object" && b !== null) {
+      return Object.keys(b).some(key => deepEqual(a, key));
+    }
+    return false;
+  }
+
+  function deepEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return a === b;
+    if (typeof a !== typeof b) return false;
+
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!deepEqual(a[i], b[i])) return false;
+      }
+      return true;
+    }
+
+    if (a instanceof Set && b instanceof Set) {
+      if (a.size !== b.size) return false;
+      const aArray = Array.from(a).sort();
+      const bArray = Array.from(b).sort();
+      return deepEqual(aArray, bArray);
+    }
+
+    if (typeof a === 'object') {
+      const keysA = Object.keys(a).sort();
+      const keysB = Object.keys(b).sort();
+      if (keysA.length !== keysB.length) return false;
+      for (let i = 0; i < keysA.length; i++) {
+        const key = keysA[i];
+        if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  // Operator definitions
+  const operators = {
+    "==": (a, b) => {
+      if (a === true && b === true) return true;
+      if (a === false && b === false) return true;
+      if (a === true || a === false || b === true || b === false) return a === b;
+      return deepEqual(a, b);
+    },
+    "!=": (a, b) => !operators["=="](a, b),
+    "<": (a, b) => {
+      // If either operand is a Boolean, don't perform numeric conversion
+      if (typeof a === "boolean" || typeof b === "boolean") return false;
+      return a < b;
+    },
+    "<=": (a, b) => {
+      if (typeof a === "boolean" || typeof b === "boolean") return false;
+      return a <= b;
+    },
+    ">": (a, b) => {
+      if (typeof a === "boolean" || typeof b === "boolean") return false;
+      return a > b;
+    },
+    ">=": (a, b) => {
+      if (typeof a === "boolean" || typeof b === "boolean") return false;
+      return a >= b;
+    },
+    "in": (a, b) => isIn(a, b),
+    "not in": (a, b) => !isIn(a, b),
+    "is": (a, b) => {
+      if (a === true) return b === true;
+      if (a === false) return b === false;
+      if (a === null) return b === null;
+      if (b === true) return a === true;
+      if (b === false) return a === false;
+      if (b === null) return a === null;
+      return Object.is(a, b);
+    },
+    "is not": (a, b) => !operators["is"](a, b)
+  };
+
+  // Tokenize the expression
+  const parts = tokenize(expr);
+  const values = [];
+  const ops = [];
+
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 0) {
+      let value = parts[i];
+      if (value === 'True') value = true;
+      else if (value === 'False') value = false;
+      else if (value === 'None') value = null;
+      // For parenthesized expressions that include a comparison operator,
+      // evaluate them recursively.
+      else if (
+        value.startsWith("(") &&
+        value.endsWith(")") &&
+        /is not|not in|==|!=|<=|>=|<|>|is|in/.test(value)
+      ) {
+        value = evalPythonComparison(value.slice(1, -1));
+      } else {
+        try {
+          value = eval(value);
+        } catch (e) {
+          // Keep as string if evaluation fails
+        }
+      }
+      values.push(value);
+    } else {
+      ops.push(parts[i]);
+    }
+  }
+
+  // Evaluate each comparison in the chain
+  for (let i = 0; i < ops.length; i++) {
+    const left = values[i];
+    const right = values[i + 1];
+    const op = ops[i];
+    const opFunc = operators[op];
+    if (!opFunc) throw new Error('Unsupported operator:' + op);
+    if (!opFunc(left, right)) return false;
+  }
+
+  return true;
+}
+`
 var isIn = `function osiris_builtin_python_isIn(item, container) {
   if (Array.isArray(container)) {
     return container.includes(item);
@@ -226,5 +468,6 @@ ${sumFunc}
 ${rangeFunc}
 ${lenFunc}
 ${extendFunc}
+${evalComparFun}
 `;
 
