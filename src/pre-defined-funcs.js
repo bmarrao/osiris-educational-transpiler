@@ -363,7 +363,6 @@ var joinFunc = `function osiris_builtin_python_join(separator, iterable) {
 `;
 
 export var builtInPythonFuncs = `
-${isIn}
 ${map}
 ${enumerate}
 ${divmod}
