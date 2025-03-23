@@ -13,7 +13,8 @@ export function visitComparison(ctx) {
     }
     let evalString = `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
     if(comparisonPairs.length >= 1 ) {
-        return `osiris_builtin_python_evalPythonComparison('${evalString}')`
+        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars.map(v => v + ": " + v).join(", ")} })`;
+
     }
     else 
     {
