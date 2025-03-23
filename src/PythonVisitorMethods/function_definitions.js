@@ -26,6 +26,7 @@ export function visitFunction_def(ctx) {
 export function visitFunction_def_raw(ctx) {
     let functionName = ctx.NAME().getText();
     let params =""
+    this.localVars.push(functionName)
     if (ctx.params())
     {
         params = this.visit(ctx.params()); // Visit the parameters
