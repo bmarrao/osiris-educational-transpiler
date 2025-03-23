@@ -1,3 +1,61 @@
+var convertFun =` function convertPythonOperand(value) {
+    if (typeof value === 'boolean') {
+        return value ? 1 : 0;
+    }
+    return value;
+}
+`
+var additionFun=`function osiris_builtin_addition(a, b) {
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
+
+    if (typeof a === 'number' && typeof b === 'number') {
+        return a + b;
+    } else if (typeof a === 'string' && typeof b === 'string') {
+        return a + b;
+    } else if (Array.isArray(a) && Array.isArray(b)) {
+        return a.concat(b);
+    } else {
+        throw new TypeError("unsupported operand type(s) for +");
+    }
+}
+`
+var subtractFun = `function osiris_builtin_subtraction(a, b) {
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
+
+    if (typeof a === 'number' && typeof b === 'number') {
+        return a - b;
+    } else {
+        throw new TypeError("unsupported operand type(s) for -");
+    }
+}
+`
+var multiplyFun = `function osiris_builtin_multiplication(a, b) {
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
+
+    if (typeof a === 'number' && typeof b === 'number') {
+        return a * b;
+    }
+
+    const repeatSequence = (sequence, times) => {
+        times = Math.floor(times);
+        if (times <= 0) return typeof sequence === 'string' ? '' : [];
+        if (typeof sequence === 'string') return sequence.repeat(times);
+        if (Array.isArray(sequence)) return Array(times).fill().flatMap(() => sequence);
+    };
+
+    if ((typeof a === 'string' || Array.isArray(a)) && typeof b === 'number' && Number.isInteger(b)) {
+        return repeatSequence(a, b);
+    }
+    if ((typeof b === 'string' || Array.isArray(b)) && typeof a === 'number' && Number.isInteger(a)) {
+        return repeatSequence(b, a);
+    }
+
+    throw new TypeError("unsupported operand type(s) for *");
+}
+`
 var evalComparFun = "" +
 "function osiris_builtin_python_evalPythonComparison(expr, context) { " +
 "  if (/\\b(and|or)\\b/.test(expr)) { " +
@@ -379,5 +437,8 @@ ${rangeFunc}
 ${lenFunc}
 ${extendFunc}
 ${evalComparFun}
+${convertFun}
+${additionFun}
+${subtractFun}
+${multiplyFun}
 `;
-

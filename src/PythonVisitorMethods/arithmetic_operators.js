@@ -6,8 +6,16 @@ export function visitSum(ctx) {
         // Get the operator and evaluate
         const operator = ctx.children[1].getText();
         const right = this.visit(ctx.term());
-
-        return (left + " " + operator + " " + right)
+        let funcName = "";
+        if (operator.trim() === "+")
+        {
+            funcName = 'osiris_builtin_addition'
+        }
+        else 
+        {
+            funcName = 'osiris_builtin_subtraction'
+        }
+        return `${funcName}(${left},${right})`;
     } else {
         return this.visit(ctx.term());
     }
@@ -24,6 +32,10 @@ export function visitTerm(ctx) {
         if (operator === "//")
         {
             return `Math.floor(${left} / ${right})`;
+        }
+        else if (operator === "*")
+        {
+            return `osiris_builtin_multiplication(${left},${right})`;
         }
         else if (operator === "@")
         {
