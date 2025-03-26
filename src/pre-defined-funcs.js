@@ -185,7 +185,7 @@ var multiplyFun = `function osiris_builtin_multiplication(a, b) {
 }
 `
 var evalComparFun = "" +
-"function evalPythonComparison(expr, context) { " +
+" function osiris_builtin_python_evalPythonComparison(expr, context) { " +
 "  if (/\\b(and|or)\\b/.test(expr)) { " +
 "    return false; " +
 "  } " +
