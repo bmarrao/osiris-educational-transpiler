@@ -32,8 +32,8 @@ export function visitFunction_def_raw(ctx) {
         params = this.visit(ctx.params()); // Visit the parameters
     }
     const returnType = ctx.expression() ? ` -> ${this.visit(ctx.expression())}` : ''; // Optional return type
-    
-    let paramList = params.split(",").map(param => param.trim()); // Trim every element in paramList
+
+    let paramList = params.split(",").map(param => param.split("=")[0].trim());
     let length = this.localVars.length;
     this.localVars.push(...paramList); // Spread operator to add all elements of paramList to localVars
 

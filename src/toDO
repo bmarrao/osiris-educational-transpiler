@@ -18,7 +18,20 @@ Strings builtin funcs
 pairs = [(x, y) for x in range(2) for y in range(3)]
 print(pairs)  # [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]
 
-genexp - next , list : implementar uma própria static function ? 
+genexp - next , list : implementar uma própria static function ?
+
+wildcard problem _ add variables wildcard_osiris_1 , ... 
+
+notas = list(map(float, input("Digite as notas separadas por espaço: ").split()))
+
+def juros_compostos_lista(valores):
+    p, r, t = valores
+    return p * (1 + r) ** t
+
+valores = [1000, 0.05, 3]
+print(juros_compostos_lista(valores))
+
+
 
 
 
