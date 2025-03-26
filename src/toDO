@@ -1,19 +1,9 @@
-1. When using keyword args, the definition passes to (k=2 , lst) but the call of the function keeps the incorrect order
-def rotate_list(lst, k=2):
-    k %= len(lst)  # Garante que k não seja maior que o tamanho da lista
-    return lst[-k:] + lst[:-k]
-
-# Testes
-print(rotate_list([1, 2, 3, 4, 5], 2))  # Saída: [4, 5, 1, 2, 3]
-
-
 add function in window so it is builtin see how you do it in the new beowser I defnin
 
 + between lists gives a list, in js it gives a string
 lst = [z for x, y in [(2, 3), (4, 5)] for z in (x, y)]
 print(lst)  # [2, 3, 4, 5]
 
-print(x == [2, 3, 4])  # True
 Strings builtin funcs
 pairs = [(x, y) for x in range(2) for y in range(3)]
 print(pairs)  # [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]

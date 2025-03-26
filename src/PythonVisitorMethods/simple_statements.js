@@ -4,7 +4,7 @@ import { flatten }  from "../tools/flatten.js"
 function multipleTargets(targets, valuesStr) {
     let ret = "";
     let unpack ; 
-    if (valuesStr.trim()[0] === "[") {
+    if (valuesStr.trim()[0] === "[" || !(valuesStr.includes(",")) ) {
         unpack = `osiris_iterable_unpacking = ${valuesStr};\n`;
     } else {
         unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
