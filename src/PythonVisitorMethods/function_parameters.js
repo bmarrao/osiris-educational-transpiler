@@ -56,70 +56,50 @@ export function visitAnnotation(ctx) {
     return `: ${mappedAnnotation}`;
 }
 
-
-
 export function visitParameters(ctx) {
-    // console.log("IN PARAMETERS\n\n\n\n")
     const params = [];
 
-    // Visit parameters before the '/' (slash_no_default)
+    // 1. Handle parameters before the '/'
     if (ctx.slash_no_default()) {
-        
-        // console.log("1")
         params.push(this.visit(ctx.slash_no_default()));
     }
-    
-    // Visit parameters with defaults before the '/' (slash_with_default)
     if (ctx.slash_with_default()) {
-        // console.log("2")
         params.push(this.visit(ctx.slash_with_default()));
     }
-    
-    // Visit parameters with default assignments (param_with_default)
-    if (ctx.param_with_default()) {
-        // console.log("3")
-        params.push(
-            ctx.param_with_default().map(param => this.visit(param)).join(', ')
-        );
-    }
+
+    // 2. Process param_no_default BEFORE param_with_default (critical order fix)
     if (ctx.param_no_default()) {
-        const vars = ctx.param_no_default().map(param => this.visit(param)).join(', ')
-        // console.log(`vars inside no default ${vars}`)
         params.push(
             ctx.param_no_default().map(param => this.visit(param)).join(', ')
         );
     }
-    // Visit the star arguments (e.g., *args, **kwargs)
+    if (ctx.param_with_default()) {
+        params.push(
+            ctx.param_with_default().map(param => this.visit(param)).join(', ')
+        );
+    }
+
+    // 3. Handle star_etc (e.g., *args)
     if (ctx.star_etc()) {
-        // console.log("5")
-        
         params.push(this.visit(ctx.star_etc()));
     }
-    for(let i = 0 ; i < params.lenght; i+=1)
-    {
-        // console.log(`on ${i}${params[i]}`) 
-    }
-    // Return the joined parameters as a string
 
-    return params.filter(param => param.trim() !== '').join(', ');
+    // Combine all parts into a single parameter string
+    return params.filter(p => p).join(', ');
 }
 
 export function visitSlash_no_default(ctx) {
-    // Visit each param_no_default and return as a comma-separated string
+    // Processes param_no_default+ before '/'
     return ctx.param_no_default().map(param => this.visit(param)).join(', ');
 }
 
 export function visitSlash_with_default(ctx) {
-    const params = [];
-
-    // Visit param_no_default (without defaults)
-    params.push(...ctx.param_no_default().map(param => this.visit(param)));
-    
-    // Visit param_with_default (with defaults)
-    params.push(...ctx.param_with_default().map(param => this.visit(param)));
-
-    // Return the combined parameters as a comma-separated string
-    return params.join(', ');
+    // Processes param_no_default* followed by param_with_default+
+    const parts = [
+        ...ctx.param_no_default().map(p => this.visit(p)),
+        ...ctx.param_with_default().map(p => this.visit(p))
+    ];
+    return parts.join(', ');
 }
 
 export function visitParam_no_default_star_annotation(ctx) {
