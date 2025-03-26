@@ -93,7 +93,7 @@ function str(value) {
 `
 
 var anyFun = `
-function any(iterable) 
+function any(iterable){
 
     // Handle non-iterable inputs (Python-compatible errors)
     if (iterable === null || iterable === undefined) {
