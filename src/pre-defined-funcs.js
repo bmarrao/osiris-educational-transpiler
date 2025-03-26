@@ -1,5 +1,5 @@
 var reprFun = `
-function osiris_builtin_python_repr(value) {
+function repr(value) {
     // Helper for Python-like repr() (used inside collections)
     if (value === null || value === undefined) return 'None';
     if (typeof value === 'boolean') return value ? 'True' : 'False';
@@ -58,7 +58,7 @@ function osiris_builtin_python_repr(value) {
 
 var strFun = `
 // Main function: Python's str()
-function osiris_builtin_python_str(value) {
+function str(value) {
     // Handle null/undefined
     if (value === null || value === undefined) return 'None';
 
@@ -77,10 +77,10 @@ function osiris_builtin_python_str(value) {
     if (typeof value === 'string') return value;
 
     // Collections: use repr() for elements
-    if (Array.isArray(value)) return osiris_builtin_python_repr(value);
-    if (value instanceof Set) return osiris_builtin_python_repr(value);
-    if (value instanceof Map) return osiris_builtin_python_repr(value);
-    if (value.constructor === Object) return osiris_builtin_python_repr(value);
+    if (Array.isArray(value)) return repr(value);
+    if (value instanceof Set) return repr(value);
+    if (value instanceof Map) return repr(value);
+    if (value.constructor === Object) return repr(value);
 
     // Other objects
     if (typeof value === 'object') {
@@ -93,7 +93,7 @@ function osiris_builtin_python_str(value) {
 `
 
 var anyFun = `
-function osiris_builtin_python_any(iterable) 
+function any(iterable) 
 
     // Handle non-iterable inputs (Python-compatible errors)
     if (iterable === null || iterable === undefined) {
@@ -185,7 +185,7 @@ var multiplyFun = `function osiris_builtin_multiplication(a, b) {
 }
 `
 var evalComparFun = "" +
-"function osiris_builtin_python_evalPythonComparison(expr, context) { " +
+"function evalPythonComparison(expr, context) { " +
 "  if (/\\b(and|or)\\b/.test(expr)) { " +
 "    return false; " +
 "  } " +
@@ -336,7 +336,7 @@ var evalComparFun = "" +
 "  return true; " +
 "}";
 
-var map = `function osiris_builtin_python_map(fn, ...iterables) {
+var map = `function map(fn, ...iterables) {
   const length = Math.max(...iterables.map(iterable => iterable.length));
   const result = [];
 
@@ -348,7 +348,7 @@ var map = `function osiris_builtin_python_map(fn, ...iterables) {
   return result;
 }`;
 
-var enumerate = `function osiris_builtin_python_enumerate(iterable, start=0) {
+var enumerate = `function enumerate(iterable, start=0) {
 
     const result = [];
     for (let index = start; index < iterable.length + start; index++) {
@@ -357,7 +357,7 @@ var enumerate = `function osiris_builtin_python_enumerate(iterable, start=0) {
     return result;
 }`;
 
-var divmod = `function osiris_builtin_python_divmod(x, y) {
+var divmod = `function divmod(x, y) {
   if (y === 0) {
     throw new Error("Division by zero");
   }
@@ -367,12 +367,12 @@ var divmod = `function osiris_builtin_python_divmod(x, y) {
   return [q, r];
 }`;
 
-var roundFunc = `function osiris_builtin_python_round(number, precision = 0) {
+var roundFunc = `function round(number, precision = 0) {
   const factor = Math.pow(10, precision);
   return (Math.round(number * factor) / factor);
 }`;
 
-var zip = `function osiris_builtin_python_zip(...arrays) {
+var zip = `function zip(...arrays) {
   // Check if the first argument is 'true' for unzipping
   if (arrays[0] === true) {
     const zipped = arrays.slice(1); // Remove the 'true' argument
@@ -401,7 +401,7 @@ var zip = `function osiris_builtin_python_zip(...arrays) {
   }
 }`;
 
-var myRemove = `function osiris_builtin_python_myRemove(collection, value) {
+var myRemove = `function myRemove(collection, value) {
   if (Array.isArray(collection)) {
     // If it's a list, remove the first occurrence of the value
     const index = collection.indexOf(value);
@@ -418,7 +418,7 @@ var myRemove = `function osiris_builtin_python_myRemove(collection, value) {
   }
 }`;
 
-var myPop = `function osiris_builtin_python_myPop(collection, ...args) {
+var myPop = `function myPop(collection, ...args) {
   if (Array.isArray(collection)) {
     // Caso seja uma lista (array)
     if (args.length === 0) {
@@ -466,7 +466,7 @@ var myPop = `function osiris_builtin_python_myPop(collection, ...args) {
   }
 }`;
 
-var sortedFunc = `function osiris_builtin_python_sorted(iterable, { key = null, reverse = false } = {}) {
+var sortedFunc = `function sorted(iterable, { key = null, reverse = false } = {}) {
   let arr = [...iterable];
   arr.sort((a, b) => {
     let valA = key ? key(a) : a;
@@ -476,17 +476,17 @@ var sortedFunc = `function osiris_builtin_python_sorted(iterable, { key = null, 
   return reverse ? arr.reverse() : arr;
 }`;
 
-var maxFunc = `function osiris_builtin_python_max(iterable, key = x => x) {
+var maxFunc = `function max(iterable, key = x => x) {
   if (!Array.isArray(iterable)) iterable = [...arguments]; // Allow separate args
   return iterable.reduce((max, item) => (key(item) > key(max) ? item : max));
 }`;
 
-var minFunc = `function osiris_builtin_python_min(iterable, key = x => x) {
+var minFunc = `function min(iterable, key = x => x) {
   if (!Array.isArray(iterable)) iterable = [...arguments];
   return iterable.reduce((min, item) => (key(item) < key(min) ? item : min));
 }`;
 
-var typeFunc = `function osiris_builtin_python_type(obj) {
+var typeFunc = `function type(obj) {
   if (obj === null) return "NoneType";
   if (Array.isArray(obj)) return "list";
   if (obj instanceof Function) return "function";
@@ -498,11 +498,11 @@ var typeFunc = `function osiris_builtin_python_type(obj) {
   return typeof obj; // fallback for other types
 }`;
 
-var sumFunc = `function osiris_builtin_python_sum(iterable, start = 0) {
+var sumFunc = `function sum(iterable, start = 0) {
   return iterable.reduce((acc, val) => acc + val, start);
 }`;
 
-var rangeFunc = `function osiris_builtin_python_range(start, stop, step = 1) {
+var rangeFunc = `function range(start, stop, step = 1) {
   if (stop === undefined) {
     stop = start;
     start = 0;
@@ -510,7 +510,7 @@ var rangeFunc = `function osiris_builtin_python_range(start, stop, step = 1) {
   return Array.from({ length: Math.max(0, Math.ceil((stop - start) / step)) }, (_, i) => start + i * step);
 }`;
 
-var lenFunc = `function osiris_builtin_python_len(input) {
+var lenFunc = `function len(input) {
   if (typeof input === "string" || Array.isArray(input)) {
     return input.length;
   }
@@ -532,11 +532,11 @@ var lenFunc = `function osiris_builtin_python_len(input) {
 
 `;
 
-var extendFunc = `function osiris_builtin_python_extend(arr, iterable) {
+var extendFunc = `function extend(arr, iterable) {
   arr.push(...iterable);
 }
 `
-var joinFunc = `function osiris_builtin_python_join(separator, iterable) {
+var joinFunc = `function join(separator, iterable) {
   if (!Array.isArray(iterable)) {
     throw new TypeError('The second argument must be an array.');
   }
