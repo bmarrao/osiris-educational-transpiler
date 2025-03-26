@@ -215,6 +215,12 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
       return `Math.abs(${argsText})`;
     case "map":
       return `osiris_builtin_python_map(${argsText})`;
+    case "repr":
+      return `osiris_builtin_python_repr(${argsText})`;
+    case "str":
+      return `osiris_builtin_python_str(${argsText})`;
+    case "str":
+          return `osiris_builtin_python_any(${argsText})`;
     case "enumerate":
       return `osiris_builtin_python_enumerate(${argsText})`;
     case "divmod":

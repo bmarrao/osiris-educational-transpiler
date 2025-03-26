@@ -1,4 +1,132 @@
-var convertFun =` function convertPythonOperand(value) {
+var reprFun = `
+function osiris_builtin_python_repr(value) {
+    // Helper for Python-like repr() (used inside collections)
+    if (value === null || value === undefined) return 'None';
+    if (typeof value === 'boolean') return value ? 'True' : 'False';
+
+    // Numbers
+    if (typeof value === 'number') {
+        if (Number.isNaN(value)) return 'nan';
+        if (value === Infinity) return 'inf';
+        if (value === -Infinity) return '-inf';
+        return Number.isInteger(value) ? String(value) : value.toString();
+    }
+
+    // Strings (dynamic quoting)
+    if (typeof value === 'string') {
+        let quote = "'";
+        if (value.includes("'") && !value.includes('"')) quote = '"';
+        const escaped = value
+            .replace(/\\/g, '\\\\')
+            .replace(new RegExp(quote, 'g'), "\\" + quote)
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r')
+            .replace(/\t/g, '\\t');
+        return quote + escaped + quote; // Replaced template literal
+    }
+
+    // Lists/arrays
+    if (Array.isArray(value)) {
+        const elements = value.map(pyRepr).join(', ');
+        return "[" + elements + "]"; // Replaced
+    }
+
+    // Sets
+    if (value instanceof Set) {
+        if (value.size === 0) return 'set()';
+        const elements = Array.from(value).map(pyRepr).join(', ');
+        return "{" + elements + "}"; // Replaced
+    }
+
+    // Dicts/Maps
+    if (value instanceof Map || value.constructor === Object) {
+        const entries = Array.from(value.entries() || Object.entries(value))
+            .map(([k, v]) => pyRepr(k) + ": " + pyRepr(v))
+            .join(', ');
+        return "{" + entries + "}"; // Replaced
+    }
+
+    // Objects/classes
+    if (typeof value === 'object') {
+        const className = value.constructor?.name || 'object';
+        return "<" + className + " instance>"; // Replaced
+    }
+
+    return String(value);
+}
+`
+
+var strFun = `
+// Main function: Python's str()
+function osiris_builtin_python_str(value) {
+    // Handle null/undefined
+    if (value === null || value === undefined) return 'None';
+
+    // Booleans
+    if (typeof value === 'boolean') return value ? 'True' : 'False';
+
+    // Numbers
+    if (typeof value === 'number') {
+        if (Number.isNaN(value)) return 'nan';
+        if (value === Infinity) return 'inf';
+        if (value === -Infinity) return '-inf';
+        return value.toString();
+    }
+
+    // Strings (no quotes for top-level)
+    if (typeof value === 'string') return value;
+
+    // Collections: use repr() for elements
+    if (Array.isArray(value)) return osiris_builtin_python_repr(value);
+    if (value instanceof Set) return osiris_builtin_python_repr(value);
+    if (value instanceof Map) return osiris_builtin_python_repr(value);
+    if (value.constructor === Object) return osiris_builtin_python_repr(value);
+
+    // Other objects
+    if (typeof value === 'object') {
+        const className = value.constructor?.name || 'object';
+        return "<" + className + " object>";
+    }
+
+    return String(value);
+}
+`
+
+var anyFun = `
+function osiris_builtin_python_any(iterable) 
+
+    // Handle non-iterable inputs (Python-compatible errors)
+    if (iterable === null || iterable === undefined) {
+        const typeName = iterable === null ? 'NoneType' : 'undefined';
+        throw new TypeError("object is not iterable");
+    }
+    if (typeof iterable[Symbol.iterator] !== 'function') {
+        throw new TypeError("object is not iterable");
+    }
+
+    // Python-style truthiness checker
+    function isTruthy(value) {
+        if (value === null || value === undefined) return false; // None
+        if (typeof value === 'number' && (value === 0 || Number.isNaN(value))) return false;
+        if (typeof value === 'string' && value === '') return false;
+        if (typeof value === 'boolean') return value;
+        // Handle collections (Python treats empty ones as falsy)
+        if (Array.isArray(value) && value.length === 0) return false;
+        if (value instanceof Set && value.size === 0) return false;
+        if (value instanceof Map && value.size === 0) return false;
+        if (value.constructor === Object && Object.keys(value).length === 0) return false;
+        return true; // All other values are truthy
+    }
+
+    // Check elements with Python's truthiness rules
+    for (const element of iterable) {
+        if (isTruthy(element)) return true;
+    }
+    return false;
+}
+`
+
+var convertFun =` function osiris_builtin_convertPythonOperand(value) {
     if (typeof value === 'boolean') {
         return value ? 1 : 0;
     }
@@ -6,8 +134,8 @@ var convertFun =` function convertPythonOperand(value) {
 }
 `
 var additionFun=`function osiris_builtin_addition(a, b) {
-    a = convertPythonOperand(a);
-    b = convertPythonOperand(b);
+    a = osiris_builtin_convertPythonOperand(a);
+    b = osiris_builtin_convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a + b;
@@ -21,8 +149,8 @@ var additionFun=`function osiris_builtin_addition(a, b) {
 }
 `
 var subtractFun = `function osiris_builtin_subtraction(a, b) {
-    a = convertPythonOperand(a);
-    b = convertPythonOperand(b);
+    a = osiris_builtin_convertPythonOperand(a);
+    b = osiris_builtin_convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a - b;
@@ -32,8 +160,8 @@ var subtractFun = `function osiris_builtin_subtraction(a, b) {
 }
 `
 var multiplyFun = `function osiris_builtin_multiplication(a, b) {
-    a = convertPythonOperand(a);
-    b = convertPythonOperand(b);
+    a = osiris_builtin_convertPythonOperand(a);
+    b = osiris_builtin_convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a * b;
@@ -441,4 +569,7 @@ ${convertFun}
 ${additionFun}
 ${subtractFun}
 ${multiplyFun}
+${anyFun}
+${strFun}
+${reprFun}
 `;
