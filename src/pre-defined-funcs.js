@@ -27,21 +27,21 @@ function repr(value) {
 
     // Lists/arrays
     if (Array.isArray(value)) {
-        const elements = value.map(pyRepr).join(', ');
+        const elements = value.map(repr).join(', ');
         return "[" + elements + "]"; // Replaced
     }
 
     // Sets
     if (value instanceof Set) {
         if (value.size === 0) return 'set()';
-        const elements = Array.from(value).map(pyRepr).join(', ');
+        const elements = Array.from(value).map(repr).join(', ');
         return "{" + elements + "}"; // Replaced
     }
 
     // Dicts/Maps
     if (value instanceof Map || value.constructor === Object) {
         const entries = Array.from(value.entries() || Object.entries(value))
-            .map(([k, v]) => pyRepr(k) + ": " + pyRepr(v))
+            .map(([k, v]) => repr(k) + ": " + repr(v))
             .join(', ');
         return "{" + entries + "}"; // Replaced
     }
