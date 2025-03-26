@@ -344,7 +344,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   dealTargets: () => (/* binding */ dealTargets)\n/* harmony export */ });\nfunction _typeof(o) { \"@babel/helpers - typeof\"; return _typeof = \"function\" == typeof Symbol && \"symbol\" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && \"function\" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? \"symbol\" : typeof o; }, _typeof(o); }\nfunction dealTargets(variables) {\n  console.log(\"In deal targets with variables: \".concat(variables));\n  console.log(\"Type of variables: \".concat(_typeof(variables)));\n  console.log(\"Is variables an array? \".concat(Array.isArray(variables)));\n  console.log(variables.length);\n  return variables.length > 1 ? \"[\".concat(variables.join(','), \"]\") : variables.join(',');\n}\n\n//# sourceURL=webpack://osiris-educational-transpiler/./tools/targets.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   dealTargets: () => (/* binding */ dealTargets)\n/* harmony export */ });\nfunction dealTargets(variables, localVars) {\n  this.localVars.push(variables);\n  return variables.length > 1 ? \"[\".concat(variables.join(','), \"]\") : variables.join(',');\n}\n\n//# sourceURL=webpack://osiris-educational-transpiler/./tools/targets.js?");
 
 /***/ }),
 
