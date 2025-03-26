@@ -1,10 +1,10 @@
 import { flatten }  from "../tools/flatten.js"
 
 
-function multipleTargets(targets, valuesStr) {
+function multipleTargets(targets, valuesStr,localVars) {
     let ret = "";
     let unpack ; 
-    if (valuesStr.trim()[0] === "[" || !(valuesStr.includes(",")) ) {
+    if (valuesStr.trim()[0] === "[" || localVars.includes(valuesStr.trim()) ) {
         unpack = `osiris_iterable_unpacking = ${valuesStr};\n`;
     } else {
         unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
