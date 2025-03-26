@@ -344,7 +344,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**************************/
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   dealTargets: () => (/* binding */ dealTargets)\n/* harmony export */ });\nfunction dealTargets(variables, localVars) {\n  this.localVars.push(variables);\n  return variables.length > 1 ? \"[\".concat(variables.join(','), \"]\") : variables.join(',');\n}\n\n//# sourceURL=webpack://osiris-educational-transpiler/./tools/targets.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   dealTargets: () => (/* binding */ dealTargets)\n/* harmony export */ });\nfunction dealTargets(variables, localVars) {\n  localVars.push(variables);\n  return variables.length > 1 ? \"[\".concat(variables.join(','), \"]\") : variables.join(',');\n}\n\n//# sourceURL=webpack://osiris-educational-transpiler/./tools/targets.js?");
 
 /***/ }),
 
