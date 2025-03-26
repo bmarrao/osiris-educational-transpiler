@@ -5,11 +5,9 @@ export function visitFor_if_clauses(ctx) {
 }
 
 export function visitFor_if_clause(ctx) {
-    console.log(this.visit(ctx.star_targets()))
-    console.log(dealTargets(this.visit(ctx.star_targets())))
     return {
         async: !!ctx.ASYNC(),
-        targets: dealTargets(this.visit(ctx.star_targets())),
+        targets: dealTargets(this.visit(ctx.star_targets()),this.localVars),
         iterable: this.visit(ctx.disjunction(0)),
         conditions: ctx.disjunction().slice(1).map(cond => this.visit(cond))
     };
