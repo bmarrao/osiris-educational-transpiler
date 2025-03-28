@@ -1,20 +1,18 @@
-# Osiris - Transpiler Educacional
+# Osiris - Educational Transpiler
 
-Osiris é um transpiler que converte código Python para JavaScript, permitindo execução de código em um web worker. É uma ferramenta educativa para quem deseja aprender sobre transpilação de linguagens de programação.
+Osiris is a transpiler that converts Python code to JavaScript.It also allows transpiled code execution within a web worker. It is an educational tool for those who want to learn about programming language transpilation.
 
-## Instalação
-
+## Installation
 
 ```sh
 npm i osiris-educational-transpiler
 ```
 
-## Uso
+## Usage
 
-Crie uma instância da classe `Osiris`, passe o código Python e execute-o:
+Create an instance of the `Osiris` class, pass the Python code, and execute it:
 
 ```js
-
 import Osiris from "osiris-educational-transpiler";
 const transpiler = new Osiris("python");
 
@@ -22,27 +20,30 @@ const result = transpiler.passCode('print("Hello, World!")');
 
 if (result.success) {
     console.log('Transpiled Code:', result.code);
+    //eval()
 } else {
     console.error('Transpilation Error:', result.error);
 }
+
+Also add run code example
 ```
 
 ## API
 
 ### `new Osiris(language: string)`
-Cria uma instância do transpiler para a linguagem desejada.
+Creates a transpiler instance for the desired language.
 
 ### `passCode(code: string): object`
-Define o código Python a ser transpilado e retorna um objeto contendo o resultado:
-- `success`: booleano indicando sucesso ou falha na transpilação.
-- `code`: código JavaScript transpilado.
-- `error`: mensagem de erro em caso de falha.
+Sets the Python code to be transpiled and returns an object with the result:
+- `success`: boolean indicating whether the transpilation was successful.
+- `code`: transpiled JavaScript code.
+- `error`: error message in case of failure.
 
 ### `runCode(appendToTerminal: function, timeout?: number)`
-Executa o código transpilado dentro de um web worker. O `appendToTerminal` é um callback para capturar a saída e adicionar a um terminal.
+Executes the transpiled code within a web worker. The `appendToTerminal` is a callback to capture and add output to a terminal.
 
 ### `sendIO(userInput: string)`
-Envia entrada do usuário para o código em execução.
+Sends user input to the running code.
 
 ### `supportedLanguages(): Array<string>`
-Retorna uma lista de linguagens suportadas.
+Returns a list of supported languages.

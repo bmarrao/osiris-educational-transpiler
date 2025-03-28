@@ -17,25 +17,25 @@ function repr(value) {
         let quote = "'";
         if (value.includes("'") && !value.includes('"')) quote = '"';
         const escaped = value
-            .replace(/\\/g, '\\\\')
-            .replace(new RegExp(quote, 'g'), "\\" + quote)
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r')
-            .replace(/\t/g, '\\t');
-        return quote + escaped + quote; // Replaced template literal
+            .replace(/\\\\/g, '\\\\\\\\')  // Match backslashes
+            .replace(new RegExp(quote, 'g'), '\\\\' + quote)  // Escape chosen quote
+            .replace(/\\n/g, '\\\\n')       // Newlines
+            .replace(/\\r/g, '\\\\r')       // Carriage returns
+            .replace(/\\t/g, '\\\\t');      // Tabs
+        return quote + escaped + quote;
     }
 
     // Lists/arrays
     if (Array.isArray(value)) {
         const elements = value.map(repr).join(', ');
-        return "[" + elements + "]"; // Replaced
+        return "[" + elements + "]";
     }
 
     // Sets
     if (value instanceof Set) {
         if (value.size === 0) return 'set()';
         const elements = Array.from(value).map(repr).join(', ');
-        return "{" + elements + "}"; // Replaced
+        return "{" + elements + "}";
     }
 
     // Dicts/Maps
@@ -43,18 +43,18 @@ function repr(value) {
         const entries = Array.from(value.entries() || Object.entries(value))
             .map(([k, v]) => repr(k) + ": " + repr(v))
             .join(', ');
-        return "{" + entries + "}"; // Replaced
+        return "{" + entries + "}";
     }
 
     // Objects/classes
     if (typeof value === 'object') {
         const className = value.constructor?.name || 'object';
-        return "<" + className + " instance>"; // Replaced
+        return "<" + className + " instance>";
     }
 
     return String(value);
 }
-`
+`;
 
 var strFun = `
 // Main function: Python's str()
