@@ -1,5 +1,7 @@
 add function in window so it is builtin see how you do it in the new beowser I defnin
 
+
+change name of funcs that are builtin when called inside another function map(sum, [1,2,3])
 + between lists gives a list, in js it gives a string
 lst = [z for x, y in [(2, 3), (4, 5)] for z in (x, y)]
 print(lst)  # [2, 3, 4, 5]
