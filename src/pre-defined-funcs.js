@@ -12,16 +12,16 @@ function repr(value) {
         return Number.isInteger(value) ? String(value) : value.toString();
     }
 
-    // Strings (dynamic quoting) - FIXED REGEX
+    // Strings (dynamic quoting with valid regex)
     if (typeof value === 'string') {
         let quote = "'";
         if (value.includes("'") && !value.includes('"')) quote = '"';
         const escaped = value
-            .replace(/\\\\/g, '\\\\\\\\')  // Match backslashes
-            .replace(new RegExp(quote, 'g'), '\\\\' + quote)  // Escape quotes
-            .replace(/\\n/g, '\\\\n')      // Newlines
-            .replace(/\\r/g, '\\\\r')       // Carriage returns
-            .replace(/\\t/g, '\\\\t');      // Tabs
+            .replace(/\\\\/g, '\\\\\\\\')       // Match backslashes (regex: /\\/g)
+            .replace(new RegExp(quote, 'g'), '\\\\' + quote) // Escape quotes
+            .replace(/\\n/g, '\\\\n')            // Newlines
+            .replace(/\\r/g, '\\\\r')            // Carriage returns
+            .replace(/\\t/g, '\\\\t');           // Tabs
         return quote + escaped + quote;
     }
 
