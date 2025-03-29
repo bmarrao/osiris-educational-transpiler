@@ -96,7 +96,7 @@ export function visitTarget_with_star_atom(ctx) {
             // Handle t_primary '[' slices ']'
             const slices = this.visit(ctx.slices());
             console.log(slices)
-            return `${primary}[${slices}]`;
+            return `${primary}${slices}`;
         }
     } else if (ctx.star_atom()) {
         // Handle star_atom

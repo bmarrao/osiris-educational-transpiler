@@ -390,35 +390,67 @@ export function visitSlices(ctx) {
 export function visitSlice(ctx) {
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
+    
+    // Handle slice with step (start:stop:step)
+    if (exprs.length === 3) {
+      const start = this.visit(exprs[0]) || 'null';
+      const stop = this.visit(exprs[1]) || 'null';
+      const step = this.visit(exprs[2]) || '1';
+
+      return `((${step}) => {
+        const $$ARRAY$$ = this;
+        if (${step} === 0) throw new Error('Slice step cannot be zero');
+        
+        return ${step} > 0 
+          ? $$ARRAY$$.slice(${adjustIndex(start, 'start', false)}, ${adjustIndex(stop, 'end', false)})
+              .filter((_, i) => i % ${Math.abs(step)} === 0)
+          : (() => {
+              const adjStart = ${adjustIndex(start, 'start', true)};
+              const adjStop = ${adjustIndex(stop, 'end', true)};
+              return $$ARRAY$$.slice(
+                Math.min(adjStop + 1, $$ARRAY$$.length), 
+                Math.min(adjStart + 1, $$ARRAY$$.length)
+              ).reverse()
+               .filter((_, i) => i % ${Math.abs(step)} === 0);
+            })();
+      }).call($$ARRAY$$)`;
+
+      function adjustIndex(value, type, isNegativeStep) {
+        // Handle Python's slice index semantics
+        return `((${value} === null ? 
+          (${isNegativeStep} ? 
+            ($$ARRAY$$.length - 1) : 
+            (${type} === 'start' ? 0 : $$ARRAY$$.length)) 
+          : ${value} < 0 ? Math.max(0, $$ARRAY$$.length + ${value}) : 
+            Math.min($$ARRAY$$.length, ${value}))`;
+      }
+    }
+
+    // Handle simple slices (start:stop)
     if (exprs.length === 2) {
       const start = this.visit(exprs[0]);
       const stop = this.visit(exprs[1]);
-      return `.slice(${start}, ${stop})`;
-    } else if (exprs.length === 1) {
+      return `$$ARRAY$$.slice(${adjustIndex(start)}, ${adjustIndex(stop)})`;
+    }
+
+    // Handle single index slices (start: or :stop)
+    if (exprs.length === 1) {
       if (ctx.getChild(0).getText() === ":") {
         const stop = this.visit(exprs[0]);
-        return `.slice(0, ${stop})`;
+        return `$$ARRAY$$.slice(0, ${adjustIndex(stop)})`;
       } else {
         const start = this.visit(exprs[0]);
-        return `.slice(${start})`;
+        return `$$ARRAY$$.slice(${adjustIndex(start)})`;
       }
-    } else if (exprs.length === 3) {
-      const start = this.visit(exprs[0]);
-      const stop = this.visit(exprs[1]);
-      const step = this.visit(exprs[2]);
-      // Handle negative steps
-      return `((${step} < 0) ? 
-        arr.slice(
-          (${stop} < 0 ? ${stop} + arr.length : ${stop}) + 1,
-          (${start} < 0 ? ${start} + arr.length : ${start}) + 1
-        ).reverse().filter((_, i) => i % Math.abs(${step}) === 0) : 
-        arr.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)
-      )`;
-    } else {
-      return `.slice(0)`;
     }
-  } else if (ctx.named_expression()) {
-    return `${this.visit(ctx.named_expression())}`;
+
+    // Full slice [:]
+    return `$$ARRAY$$.slice(0)`;
   }
+  
+  if (ctx.named_expression()) {
+    return `[${this.visit(ctx.named_expression())}]`;
+  }
+  
   return ctx.getText();
 }
