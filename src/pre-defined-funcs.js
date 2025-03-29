@@ -32,7 +32,7 @@ var filterFunc = `function filter(predicate, iterable) {
 `
 
 var allFunc = `
-function pyAll(iterable) {
+function all(iterable) {
   // Get elements to check (Python iteration rules)
   let elements;
   
