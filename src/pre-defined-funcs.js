@@ -653,4 +653,7 @@ ${anyFun}
 ${strFun}
 ${reprFun}
 ${getFunc}
+${filterFunc}
+${getFunc}
+${allFunc}
 `;
