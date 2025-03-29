@@ -12,7 +12,7 @@ export function visitStar_targets(ctx) {
     // `...args`
     // `...a, ...b`
     const targets = ctx.star_target().map(target => this.visit(target));
-    // console.log(`${targets.join(', ')}`)
+    console.log(`Targets ${targets.join(', ')}`)
     return targets; // Spread syntax for multiple star targets
 }
 
@@ -95,6 +95,7 @@ export function visitTarget_with_star_atom(ctx) {
         } else if (ctx.slices()) {
             // Handle t_primary '[' slices ']'
             const slices = this.visit(ctx.slices());
+            console.log(slices)
             return `${primary}[${slices}]`;
         }
     } else if (ctx.star_atom()) {

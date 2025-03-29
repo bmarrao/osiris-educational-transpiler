@@ -387,15 +387,10 @@ export function visitSlices(ctx) {
     }
     return `[${result.join(", ")}]`;
   }
-
-
-
-
 export function visitSlice(ctx) {
   // If the slice text contains a colon, process it as a slice expression.
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
-    
     // Two expressions: a[start:stop]
     if (exprs.length === 2) {
       const start = this.visit(exprs[0]);
@@ -429,9 +424,8 @@ export function visitSlice(ctx) {
     }
   }
   // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
-  // delegate explicitly and wrap the result in square brackets.
   else if (ctx.named_expression()) {
-    return `[${this.visit(ctx.named_expression())}]`;
+    return `${this.visit(ctx.named_expression())}`;
   }
   
   return ctx.getText();
