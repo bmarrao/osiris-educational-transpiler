@@ -388,67 +388,57 @@ export function visitSlices(ctx) {
     return `[${result.join(", ")}]`;
   }
 export function visitSlice(ctx) {
+  // If the slice text contains a colon, process it as a slice expression.
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
     
-    // Handle slice with step (start:stop:step)
-    if (exprs.length === 3) {
-      const start = this.visit(exprs[0]) || 'null';
-      const stop = this.visit(exprs[1]) || 'null';
-      const step = this.visit(exprs[2]) || '1';
-
-      return `((${step}) => {
-        const $$ARRAY$$ = this;
-        if (${step} === 0) throw new Error('Slice step cannot be zero');
-        
-        return ${step} > 0 
-          ? $$ARRAY$$.slice(${adjustIndex(start, 'start', false)}, ${adjustIndex(stop, 'end', false)})
-              .filter((_, i) => i % ${Math.abs(step)} === 0)
-          : (() => {
-              const adjStart = ${adjustIndex(start, 'start', true)};
-              const adjStop = ${adjustIndex(stop, 'end', true)};
-              return $$ARRAY$$.slice(
-                Math.min(adjStop + 1, $$ARRAY$$.length), 
-                Math.min(adjStart + 1, $$ARRAY$$.length)
-              ).reverse()
-               .filter((_, i) => i % ${Math.abs(step)} === 0);
-            })();
-      }).call($$ARRAY$$)`;
-
-      function adjustIndex(value, type, isNegativeStep) {
-        // Handle Python's slice index semantics
-        return `((${value} === null ? 
-          (${isNegativeStep} ? 
-            ($$ARRAY$$.length - 1) : 
-            (${type} === 'start' ? 0 : $$ARRAY$$.length)) 
-          : ${value} < 0 ? Math.max(0, $$ARRAY$$.length + ${value}) : 
-            Math.min($$ARRAY$$.length, ${value}))`;
-      }
-    }
-
-    // Handle simple slices (start:stop)
+    // Two expressions: a[start:stop]
     if (exprs.length === 2) {
       const start = this.visit(exprs[0]);
-      const stop = this.visit(exprs[1]);
-      return `$$ARRAY$$.slice(${adjustIndex(start)}, ${adjustIndex(stop)})`;
+      const stop  = this.visit(exprs[1]);
+      return `.slice(${start}, ${stop})`;
     }
-
-    // Handle single index slices (start: or :stop)
-    if (exprs.length === 1) {
+    // One expression: either omitted start (a[:stop]) or omitted stop (a[start:])
+    else if (exprs.length === 1) {
+      // Check the first child token: if it's a colon, then start was omitted.
       if (ctx.getChild(0).getText() === ":") {
         const stop = this.visit(exprs[0]);
-        return `$$ARRAY$$.slice(0, ${adjustIndex(stop)})`;
+        return `.slice(0, ${stop})`;
       } else {
         const start = this.visit(exprs[0]);
-        return `$$ARRAY$$.slice(${adjustIndex(start)})`;
+        return `.slice(${start})`;
       }
     }
-
-    // Full slice [:]
-    return `$$ARRAY$$.slice(0)`;
+    // Three expressions: a[start:stop:step]
+    else if (exprs.length === 3) {
+    const start = this.visit(exprs[0]);
+    const stop = this.visit(exprs[1]);
+    const step = this.visit(exprs[2]);
+    
+    if (step === "1") {
+      return `.slice(${start}, ${stop})`;
+    } else if (step.startsWith("-")) {
+      // Handle negative step
+      return `.slice().reverse().filter((_, i) => {
+        const len = this.length || this.length();
+        const actualStart = ${start} < 0 ? len + ${start} : ${start};
+        const actualStop = ${stop} < 0 ? len + ${stop} : ${stop};
+        return i >= len - Math.max(actualStart, 0) && 
+               i < len - Math.min(actualStop, len) && 
+               i % Math.abs(${step}) === 0;
+      })`;
+    } else {
+      return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+    }
   }
-  
-  if (ctx.named_expression()) {
+  // If no expressions are provided (a[:] for example), return full slice.
+  else {
+    return `.slice(0)`;
+  }
+  }
+  // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
+  // delegate explicitly and wrap the result in square brackets.
+  else if (ctx.named_expression()) {
     return `[${this.visit(ctx.named_expression())}]`;
   }
   
