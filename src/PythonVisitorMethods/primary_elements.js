@@ -413,25 +413,19 @@ export function visitSlice(ctx) {
       const start = this.visit(exprs[0]);
       const stop = this.visit(exprs[1]);
       const step = this.visit(exprs[2]);
-      
+
       if (step === "1") {
         return `.slice(${start}, ${stop})`;
       } else if (step.startsWith("-")) {
-        // Handle negative step
-        return `.slice().reverse().filter((_, i, arr) => {
-          const len = arr.length;
-          const actualStart = ${start} < 0 ? len + ${start} : ${start};
-          const actualStop = ${stop} < 0 ? len + ${stop} : ${stop};
-          return i >= len - Math.max(actualStart, 0) && 
-                 i < len - Math.min(actualStop, len) && 
-                 i % Math.abs(${step}) === 0;
-        })`;
+        const actualStart = stop === "" ? "0" : `(${stop} < 0 ? arr.length + ${stop} : ${stop})`;
+        const actualStop = start === "" ? "arr.length" : `(${start} < 0 ? arr.length + ${start} : ${start})`;
+
+        // Corrected line: Subtract 1 from arr.length when calculating reversed indices
+        return `.slice().reverse().slice(arr.length - 1 - ${actualStop}, arr.length - 1 - ${actualStart}).filter((_, i) => i % Math.abs(${step}) === 0)`;
       } else {
         return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
       }
-    }
-    // If no expressions are provided (a[:] for example), return full slice.
-    else {
+    } else {
       return `.slice(0)`;
     }
   }
