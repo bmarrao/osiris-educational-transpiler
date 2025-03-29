@@ -1,3 +1,83 @@
+var filterFunc = `function filter(predicate, iterable) {
+  // Handle predicate (default to truthy check)
+  if (typeof predicate !== 'function') {
+    predicate = element => Boolean(element);
+  }
+
+  // Handle different iterables
+  if (Array.isArray(iterable)) {
+    return iterable.filter(predicate);
+  }
+
+  if (typeof iterable === 'string') {
+    return Array.from(iterable).filter(predicate).join('');
+  }
+
+  if (iterable instanceof Set) {
+    return new Set([...iterable].filter(predicate));
+  }
+
+  if (iterable instanceof Map) {
+    return new Map([...iterable].filter(([k]) => predicate(k)));
+  }
+
+  if (typeof iterable === 'object' && iterable !== null) {
+    return Object.fromEntries(
+      Object.entries(iterable).filter(([k]) => predicate(k))
+    );
+  }
+
+  throw new TypeError("object is not iterable");
+}
+`
+
+var allFunc = `
+function pyAll(iterable) {
+  // Get elements to check (Python iteration rules)
+  let elements;
+  
+  if (Array.isArray(iterable) || typeof iterable === 'string') {
+    elements = [...iterable];
+  } else if (iterable instanceof Set) {
+    elements = [...iterable];
+  } else if (iterable instanceof Map) {
+    elements = [...iterable.keys()];
+  } else if (typeof iterable === 'object' && iterable !== null) {
+    elements = Object.keys(iterable);
+  } else {
+    throw new TypeError("object is not iterable");
+  }
+
+  // Python's all() behavior: True for empty, check truthiness
+  return elements.length === 0 ? true : elements.every(e => Boolean(e));
+}
+`
+var getFunc = `function get(obj, key, defaultValue = null) {
+  // Handle arrays (negative indices and bounds checks)
+  if (Array.isArray(obj)) {
+    const index = Number(key);
+    if (!Number.isInteger(index)) return defaultValue;
+    const adjustedIndex = index < 0 ? obj.length + index : index;
+    return adjustedIndex >= 0 && adjustedIndex < obj.length 
+      ? obj[adjustedIndex] 
+      : defaultValue;
+  }
+
+  if (obj instanceof Map) {
+    return obj.has(key) ? obj.get(key) : defaultValue;
+  }
+
+  // Handle plain objects (key existence check)
+  if (typeof obj === 'object' && obj !== null) {
+    return Object.prototype.hasOwnProperty.call(obj, key) 
+      ? obj[key] 
+      : defaultValue;
+  }
+
+  // Fallback for unsupported types (e.g., numbers, strings)
+  return defaultValue;
+}
+`
 var reprFun = `
 function repr(value) {
     // Helper for Python-like repr() (used inside collections)
@@ -572,4 +652,5 @@ ${multiplyFun}
 ${anyFun}
 ${strFun}
 ${reprFun}
+${getFunc}
 `;
