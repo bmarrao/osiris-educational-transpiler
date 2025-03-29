@@ -388,18 +388,13 @@ export function visitSlices(ctx) {
     return `[${result.join(", ")}]`;
   }
 export function visitSlice(ctx) {
-  // If the slice text contains a colon, process it as a slice expression.
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
-    // Two expressions: a[start:stop]
     if (exprs.length === 2) {
       const start = this.visit(exprs[0]);
-      const stop  = this.visit(exprs[1]);
+      const stop = this.visit(exprs[1]);
       return `.slice(${start}, ${stop})`;
-    }
-    // One expression: either omitted start (a[:stop]) or omitted stop (a[start:])
-    else if (exprs.length === 1) {
-      // Check the first child token: if it's a colon, then start was omitted.
+    } else if (exprs.length === 1) {
       if (ctx.getChild(0).getText() === ":") {
         const stop = this.visit(exprs[0]);
         return `.slice(0, ${stop})`;
@@ -407,27 +402,23 @@ export function visitSlice(ctx) {
         const start = this.visit(exprs[0]);
         return `.slice(${start})`;
       }
-    }
-    // Three expressions: a[start:stop:step]
-    else if (exprs.length === 3) {
+    } else if (exprs.length === 3) {
       const start = this.visit(exprs[0]);
-      const stop  = this.visit(exprs[1]);
-      const step  = this.visit(exprs[2]);
-      if (step === "1") {
-        return `.slice(${start}, ${stop})`;
-      }
-      return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
-    }
-    // If no expressions are provided (a[:] for example), return full slice.
-    else {
+      const stop = this.visit(exprs[1]);
+      const step = this.visit(exprs[2]);
+      // Handle negative steps
+      return `((${step} < 0) ? 
+        arr.slice(
+          (${stop} < 0 ? ${stop} + arr.length : ${stop}) + 1,
+          (${start} < 0 ? ${start} + arr.length : ${start}) + 1
+        ).reverse().filter((_, i) => i % Math.abs(${step}) === 0) : 
+        arr.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)
+      )`;
+    } else {
       return `.slice(0)`;
     }
-  }
-  // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
-  else if (ctx.named_expression()) {
+  } else if (ctx.named_expression()) {
     return `${this.visit(ctx.named_expression())}`;
   }
-  
   return ctx.getText();
 }
-
