@@ -148,8 +148,7 @@ function handleCollectionFunctions(primary, argsText) {
     case "items":
       return `Object.entries(${objectName})`;
     case "get": {
-      let parts = argsText.split(',').map(arg => arg.trim());
-      return parts.length === 1 ? `${objectName}[${parts[0]}]` : `${objectName}[${parts[0]}] ?? ${parts[1]}`;
+      return `get(${objectName},${argsText})`;
     }
     case "update":
       return `Object.assign(${objectName}, ${argsText})`;
@@ -204,6 +203,10 @@ function handleCollectionFunctions(primary, argsText) {
 
 function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
   switch (primary) {
+    case "all":
+      return `all(${argsText})`;
+    case "filter":
+      return `filter(${argsText})`;
     case "print":
       return handlePrint(argsText, runOnBrowser);
     case "min":
