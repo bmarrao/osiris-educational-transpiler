@@ -409,32 +409,31 @@ export function visitSlice(ctx) {
         return `.slice(${start})`;
       }
     }
-    // Three expressions: a[start:stop:step]
     else if (exprs.length === 3) {
-    const start = this.visit(exprs[0]);
-    const stop = this.visit(exprs[1]);
-    const step = this.visit(exprs[2]);
-    
-    if (step === "1") {
-      return `.slice(${start}, ${stop})`;
-    } else if (step.startsWith("-")) {
-      // Handle negative step
-      return `.slice().reverse().filter((_, i) => {
-        const len = this.length || this.length();
-        const actualStart = ${start} < 0 ? len + ${start} : ${start};
-        const actualStop = ${stop} < 0 ? len + ${stop} : ${stop};
-        return i >= len - Math.max(actualStart, 0) && 
-               i < len - Math.min(actualStop, len) && 
-               i % Math.abs(${step}) === 0;
-      })`;
-    } else {
-      return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+      const start = this.visit(exprs[0]);
+      const stop = this.visit(exprs[1]);
+      const step = this.visit(exprs[2]);
+      
+      if (step === "1") {
+        return `.slice(${start}, ${stop})`;
+      } else if (step.startsWith("-")) {
+        // Handle negative step
+        return `.slice().reverse().filter((_, i, arr) => {
+          const len = arr.length;
+          const actualStart = ${start} < 0 ? len + ${start} : ${start};
+          const actualStop = ${stop} < 0 ? len + ${stop} : ${stop};
+          return i >= len - Math.max(actualStart, 0) && 
+                 i < len - Math.min(actualStop, len) && 
+                 i % Math.abs(${step}) === 0;
+        })`;
+      } else {
+        return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+      }
     }
-  }
-  // If no expressions are provided (a[:] for example), return full slice.
-  else {
-    return `.slice(0)`;
-  }
+    // If no expressions are provided (a[:] for example), return full slice.
+    else {
+      return `.slice(0)`;
+    }
   }
   // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
   // delegate explicitly and wrap the result in square brackets.
