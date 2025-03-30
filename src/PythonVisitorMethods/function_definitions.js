@@ -30,10 +30,6 @@ export function visitFunction_def_raw(ctx) {
         this.localVars.push(`${this.className}`)
         functionName = "constructor";
     }
-    else if (this.inClass)
-    {
-        this.localVars.push(`${this.className}.${functionName}`)
-    }
     else{
         this.localVars.push(functionName)
     }
