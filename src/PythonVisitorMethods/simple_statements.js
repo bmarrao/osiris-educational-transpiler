@@ -17,7 +17,7 @@ function multipleTargets(targets, valuesStr) {
     }
     for (let i = 0; i < targets.length; i++) {
         let assignment = `${targets[i]} = osiris_iterable_unpacking[${i}];`;
-        if (this.localVars.includes(targets[i]) || this.inClass) {
+        if (this.localVars.includes(targets[i]) || this.inClass || targets[i].includes('[')) {
             ret += assignment;
         } else {
             this.localVars.push(targets[i]);
@@ -47,7 +47,7 @@ export function visitAssignment(ctx) {
         const expression = this.visit(ctx.expression());
         let annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
             // Return the JavaScript equivalent of assignment
-        if (this.localVars.includes(variableName) || this.inClass)
+        if (this.localVars.includes(variableName) || this.inClass || variableName.includes('['))
         {
             return `${variableName} = ${String(annotatedRhs).trim()};`
         }
@@ -64,7 +64,7 @@ export function visitAssignment(ctx) {
         const target = this.visit(ctx.single_target());
         const expression = this.visit(ctx.expression());
         const annotatedRhs = ctx.annotated_rhs() ? this.visit(ctx.annotated_rhs()) : null;
-        if (this.localVars.includes(target) || this.inClass)
+        if (this.localVars.includes(target) || this.inClass || target.includes('['))
         {
             return `${target} ;`;
         }
@@ -102,7 +102,7 @@ export function visitAssignment(ctx) {
                 ret = multipleTargets.call(this, prep.split(",").map(p => p.trim()), values);
             } else {
                 let assignment = `${targets[0]} = ${values};`;
-                if (this.localVars.includes(targets[0]) || this.inClass) {
+                if (this.localVars.includes(targets[0]) || this.inClass|| targets[0].includes('[')) {
                     ret += assignment;
                 } else {
                     this.localVars.push(targets[0]);
@@ -134,7 +134,7 @@ export function visitAssignment(ctx) {
             ret = `${target} = Math.floor(${target} / ${expression});`;
        }
         
-        if ((this.localVars.includes(target) && ret != null) || this.inClass)
+        if ((this.localVars.includes(target) && ret != null) || this.inClass || target.includes('['))
         {
             return ret;
         }
