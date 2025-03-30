@@ -233,7 +233,7 @@ export function visitT_primary(ctx) {
         } else if (ctx.slices()) {
             // Handle t_primary '[' slices ']'
             const slices = this.visit(ctx.slices());
-            return `${primary}[${slices}]`;
+            return `${primary}${slices}`;
         } else if (ctx.genexp()) {
 	    //TODO SEE WHAT TO DO IN RELATION TO THISA
             // Handle t_primary genexp
