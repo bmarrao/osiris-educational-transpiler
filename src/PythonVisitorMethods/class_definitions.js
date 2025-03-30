@@ -24,6 +24,7 @@ export function visitClass_def(ctx) {
 export function visitClass_def_raw(ctx) {
     const className = ctx.NAME().getText(); // Extract class name
     this.inClass = true ; 
+    this.className= className;
     // Extract base classes (if any)
     let baseClass = null;
     this.classes.push(className)    

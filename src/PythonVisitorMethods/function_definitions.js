@@ -26,7 +26,18 @@ export function visitFunction_def(ctx) {
 export function visitFunction_def_raw(ctx) {
     let functionName = ctx.NAME().getText();
     let params =""
-    this.localVars.push(functionName)
+    if (functionName === "__init__") {
+        this.localVars.push(`${this.className}`)
+        functionName = "constructor";
+    }
+    else if (this.inClass)
+    {
+        this.localVars.push(`${this.className}.${functionName}`)
+    }
+    else{
+        this.localVars.push(functionName)
+    }
+ 
     if (ctx.params())
     {
         params = this.visit(ctx.params()); // Visit the parameters
@@ -42,9 +53,7 @@ export function visitFunction_def_raw(ctx) {
     // Convert __init__ to constructor and remove the first parameter
     this.localVars.length = length; // Restore the length of localVars
 
-    if (functionName === "__init__") {
-        functionName = "constructor";
-    }
+    
     let functionStr = `function ${functionName}(${params}) {\n${body}\n}`;
 
     if (this.inClass)
