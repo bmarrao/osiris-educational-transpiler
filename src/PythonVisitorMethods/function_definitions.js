@@ -26,11 +26,16 @@ export function visitFunction_def(ctx) {
 export function visitFunction_def_raw(ctx) {
     let functionName = ctx.NAME().getText().trim();
     let params =""
-    if (this.inclass && functionName === "__init__") {
+    if (functionName === "__init__") 
+    {
+        console.log(this.localVars)
+        console.log("TESTE")
         this.localVars.push(`${this.className}`)
+        console.log(this.localVars)
         functionName = "constructor";
     }
     else if (this.inclass && functionName.slice(0, 2) === "__") {
+        console.log("HERE")
         functionName = "#" + functionName.slice(2);
     }
     else if(!(this.inclass)){

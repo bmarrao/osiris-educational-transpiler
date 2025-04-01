@@ -1,20 +1,13 @@
-    Passar como contexto para evalcomparison self:this inves de self:self 
+Problemas atuais com classe : 
+1 - return self não deveria funcionar . Ver como é pego o self se for pelo atom ver se if inClass e depois transformar em this . 
+2. class Hotel:
+
+    def __verificar_reserva(self, qtd):
+        return (self.__hospedes + qtd) <= self.__capacidade
 
 add function in window so it is builtin see how you do it in the new beowser I defnin
 
-# Slicing com step negativo
-print("arr[8:2:-1] =", arr[8:2:-1])     # [8, 7, 6, 5, 4, 3]
-
-# Slicing usando índices negativos
-print("arr[-5:-2] =", arr[-5:-2])       # [5, 6, 7]
-
-# Slicing com step negativo e indices negativos
-print("arr[-1:-6:-2] =", arr[-1:-6:-2]) # [9, 7, 5]
-
-
-
 change name of funcs that are builtin when called inside another function map(sum, [1,2,3])
-+ between lists gives a list, in js it gives a string
 lst = [z for x, y in [(2, 3), (4, 5)] for z in (x, y)]
 print(lst)  # [2, 3, 4, 5]
 
