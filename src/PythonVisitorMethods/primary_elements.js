@@ -46,8 +46,9 @@ export function visitAtom(ctx) {
     else if (ctx.NONE()) {
             // Handle the case for the Python None literal
             return 'null'; // Convert to JavaScript's null
-    }	
-    return ctx.getText(); // Default case
+    }
+  return ctx.getText() === "self" && this.inClass ? "this" : ctx.getText();
+ 
 }
 export function visitGroup(ctx) {
     let inside = "";
