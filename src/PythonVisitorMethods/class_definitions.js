@@ -49,10 +49,16 @@ export function visitClass_def_raw(ctx) {
     // New code for handling private fields
     const privateFields = new Set();
 
-    // Replace this.__name with this.#name and collect field names
-    body = body.replace(/\bthis\.__(\w+)/g, (match, name) => {
+    // 1. Find PRIVATE FIELD ASSIGNMENTS (this.__name = ...)
+    // Find all PRIVATE FIELD ASSIGNMENTS (this.__x = ...)
+    body = body.replace(/this\.__(\w+)(?=\s*=[^=])/g, (match, name) => {
         privateFields.add(name);
-        return `\t\tthis.#${name}`;
+        return `this.#${name}`; // Transpile to this.#x = ...
+    });
+
+        // Convert ALL OTHER this.__x to this.#x (accesses, method params, etc)
+    body = body.replace(/this\.__(\w+)/g, (match, name) => {
+        return `this.#${name}`; // Just transpile, don't add to declarations
     });
 
     // Add private field declarations at the beginning of the body
