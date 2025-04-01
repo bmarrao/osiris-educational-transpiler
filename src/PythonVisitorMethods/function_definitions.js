@@ -34,11 +34,11 @@ export function visitFunction_def_raw(ctx) {
         console.log(this.localVars)
         functionName = "constructor";
     }
-    else if (this.inclass && functionName.slice(0, 2) === "__") {
+    else if (this.inClass && functionName.slice(0, 2) === "__") {
         console.log("HERE")
         functionName = "#" + functionName.slice(2);
     }
-    else if(!(this.inclass)){
+    else if(!(this.inClass)){
         this.localVars.push(functionName)
     }
  
