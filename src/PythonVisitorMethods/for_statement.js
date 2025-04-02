@@ -81,14 +81,14 @@ export function visitFor_stmt(ctx) {
     // Generate the JavaScript for loop
     if (step.startsWith("-")) {
       // Handle negative step
-      jsCode = `let ${preDeclaretargets}\nfor (${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode = `let ${preDeclareTargets}\nfor (${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     } else {
       // Handle positive step
-      jsCode = `let ${preDeclaretargets}\nfor (${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode = `let ${preDeclareTargets}\nfor (${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     }
   } else 
   {
-    jsCode = `let ${preDeclaretargets};\n 
+    jsCode = `let ${preDeclareTargets};\n 
     if (typeof ${iterable}[Symbol.iterator] === "function") {
     // It's an iterable (Array, Set, Map, etc.), but not a string
         for (const ${targets} of ${iterable}) {\n${body}\n}
