@@ -1,8 +1,4 @@
-for (let i = 0; i < 3; i++) {
-  console.log(i); // 0, 1, 2
-}
-console.log(i); // ReferenceError: i is not defined
-
+Print in python is different than javascript make a function for print that takes tthat into consideration
 add function in window so it is builtin see how you do it in the new beowser I defnin
 
 change name of funcs that are builtin when called inside another function map(sum, [1,2,3])

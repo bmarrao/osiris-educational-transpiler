@@ -10,7 +10,7 @@ function multipleTargets(targets, valuesStr) {
         unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
     }
     if (this.localVars.includes("osiris_iterable_unpacking")) {
-            ret += assignment;
+            ret += unpack;
     } else {
             this.localVars.push("osiris_iterable_unpacking");
             ret += `let ${unpack}`;
