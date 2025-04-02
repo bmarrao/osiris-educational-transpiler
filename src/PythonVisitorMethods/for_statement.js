@@ -74,20 +74,22 @@ export function visitFor_stmt(ctx) {
       throw new Error("Translation error: Invalid range syntax");
     }
 
+    let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
     console.log(targets)
     console.log(stop)
     console.log(step)
     // Generate the JavaScript for loop
     if (step.startsWith("-")) {
       // Handle negative step
-      jsCode = `for (let ${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode = `let ${predeclaretargets}\nfor (${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     } else {
       // Handle positive step
-      jsCode = `for (let ${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode = `let ${predeclaretargets}\nfor (${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     }
   } else 
   {
-    jsCode = `if (typeof ${iterable}[Symbol.iterator] === "function") {
+    jsCode = `let ${predeclaretargets};\n 
+    if (typeof ${iterable}[Symbol.iterator] === "function") {
     // It's an iterable (Array, Set, Map, etc.), but not a string
         for (const ${targets} of ${iterable}) {\n${body}\n}
     } else if (typeof ${iterable} === "object" && ${iterable} !== null) {
