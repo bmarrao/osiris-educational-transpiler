@@ -364,11 +364,14 @@ function splitArguments(argsText) {
   return result;
 }
 export function visitSlices(ctx) {
+    console.log("IM ON SLICES")
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();
     
     // If only one type of node exists, use the explicit visit for each.
-    if (sliceNodes.length && !starredNodes.length) {
+    if (sliceNodes.length && !starredNodes.length) 
+    {
+      console.log("HERE")
       return sliceNodes.map(node => this.visit(node)).join(", ");
     } else if (starredNodes.length && !sliceNodes.length) {
       return starredNodes.map(node => this.visit(node)).join(", ");
@@ -383,9 +386,12 @@ export function visitSlices(ctx) {
       if (child.ruleIndex === this.parser.RULE_slice) {
         result.push(this.visit(child)); // calls visitSlice
       } else if (child.ruleIndex === this.parser.RULE_starred_expression) {
-        result.push(this.visit(child)); // calls visitStarred_expression
+          console.log("I COME HERE WHEN IT IS -1");
+          result.push(this.visit(child)); // calls visitStarred_expression
       }
     }
+      console.log("Results array ")
+      console.log(result)
     return `[${result.join(", ")}]`;
   }
 export function visitSlice(ctx) {
@@ -433,7 +439,9 @@ export function visitSlice(ctx) {
   // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
   // delegate explicitly and wrap the result in square brackets.
   else if (ctx.named_expression()) {
-    return `[${this.visit(ctx.named_expression())}]`;
+    const index = this.visit(ctx.named_expression());
+    // Convert Python-style negative indices to JS positive indices
+    return `[(${index} < 0 ? arr.length + ${index} : ${index})]`;
   }
   
   return ctx.getText();
