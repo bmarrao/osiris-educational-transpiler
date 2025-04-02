@@ -195,13 +195,14 @@ export function visitAugassign(ctx) {
 
 
 export function visitReturn_stmt(ctx) {
-    // Check if there are star_expressions
     if (ctx.star_expressions()) {
         let expression = this.visit(ctx.star_expressions());
 
-        // Test if the result contains commas but is not a list or tuple
-        if (expression.includes(',') && !/^[\[\(].*[\]\)]$/.test(expression)) {
-            expression = `[${expression}]`
+        if (expression.includes(',')) {
+            const isEnclosed = /^[\[\(].*[\]\)]$/.test(expression);
+            if (!isEnclosed && hasTopLevelComma(expression)) {
+                expression = `[${expression}]`;
+            }
         }
 
         return `return ${expression};`;
@@ -209,8 +210,16 @@ export function visitReturn_stmt(ctx) {
     return 'return;';
 }
 
-
-export function visitNonlocal_stmt(ctx) {
+// Helper: Check for any comma at the "top level" (not inside parentheses/brackets)
+function hasTopLevelComma(expr) {
+    let balance = 0;
+    for (const char of expr) {
+        if (char === '(' || char === '[') balance++;
+        else if (char === ')' || char === ']') balance--;
+        else if (char === ',' && balance === 0) return true;
+    }
+    return false;
+}export function visitNonlocal_stmt(ctx) {
     return '';
 }
 
