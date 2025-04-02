@@ -41,11 +41,6 @@ export function visitClass_def_raw(ctx) {
     let body = this.visit(ctx.block());
 
     body = body.replace(/\bself\./g, 'this.');
-    body = body.replace(
-    /^\s*(let|const)\s+(\w+)\s*=/gm,  // Matches let/const followed by a variable name
-    '\t\tstatic $2 ='
-);  
-    
     // New code for handling private fields
     const privateFields = new Set();
 
