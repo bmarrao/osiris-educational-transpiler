@@ -1,9 +1,7 @@
-Problemas atuais com classe : 
-1 - return self não deveria funcionar . Ver como é pego o self se for pelo atom ver se if inClass e depois transformar em this . 
-2. class Hotel:
-
-    def __verificar_reserva(self, qtd):
-        return (self.__hospedes + qtd) <= self.__capacidade
+for (let i = 0; i < 3; i++) {
+  console.log(i); // 0, 1, 2
+}
+console.log(i); // ReferenceError: i is not defined
 
 add function in window so it is builtin see how you do it in the new beowser I defnin
 
