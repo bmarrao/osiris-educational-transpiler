@@ -47,7 +47,7 @@ export function visitFor_stmt(ctx) {
   let targets = dealTargets(targetsRet,this.localVars)
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
-
+  let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
   let jsCode;
   console.log(iterable)
   // Check if the iterable contains 'range('
@@ -74,7 +74,6 @@ export function visitFor_stmt(ctx) {
       throw new Error("Translation error: Invalid range syntax");
     }
 
-    let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
     console.log(targets)
     console.log(stop)
     console.log(step)
