@@ -1,3 +1,6 @@
+
+Temporary solution need to find a better one return `[${index} < 0 && Array.isArray(${this.currentObject}) ? this.length + ${index} : ${index}]`;  } Wouldnt work on something like currentObject being a function that alters state
+
 Print in python is different than javascript make a function for print that takes tthat into consideration
 add function in window so it is builtin see how you do it in the new beowser I defnin
 

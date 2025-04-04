@@ -92,8 +92,10 @@ export function visitPrimary(ctx) {
     }
 
     if (ctx.slices()) {
-      // Handle slicing
-      return `${primary}${this.visit(ctx.slices())}`;
+      this.currentObject = primary;
+      const result = this.visit(ctx.slices());
+      return `${primary}${result}`;
+
     }
   } else {
     // Handle atom cases
@@ -364,37 +366,34 @@ function splitArguments(argsText) {
   return result;
 }
 export function visitSlices(ctx) {
-    console.log("IM ON SLICES")
+    let primary = this.currentObject;
+    console.log("IM ON SLICES");
     const sliceNodes = ctx.slice();
     const starredNodes = ctx.starred_expression();
     
-    // If only one type of node exists, use the explicit visit for each.
-    if (sliceNodes.length && !starredNodes.length) 
-    {
-      console.log("HERE")
-      return sliceNodes.map(node => this.visit(node)).join(", ");
+    // Handle cases with only slices or starred expressions
+    if (sliceNodes.length && !starredNodes.length) {
+        return sliceNodes.map(node => visitSlice.call(this, node, primary)).join(", ");
     } else if (starredNodes.length && !sliceNodes.length) {
-      return starredNodes.map(node => this.visit(node)).join(", ");
+        return starredNodes.map(node => this.visit(node)).join(", ");
     }
     
-    // Mixed case: preserve order by iterating over children.
+    // Mixed case: iterate over children to preserve order
     let result = [];
     for (let i = 0; i < ctx.getChildCount(); i++) {
-      const child = ctx.getChild(i);
-      if (child.getText() === ",") continue;
-      // Use explicit rule checks:
-      if (child.ruleIndex === this.parser.RULE_slice) {
-        result.push(this.visit(child)); // calls visitSlice
-      } else if (child.ruleIndex === this.parser.RULE_starred_expression) {
-          console.log("I COME HERE WHEN IT IS -1");
-          result.push(this.visit(child)); // calls visitStarred_expression
-      }
+        const child = ctx.getChild(i);
+        if (child.getText() === ",") continue;
+        
+        if (child.ruleIndex === this.parser.RULE_slice) {
+            result.push(visitSlice.call(this, child, primary)); // Correct 'this' context
+        } else if (child.ruleIndex === this.parser.RULE_starred_expression) {
+            result.push(this.visit(child));
+        }
     }
-      console.log("Results array ")
-      console.log(result)
     return `[${result.join(", ")}]`;
-  }
-export function visitSlice(ctx) {
+}
+
+function visitSlice(ctx,primary) {
   // If the slice text contains a colon, process it as a slice expression.
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
@@ -424,11 +423,10 @@ export function visitSlice(ctx) {
       if (step === "1") {
         return `.slice(${start}, ${stop})`;
       } else if (step.startsWith("-")) {
-        const actualStart = stop === "" ? "0" : `(${stop} < 0 ? arr.length + ${stop} : ${stop})`;
-        const actualStop = start === "" ? "arr.length" : `(${start} < 0 ? arr.length + ${start} : ${start})`;
+        const actualStart = stop === "" ? "0" : `(${stop} < 0 ? ${primary}.length + ${stop} : ${stop})`;
+        const actualStop = start === "" ? `${primary}.length` : `(${start} < 0 ? ${primary}.length + ${start} : ${start})`;
 
-        // Corrected line: Subtract 1 from arr.length when calculating reversed indices
-        return `.slice().reverse().slice(arr.length - 1 - ${actualStop}, arr.length - 1 - ${actualStart}).filter((_, i) => i % Math.abs(${step}) === 0)`;
+        return `.slice().reverse().slice(${primary}.length - 1 - ${actualStop}, ${primary}.length - 1 - ${actualStart}).filter((_, i) => i % Math.abs(${step}) === 0)`;
       } else {
         return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
       }
@@ -439,10 +437,9 @@ export function visitSlice(ctx) {
   // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
   // delegate explicitly and wrap the result in square brackets.
   else if (ctx.named_expression()) {
-    const index = this.visit(ctx.named_expression());
-    // Convert Python-style negative indices to JS positive indices
-    return `[(${index} < 0 ? arr.length + ${index} : ${index})]`;
-  }
-  
-  return ctx.getText();
+        const index = this.visit(ctx.named_expression());
+        // Correct condition to check if primary is an array
+        return `[ (${index} < 0 && Array.isArray(${primary}) ? ${primary}.length + ${index} : ${index}) ]`;
+    }
+    return ctx.getText();
 }
