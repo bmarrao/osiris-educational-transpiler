@@ -91,12 +91,17 @@ export function visitPrimary(ctx) {
       return handleFunctionCalls(primary, argsText, this.runOnBrowser);
     }
 
-    if (ctx.slices()) {
-      this.currentObject = primary;
-      const result = this.visit(ctx.slices());
-      return `${primary}${result}`;
-
+    
+    if (ctx.slices()) 
+    {
+      this.iterable+= 1;
+      return `(function osiris_iterable_func${iterable}(){
+          let primary_${iterable} = ${primary};
+          let result_${iterable} = ${visitSlices.call(this, ctx.slices(),primary)};
+          return primary_${iterable} + result_${iterable};
+      }).call(this)`;
     }
+
   } else {
     // Handle atom cases
     return this.visit(ctx.atom());

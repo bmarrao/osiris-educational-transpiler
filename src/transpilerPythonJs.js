@@ -38,6 +38,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         this.inClass = false ;
         this.className="";
         this.classes = [] ;
+        this.iterables = 0 ;
         this.case= {}
         this.runOnBrowser = runOnBrowser
     }
@@ -411,10 +412,6 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     visitAtom(ctx) {
         //console.log('Visiting atom');
         return PrimaryElements.visitAtom.call(this, ctx);
-    }
-    visitSlices(ctx) {
-        //console.log('Visiting group');
-        return PrimaryElements.visitSlices.call(this, ctx);
     }
     visitGroup(ctx) {
         //console.log('Visiting group');

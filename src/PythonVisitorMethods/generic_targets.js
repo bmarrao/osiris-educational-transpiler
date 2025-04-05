@@ -1,3 +1,5 @@
+import * as PrimaryElements from './primary_elements.js';
+
 export function visitStar_targets(ctx) {
     
     console.log('Visiting star_targets');
@@ -93,10 +95,12 @@ export function visitTarget_with_star_atom(ctx) {
             // Handle t_primary '.' NAME
             return `${primary}.${ctx.NAME().getText()}`;
         } else if (ctx.slices()) {
-            // Handle t_primary '[' slices ']'
-            const slices = this.visit(ctx.slices());
-            console.log(slices)
-            return `${primary}${slices}`;
+              this.iterable+= 1;
+              return `(function osiris_iterable_func${iterable}(){
+                  let primary_${iterable} = ${primary};
+                  let result_${iterable} = ${PrimaryElements.visitSlices.call(this, ctx.slices(),primary)};
+                  return primary_${iterable} + result_${iterable};
+              }).call(this)`;
         }
     } else if (ctx.star_atom()) {
         // Handle star_atom
@@ -178,27 +182,18 @@ export function visitSingle_target(ctx) {
 
 // Visitor method for single_subscript_attribute_target
 export function visitSingle_subscript_attribute_target(ctx) {
-    // Grammar Rule: single_subscript_attribute_target
-    // single_subscript_attribute_target: t_primary ('.' NAME | '[' slices ']')
-    //
-    // Example in Python:
-    // t_primary '.' NAME: `my_object.property`
-    // t_primary '[' slices ']': `my_list[index]`
-    //
-    // Translation to JavaScript:
-    // t_primary '.' NAME: `myObject.property`
-    // t_primary '[' slices ']': `myList[index]`
-
     const primary = this.visit(ctx.t_primary());
-    
     if (ctx.NAME()) {
         // Handle '.' NAME
         const property = ctx.NAME().getText();
         return `${primary}.${property}`; // JavaScript dot notation
     } else if (ctx.slices()) {
-        // Handle '[' slices ']'
-        const index = this.visit(ctx.slices());
-        return `${primary}[${index}]`; // JavaScript bracket notation for indexing
+          this.iterable+= 1;
+          return `(function osiris_iterable_func${iterable}(){
+              let primary_${iterable} = ${primary};
+              let result_${iterable} = ${PrimaryElements.visitSlices.call(this, ctx.slices(),primary)};
+              return primary_${iterable} + result_${iterable};
+          }).call(this)`;
     }
 
     throw new Error("Unsupported single_subscript_attribute_target structure."); // Raise an error for unsupported cases
@@ -231,9 +226,12 @@ export function visitT_primary(ctx) {
             // Handle t_primary '.' NAME
             return `${primary}.${ctx.NAME().getText()}`;
         } else if (ctx.slices()) {
-            // Handle t_primary '[' slices ']'
-            const slices = this.visit(ctx.slices());
-            return `${primary}${slices}`;
+              this.iterable+= 1;
+              return `(function osiris_iterable_func${iterable}(){
+                  let primary_${iterable} = ${primary};
+                  let result_${iterable} = ${PrimaryElements.visitSlices.call(this, ctx.slices(),primary)};
+                  return primary_${iterable} + result_${iterable};
+              }).call(this)`;
         } else if (ctx.genexp()) {
 	    //TODO SEE WHAT TO DO IN RELATION TO THISA
             // Handle t_primary genexp
