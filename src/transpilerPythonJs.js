@@ -38,7 +38,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         this.inClass = false ;
         this.className="";
         this.classes = [] ;
-        this.iterables = 0 ;
+        this.iterable = 0 ;
         this.case= {}
         this.runOnBrowser = runOnBrowser
     }

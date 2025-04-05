@@ -1,3 +1,20 @@
+var pythonIndex = `function pythonIndex(obj, index) {
+    // Handle array-like access (arrays and strings)
+    if (Array.isArray(obj) || typeof obj === 'string') {
+        // Convert index to number and handle negative values
+        const numericIndex = Number(index);
+        if (!isNaN(numericIndex)) {
+            return numericIndex < 0 
+                ? Math.max(0, obj.length + numericIndex)
+                : Math.min(numericIndex, obj.length - 1);
+        }
+    }
+    
+    // Handle object access (dictionaries/objects) and non-numeric indices
+    return index;
+}
+`
+
 var filterFunc = `function filter(predicate, iterable) {
   // Handle predicate (default to truthy check)
   if (typeof predicate !== 'function') {
@@ -656,4 +673,5 @@ ${getFunc}
 ${filterFunc}
 ${getFunc}
 ${allFunc}
+${pythonIndex}
 `;

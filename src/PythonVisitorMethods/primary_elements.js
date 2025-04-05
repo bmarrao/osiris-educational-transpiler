@@ -91,17 +91,10 @@ export function visitPrimary(ctx) {
       return handleFunctionCalls(primary, argsText, this.runOnBrowser);
     }
 
-    
-    if (ctx.slices()) 
-    {
-      this.iterable+= 1;
-      return `(function osiris_iterable_func${this.iterable}(){
-          let primary_${this.iterable} = ${primary};
-          let result_${this.iterable} = ${visitSlices.call(this, ctx.slices(),primary)};
-          return primary_${this.iterable} + result_${this.iterable};
-      }).call(this)`;
+    if (ctx.slices()) {
+      // Handle slicing
+      return `${primary}${this.visit(ctx.slices())}`;
     }
-
   } else {
     // Handle atom cases
     return this.visit(ctx.atom());
@@ -370,81 +363,75 @@ function splitArguments(argsText) {
   
   return result;
 }
-export function visitSlices(ctx) {
-    let primary = this.currentObject;
-    console.log("IM ON SLICES");
-    const sliceNodes = ctx.slice();
-    const starredNodes = ctx.starred_expression();
+  export function visitSlices(ctx, primary) {
+    const slices = [];
     
-    // Handle cases with only slices or starred expressions
-    if (sliceNodes.length && !starredNodes.length) {
-        return sliceNodes.map(node => visitSlice.call(this, node, primary)).join(", ");
-    } else if (starredNodes.length && !sliceNodes.length) {
-        return starredNodes.map(node => this.visit(node)).join(", ");
-    }
-    
-    // Mixed case: iterate over children to preserve order
-    let result = [];
-    for (let i = 0; i < ctx.getChildCount(); i++) {
-        const child = ctx.getChild(i);
-        if (child.getText() === ",") continue;
+    for (let i = 0; i < ctx.children.length; i++) {
+        const child = ctx.children[i];
         
-        if (child.ruleIndex === this.parser.RULE_slice) {
-            result.push(visitSlice.call(this, child, primary)); // Correct 'this' context
-        } else if (child.ruleIndex === this.parser.RULE_starred_expression) {
-            result.push(this.visit(child));
+        if (child.constructor.name.includes("SliceContext")) {
+            slices.push(visitSlice.call(this, child, primary));
+        }
+        else if (child.constructor.name.includes("Starred_expressionContext")) {
+            // Fixed object syntax and added spread operator conversion
+            slices.push(`...${this.visit(child)}`);
         }
     }
-    return `[${result.join(", ")}]`;
+
+    if (slices.length === 1) {
+        return `${primary}${slices[0]}`;
+    }
+    // Throw error before any return statement
+    throw new Error("Translation error: more than one access in a slice is not permitted");
 }
 
-function visitSlice(ctx,primary) {
-  // If the slice text contains a colon, process it as a slice expression.
+export function visitSlice(ctx, primary) { // Add primary as parameter
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
     
-    // Two expressions: a[start:stop]
+    // Helper function to process slice components
+    const processBound = (value, defaultVal) => {
+      if (!value) return defaultVal;
+      return `pythonIndex(${primary}, ${value})`;
+    };
+
+    // Handle different slice cases
     if (exprs.length === 2) {
-      const start = this.visit(exprs[0]);
-      const stop  = this.visit(exprs[1]);
-      return `.slice(${start}, ${stop})`;
+      const [start, stop] = exprs.map(e => this.visit(e));
+      return `.slice(${processBound(start, 0)}, ${processBound(stop, `${primary}.length`)})`;
     }
-    // One expression: either omitted start (a[:stop]) or omitted stop (a[start:])
     else if (exprs.length === 1) {
-      // Check the first child token: if it's a colon, then start was omitted.
       if (ctx.getChild(0).getText() === ":") {
         const stop = this.visit(exprs[0]);
-        return `.slice(0, ${stop})`;
+        return `.slice(0, ${processBound(stop, `${primary}.length`)})`;
       } else {
         const start = this.visit(exprs[0]);
-        return `.slice(${start})`;
+        return `.slice(${processBound(start, 0)})`;
       }
     }
     else if (exprs.length === 3) {
-      const start = this.visit(exprs[0]);
-      const stop = this.visit(exprs[1]);
-      const step = this.visit(exprs[2]);
-
-      if (step === "1") {
-        return `.slice(${start}, ${stop})`;
-      } else if (step.startsWith("-")) {
-        const actualStart = stop === "" ? "0" : `(${stop} < 0 ? ${primary}.length + ${stop} : ${stop})`;
-        const actualStop = start === "" ? `${primary}.length` : `(${start} < 0 ? ${primary}.length + ${start} : ${start})`;
-
-        return `.slice().reverse().slice(${primary}.length - 1 - ${actualStop}, ${primary}.length - 1 - ${actualStart}).filter((_, i) => i % Math.abs(${step}) === 0)`;
-      } else {
-        return `.slice(${start}, ${stop}).filter((_, i) => i % ${step} === 0)`;
+      const [start, stop, step] = exprs.map(e => this.visit(e));
+      
+      // Handle negative step with proper bounds
+      if (step.startsWith("-")) {
+        const reversedPrimary = `${primary}.slice().reverse()`;
+        const adjStart = start ? `pythonIndex(${reversedPrimary}, ${start})` : 0;
+        const adjStop = stop ? `pythonIndex(${reversedPrimary}, ${stop})` : `${reversedPrimary}.length`;
+        
+        return `${reversedPrimary}.slice(${adjStart}, ${adjStop})` +
+               `.filter((_, i) => i % ${step.replace("-", "")} === 0)`;
       }
-    } else {
-      return `.slice(0)`;
+      
+      return `.slice(${processBound(start, 0)}, ${processBound(stop, `${primary}.length`)})` +
+             `.filter((_, i) => i % ${step} === 0)`;
     }
   }
-  // Otherwise, if it's not a slice expression but a named_expression (e.g. dictionary access),
-  // delegate explicitly and wrap the result in square brackets.
-  else if (ctx.named_expression()) {
-        const index = this.visit(ctx.named_expression());
-        // Correct condition to check if primary is an array
-        return `[ (${index} < 0 && Array.isArray(${primary}) ? ${primary}.length + ${index} : ${index}) ]`;
-    }
-    return ctx.getText();
+  
+  // Handle simple index access
+  if (ctx.named_expression()) {
+    const index = this.visit(ctx.named_expression());
+    return `[pythonIndex(${primary}, ${index})]`;
+  }
+  
+  return ctx.getText();
 }
