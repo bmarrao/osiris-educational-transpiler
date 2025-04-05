@@ -95,10 +95,10 @@ export function visitPrimary(ctx) {
     if (ctx.slices()) 
     {
       this.iterable+= 1;
-      return `(function osiris_iterable_func${iterable}(){
-          let primary_${iterable} = ${primary};
-          let result_${iterable} = ${visitSlices.call(this, ctx.slices(),primary)};
-          return primary_${iterable} + result_${iterable};
+      return `(function osiris_iterable_func${this.iterable}(){
+          let primary_${this.iterable} = ${primary};
+          let result_${this.iterable} = ${visitSlices.call(this, ctx.slices(),primary)};
+          return primary_${this.iterable} + result_${this.iterable};
       }).call(this)`;
     }
 
