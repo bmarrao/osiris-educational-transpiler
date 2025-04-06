@@ -395,31 +395,34 @@ export function visitSlice(ctx, primary) {
       
       if (step && step.includes("-")) {
         const stepValue = step.replace("-", "");
-        const startProvided = exprs[0] !== null;
-        const stopProvided = exprs[1] !== null;
+        const startOmitted = exprs[0] === null;
+        const stopOmitted = exprs[1] === null;
 
         // Handle Python's negative step defaults
-        let startDefault = stopProvided ? -1 : `${primary}.length - 1`;
-        let stopDefault = startProvided ? -1 : `-${primary}.length - 1`;
+        let startExpr;
+        if (startOmitted) {
+          // Default start is last index when omitted
+          startExpr = `pythonIndex(${primary}, ${primary}.length - 1, true)`;
+        } else {
+          startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
+        }
 
-        let startExpr = start ? 
-          `pythonIndex(${primary}, ${start}, true)` : 
-          `pythonIndex(${primary}, ${startDefault}, true)`;
+        let stopExpr;
+        if (stopOmitted) {
+          // Default stop is -1 when omitted
+          stopExpr = `pythonIndex(${primary}, -1, true)`;
+        } else {
+          stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
+        }
 
-        let stopExpr = stop ? 
-          `pythonIndex(${primary}, ${stop}, true)` : 
-          `pythonIndex(${primary}, ${stopDefault}, true)`;
+        // Adjust boundaries for JS slice
+        const adjustedStop = stopOmitted ? "0" : `(${stopExpr} + 1)`;
+        const adjustedStart = startOmitted ? `${primary}.length` : `(${startExpr} + 1)`;
 
-        // Adjust for Python's exclusive stop
-        const adjustedStop = `${stopExpr} + (${stopExpr} >= 0 ? 0 : 1)`;
-        const adjustedStart = `${startExpr} + (${startExpr} >= 0 ? 0 : 1)`;
-
-        // Special case for step -1
+        // Handle step -1 and other negative steps
         if (step === "-1") {
           return `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
         }
-        
-        // General negative steps
         return `.slice(${adjustedStop}, ${adjustedStart})`
              + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
       }
