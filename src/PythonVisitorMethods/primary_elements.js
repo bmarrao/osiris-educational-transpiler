@@ -395,38 +395,44 @@ export function visitSlice(ctx, primary) {
       
       if (step && step.includes("-")) {
         const stepValue = step.replace("-", "");
-        const startOmitted = exprs[0] === null;
-        const stopOmitted = exprs[1] === null;
+        const startOmitted = !exprs[0];  // Check if start was omitted
+        const stopOmitted = !exprs[1];   // Check if stop was omitted
 
-        // Handle Python's negative step defaults
+        // Determine default indices for Python negative steps
         let startExpr;
         if (startOmitted) {
-          // Default start is last index when omitted
-          startExpr = `pythonIndex(${primary}, ${primary}.length - 1, true)`;
+          startExpr = `${primary}.length - 1`;  // Python's default start when step < 0
         } else {
           startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
         }
 
         let stopExpr;
         if (stopOmitted) {
-          // Default stop is -1 when omitted
-          stopExpr = `pythonIndex(${primary}, -1, true)`;
+          stopExpr = `-1`;  // Python's default stop when step < 0
         } else {
           stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
         }
 
-        // Adjust boundaries for JS slice
-        const adjustedStop = stopOmitted ? "0" : `(${stopExpr} + 1)`;
-        const adjustedStart = startOmitted ? `${primary}.length` : `(${startExpr} + 1)`;
+        // Adjust boundaries for JavaScript slice
+        const adjustedStop = stopOmitted ? 
+          "0" : 
+          `(pythonIndex(${primary}, ${stop}, true) + 1)`;
+        
+        const adjustedStart = startOmitted ? 
+          `${primary}.length` : 
+          `(pythonIndex(${primary}, ${start}, true) + 1)`;
 
-        // Handle step -1 and other negative steps
+        // Handle step -1
         if (step === "-1") {
           return `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
         }
+        
+        // Handle other negative steps
         return `.slice(${adjustedStop}, ${adjustedStart})`
              + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
       }
       
+      // Positive step handling (unchanged)
       const stepValue = step || "1";
       const startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : 0;
       const stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`;
@@ -438,10 +444,13 @@ export function visitSlice(ctx, primary) {
       }
     }
     
+    // Handle 2-expression slices (start:stop)
     if (exprs.length === 2) {
       const [start, stop] = exprs.map(e => this.visit(e));
       return `.slice(${start ? `pythonIndex(${primary}, ${start}, true)` : 0}, ${stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`})`;
     } 
+    
+    // Handle 1-expression slices (:stop or start:)
     else if (exprs.length === 1) {
       const expr = this.visit(exprs[0]);
       if (ctx.getChild(0).getText() === ":") {
@@ -450,17 +459,19 @@ export function visitSlice(ctx, primary) {
         return `.slice(pythonIndex(${primary}, ${expr}, true))`;
       }
     } 
+    
+    // Empty slice [:]
     else {
       return `.slice(0)`;
     }
   }
   
+  // Handle simple index access
   let index;
   if (ctx.named_expression()) {
     index = this.visit(ctx.named_expression());
   } else {
     index = ctx.getText();
   }
-  
   return `[pythonIndex(${primary}, ${index})]`;
 }
