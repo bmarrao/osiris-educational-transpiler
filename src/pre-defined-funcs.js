@@ -19,7 +19,7 @@ function pythonIndex(obj, index, isSlice = false) {
     
     // Handle non-numeric indices by throwing an error
     if (isNaN(numIndex) && !isSlice) {
-      throw new Error("TypeError: indices must be integers");
+      throw new Error("TypeError: indices must be integer");
     }
     
     // Convert negative indices to positive
@@ -36,7 +36,7 @@ function pythonIndex(obj, index, isSlice = false) {
     
     // For direct indexing, check bounds and throw error if out of range
     if (numIndex < 0 || numIndex >= len) {
-      throw new Error("IndexError: index out of range");
+      throw new Error("IndexError: index out of rang");
     }
     
     return numIndex;

@@ -38,9 +38,17 @@ export function visitDouble_starred_kvpair(ctx) {
         return this.visit(ctx.kvpair());
     }
 }
+
 export function visitKvpair(ctx) {
-    //Process the key and value expressions
-    const key = this.visit(ctx.expression(0)); // First expression (key)
-    const value = this.visit(ctx.expression(1)); // Second expression (value)
-    return `JSON.stringify(${key}): ${value}`; // Format as key: value
+    const key = this.visit(ctx.expression(0));
+    const value = this.visit(ctx.expression(1));
+    if (key.match(/^-?\d+$/) || key === 'true' || key === 'false' || key === 'null') {
+        return `"${key}": ${value}`;
+    } else if ((key.startsWith("'") || key.startsWith('"')) && key.endsWith(key[0])) {
+        const keyContent = key.substring(1, key.length - 1);
+        return `"${keyContent}": ${value}`;
+    } else {
+        return `[String(${key})]: ${value}`;
+    }
 }
+
