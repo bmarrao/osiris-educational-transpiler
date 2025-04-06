@@ -386,53 +386,76 @@ export function visitSlices(ctx, primary) {
     throw new Error("Translation error: more than one access in a slice is not permitted");
 }
 
-export function visitSlice(ctx, primary) { // Add primary as parameter
+export function visitSlice(ctx, primary) {
+  // Handle slices with colons
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
     
-    // Helper function to process slice components
-    const processBound = (value, defaultVal) => {
-      if (!value) return defaultVal;
-      return `pythonIndex(${primary}, ${value})`;
-    };
-
-    // Handle different slice cases
+    // Special case for reverse slice [::-1]
+    if (exprs.length === 3) {
+      const [start, stop, step] = exprs.map(e => e ? this.visit(e) : null);
+      
+      // Handle negative step case (reverse)
+      if (step && step.includes("-")) {
+        // Pure reversal for step -1 without filtering
+        if (step === "-1") {
+          let startVal = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
+          let stopVal = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
+          
+          return `.slice(${stopVal === "undefined" ? 0 : stopVal}, ${startVal === "undefined" ? `${primary}.length` : startVal}).reverse()`;
+        }
+        
+        // For other negative steps, reverse and then filter
+        const stepValue = step.replace("-", "");
+        let startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
+        let stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
+        
+        return `.slice(${stopExpr === "undefined" ? 0 : stopExpr}, ${startExpr === "undefined" ? `${primary}.length` : startExpr})`
+             + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
+      }
+      
+      // Handle positive step
+      const stepValue = step || "1";
+      const startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : 0;
+      const stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`;
+      
+      if (stepValue === "1") {
+        return `.slice(${startExpr}, ${stopExpr})`;
+      } else {
+        return `.slice(${startExpr}, ${stopExpr}).filter((_, i) => i % ${stepValue} === 0)`;
+      }
+    }
+    
+    // Handle regular slice cases (start:stop)
     if (exprs.length === 2) {
       const [start, stop] = exprs.map(e => this.visit(e));
-      return `.slice(${processBound(start, 0)}, ${processBound(stop, `${primary}.length`)})`;
-    }
+      return `.slice(${start ? `pythonIndex(${primary}, ${start}, true)` : 0}, ${stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`})`;
+    } 
+    // Handle single expression slices (:stop or start:)
     else if (exprs.length === 1) {
+      const expr = this.visit(exprs[0]);
       if (ctx.getChild(0).getText() === ":") {
-        const stop = this.visit(exprs[0]);
-        return `.slice(0, ${processBound(stop, `${primary}.length`)})`;
+        // :stop case
+        return `.slice(0, pythonIndex(${primary}, ${expr}, true))`;
       } else {
-        const start = this.visit(exprs[0]);
-        return `.slice(${processBound(start, 0)})`;
+        // start: case
+        return `.slice(pythonIndex(${primary}, ${expr}, true))`;
       }
-    }
-    else if (exprs.length === 3) {
-      const [start, stop, step] = exprs.map(e => this.visit(e));
-      
-      // Handle negative step with proper bounds
-      if (step.startsWith("-")) {
-        const reversedPrimary = `${primary}.slice().reverse()`;
-        const adjStart = start ? `pythonIndex(${reversedPrimary}, ${start})` : 0;
-        const adjStop = stop ? `pythonIndex(${reversedPrimary}, ${stop})` : `${reversedPrimary}.length`;
-        
-        return `${reversedPrimary}.slice(${adjStart}, ${adjStop})` +
-               `.filter((_, i) => i % ${step.replace("-", "")} === 0)`;
-      }
-      
-      return `.slice(${processBound(start, 0)}, ${processBound(stop, `${primary}.length`)})` +
-             `.filter((_, i) => i % ${step} === 0)`;
+    } 
+    // Handle empty slice [:]
+    else {
+      return `.slice(0)`;
     }
   }
   
-  // Handle simple index access
+  // Handle simple index access (not a slice)
+  let index;
   if (ctx.named_expression()) {
-    const index = this.visit(ctx.named_expression());
-    return `[pythonIndex(${primary}, ${index})]`;
+    index = this.visit(ctx.named_expression());
+  } else {
+    index = ctx.getText();
   }
-  return `[pythonIndex(${primary}, ${ctx.getText()})]`;
-  return ctx.getText();
+  
+  // For dictionaries and arrays
+  return `[pythonIndex(${primary}, ${index})]`;
 }

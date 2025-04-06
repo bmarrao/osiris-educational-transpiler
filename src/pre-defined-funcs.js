@@ -1,17 +1,68 @@
-var pythonIndex = `function pythonIndex(obj, index) {
-    // Handle array-like access (arrays and strings)
-    if (Array.isArray(obj) || typeof obj === 'string') {
-        // Convert index to number and handle negative values
-        const numericIndex = Number(index);
-        if (!isNaN(numericIndex)) {
-            return numericIndex < 0 
-                ? Math.max(0, obj.length + numericIndex)
-                : Math.min(numericIndex, obj.length - 1);
-        }
+var pythonIndex = `
+function pythonIndex(obj, index, isSlice = false) {
+  // Handle null/undefined indexes
+  if (index === null || index === undefined) {
+    return isSlice ? undefined : 0;
+  }
+
+  // Handle dictionary access first
+  if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+    // For dictionaries, preserve the type of the key
+    // We need to check both string and numeric representations
+    if (obj.hasOwnProperty(index)) {
+      return index;
     }
     
-    // Handle object access (dictionaries/objects) and non-numeric indices
+    // Try numeric conversion for string keys
+    const numIndex = Number(index);
+    if (!isNaN(numIndex) && obj.hasOwnProperty(numIndex)) {
+      return numIndex;
+    }
+    
+    // Try string conversion for numeric keys
+    if (typeof index === 'number' && obj.hasOwnProperty(String(index))) {
+      return String(index);
+    }
+    
+    // If we get here, the key doesn't exist
+    if (!isSlice) {
+      throw new Error("KeyError");
+    }
     return index;
+  }
+  
+  // For arrays and strings
+  if (Array.isArray(obj) || typeof obj === 'string') {
+    const len = obj.length;
+    let numIndex = Number(index);
+    
+    // Handle non-numeric indices by throwing an error (Python would raise TypeError)
+    if (isNaN(numIndex) && !isSlice) {
+      throw new Error("TypeError: indices must be integers, not ");
+    }
+    
+    // Convert negative indices to positive
+    if (numIndex < 0) {
+      numIndex = len + numIndex;
+    }
+    
+    // For slice operations, we allow out-of-bounds indices
+    if (isSlice) {
+      if (numIndex < 0) return 0;
+      if (numIndex > len) return len;
+      return numIndex;
+    }
+    
+    // For direct indexing, check bounds and throw error if out of range
+    if (numIndex < 0 || numIndex >= len) {
+      throw new Error("IndexError: index out of range");
+    }
+    
+    return numIndex;
+  }
+  
+  // Default case
+  return index;
 }
 `
 
