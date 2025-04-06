@@ -387,34 +387,31 @@ export function visitSlices(ctx, primary) {
 }
 
 export function visitSlice(ctx, primary) {
-  // Handle slices with colons
   if (ctx.getText().includes(":")) {
     const exprs = ctx.expression();
     
-    // Special case for reverse slice [::-1]
     if (exprs.length === 3) {
       const [start, stop, step] = exprs.map(e => e ? this.visit(e) : null);
       
-      // Handle negative step case (reverse)
       if (step && step.includes("-")) {
-        // Pure reversal for step -1 without filtering
-        if (step === "-1") {
-          let startVal = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
-          let stopVal = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
-          
-          return `.slice(${stopVal === "undefined" ? 0 : stopVal}, ${startVal === "undefined" ? `${primary}.length` : startVal}).reverse()`;
-        }
-        
-        // For other negative steps, reverse and then filter
         const stepValue = step.replace("-", "");
+        const startProvided = exprs[0] !== null;
+        const stopProvided = exprs[1] !== null;
+
         let startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
         let stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
-        
-        return `.slice(${stopExpr === "undefined" ? 0 : stopExpr}, ${startExpr === "undefined" ? `${primary}.length` : startExpr})`
-             + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
+
+        let adjustedStop = stopProvided ? `${stopExpr} + 1` : '0';
+        let adjustedStart = startProvided ? `${startExpr} + 1` : `${primary}.length`;
+
+        if (step === "-1") {
+          return `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
+        } else {
+          return `.slice(${adjustedStop}, ${adjustedStart})`
+               + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
+        }
       }
       
-      // Handle positive step
       const stepValue = step || "1";
       const startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : 0;
       const stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`;
@@ -426,29 +423,23 @@ export function visitSlice(ctx, primary) {
       }
     }
     
-    // Handle regular slice cases (start:stop)
     if (exprs.length === 2) {
       const [start, stop] = exprs.map(e => this.visit(e));
       return `.slice(${start ? `pythonIndex(${primary}, ${start}, true)` : 0}, ${stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`})`;
     } 
-    // Handle single expression slices (:stop or start:)
     else if (exprs.length === 1) {
       const expr = this.visit(exprs[0]);
       if (ctx.getChild(0).getText() === ":") {
-        // :stop case
         return `.slice(0, pythonIndex(${primary}, ${expr}, true))`;
       } else {
-        // start: case
         return `.slice(pythonIndex(${primary}, ${expr}, true))`;
       }
     } 
-    // Handle empty slice [:]
     else {
       return `.slice(0)`;
     }
   }
   
-  // Handle simple index access (not a slice)
   let index;
   if (ctx.named_expression()) {
     index = this.visit(ctx.named_expression());
@@ -456,6 +447,5 @@ export function visitSlice(ctx, primary) {
     index = ctx.getText();
   }
   
-  // For dictionaries and arrays
   return `[pythonIndex(${primary}, ${index})]`;
 }
