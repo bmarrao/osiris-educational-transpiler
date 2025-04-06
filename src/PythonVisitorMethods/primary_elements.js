@@ -427,6 +427,7 @@ export function visitSlice(ctx, primary) {
     // Handle negative steps
     if (hasStep) {
         const stepValue = step || '1';
+        console.log(`IS A NEGATIVE STEP AND THE VALUE IS ${stepValue}`)
         const isNegativeStep = stepValue.startsWith('-');
         
         if (isNegativeStep) {
