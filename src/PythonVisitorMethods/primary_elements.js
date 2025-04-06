@@ -398,18 +398,30 @@ export function visitSlice(ctx, primary) {
         const startProvided = exprs[0] !== null;
         const stopProvided = exprs[1] !== null;
 
-        let startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
-        let stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
+        // Handle Python's negative step defaults
+        let startDefault = stopProvided ? -1 : `${primary}.length - 1`;
+        let stopDefault = startProvided ? -1 : `-${primary}.length - 1`;
 
-        let adjustedStop = stopProvided ? `${stopExpr} + 1` : '0';
-        let adjustedStart = startProvided ? `${startExpr} + 1` : `${primary}.length`;
+        let startExpr = start ? 
+          `pythonIndex(${primary}, ${start}, true)` : 
+          `pythonIndex(${primary}, ${startDefault}, true)`;
 
+        let stopExpr = stop ? 
+          `pythonIndex(${primary}, ${stop}, true)` : 
+          `pythonIndex(${primary}, ${stopDefault}, true)`;
+
+        // Adjust for Python's exclusive stop
+        const adjustedStop = `${stopExpr} + (${stopExpr} >= 0 ? 0 : 1)`;
+        const adjustedStart = `${startExpr} + (${startExpr} >= 0 ? 0 : 1)`;
+
+        // Special case for step -1
         if (step === "-1") {
           return `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
-        } else {
-          return `.slice(${adjustedStop}, ${adjustedStart})`
-               + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
         }
+        
+        // General negative steps
+        return `.slice(${adjustedStop}, ${adjustedStart})`
+             + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
       }
       
       const stepValue = step || "1";
