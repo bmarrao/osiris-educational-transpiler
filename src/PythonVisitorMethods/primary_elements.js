@@ -386,92 +386,100 @@ export function visitSlices(ctx, primary) {
     throw new Error("Translation error: more than one access in a slice is not permitted");
 }
 
+
 export function visitSlice(ctx, primary) {
-  if (ctx.getText().includes(":")) {
-    const exprs = ctx.expression();
-    
-    if (exprs.length === 3) {
-      const [start, stop, step] = exprs.map(e => e ? this.visit(e) : null);
-      
-      if (step && step.includes("-")) {
-        const stepValue = step.replace("-", "");
-        const startOmitted = !exprs[0];  // Check if start was omitted
-        const stopOmitted = !exprs[1];   // Check if stop was omitted
-
-        // Determine default indices for Python negative steps
-        let startExpr;
-        if (startOmitted) {
-          startExpr = `${primary}.length - 1`;  // Python's default start when step < 0
-        } else {
-          startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : "undefined";
-        }
-
-        let stopExpr;
-        if (stopOmitted) {
-          stopExpr = `-1`;  // Python's default stop when step < 0
-        } else {
-          stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : "undefined";
-        }
-
-        // Adjust boundaries for JavaScript slice
-        const adjustedStop = stopOmitted ? 
-          "0" : 
-          `(pythonIndex(${primary}, ${stop}, true) + 1)`;
-        
-        const adjustedStart = startOmitted ? 
-          `${primary}.length` : 
-          `(pythonIndex(${primary}, ${start}, true) + 1)`;
-
-        // Handle step -1
-        if (step === "-1") {
-          return `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
-        }
-        
-        // Handle other negative steps
-        return `.slice(${adjustedStop}, ${adjustedStart})`
-             + `.reverse().filter((_, i) => i % ${stepValue} === 0)`;
-      }
-      
-      // Positive step handling (unchanged)
-      const stepValue = step || "1";
-      const startExpr = start ? `pythonIndex(${primary}, ${start}, true)` : 0;
-      const stopExpr = stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`;
-      
-      if (stepValue === "1") {
-        return `.slice(${startExpr}, ${stopExpr})`;
-      } else {
-        return `.slice(${startExpr}, ${stopExpr}).filter((_, i) => i % ${stepValue} === 0)`;
-      }
+    // Handle simple index access first (named_expression case)
+    console.log("1")
+    if (ctx.named_expression()) {
+      console.log("1")
+        const index = this.visit(ctx.named_expression());
+        return `[pythonIndex(${primary}, ${index})]`;
     }
+
+    console.log("2")
+    // Handle slice operations (cases with :)
+    const text = ctx.getText();
+    const colonCount = (text.match(/:/g) || []).length;
     
-    // Handle 2-expression slices (start:stop)
-    if (exprs.length === 2) {
-      const [start, stop] = exprs.map(e => this.visit(e));
-      return `.slice(${start ? `pythonIndex(${primary}, ${start}, true)` : 0}, ${stop ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`})`;
-    } 
-    
-    // Handle 1-expression slices (:stop or start:)
-    else if (exprs.length === 1) {
-      const expr = this.visit(exprs[0]);
-      if (ctx.getChild(0).getText() === ":") {
-        return `.slice(0, pythonIndex(${primary}, ${expr}, true))`;
-      } else {
-        return `.slice(pythonIndex(${primary}, ${expr}, true))`;
-      }
-    } 
-    
-    // Empty slice [:]
-    else {
-      return `.slice(0)`;
+    console.log("3")
+    // Split into components and handle different slice patterns
+    const components = text.split(':');
+    const hasStep = colonCount === 2;
+
+    console.log("1")
+    // Extract expressions with proper null handling
+    const expressions = [];
+    let exprIndex = 0;
+    for (let i = 0; i < components.length; i++) {
+        if (components[i].trim() === '') {
+            expressions.push(null);
+        } else {
+            const expr = ctx.expression()[exprIndex];
+            expressions.push(expr ? this.visit(expr) : null);
+            exprIndex++;
+        }
     }
-  }
-  
-  // Handle simple index access
-  let index;
-  if (ctx.named_expression()) {
-    index = this.visit(ctx.named_expression());
-  } else {
-    index = ctx.getText();
-  }
-  return `[pythonIndex(${primary}, ${index})]`;
+    // Pad with nulls for missing components
+    while (expressions.length < 3) expressions.push(null);
+
+    const [start, stop, step] = expressions;
+
+    // Handle negative steps
+    if (hasStep) {
+        const stepValue = step || '1';
+        const isNegativeStep = stepValue.startsWith('-');
+        
+        if (isNegativeStep) {
+            const absStep = stepValue.replace('-', '');
+            const startOmitted = start === null;
+            const stopOmitted = stop === null;
+
+            // Python's negative step defaults
+            const defaultStart = `${primary}.length - 1`;
+            const defaultStop = '-1';
+
+            const startExpr = startOmitted ? defaultStart : `pythonIndex(${primary}, ${start}, true)`;
+            const stopExpr = stopOmitted ? defaultStop : `pythonIndex(${primary}, ${stop}, true)`;
+
+            // Adjust boundaries for reverse slicing
+            const adjustedStop = stopOmitted ? 
+                '0' : 
+                `(pythonIndex(${primary}, ${stop}, true) + 1)`;
+            
+            const adjustedStart = startOmitted ? 
+                `${primary}.length` : 
+                `(pythonIndex(${primary}, ${start}, true) + 1)`;
+
+            // Generate reverse slice
+            let code = `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
+            
+            if (absStep !== '1') {
+                code += `.filter((_, i) => i % ${absStep} === 0)`;
+            }
+            
+            return code;
+        }
+    }
+
+    // Handle positive steps
+    const parts = [];
+    if (start !== null) {
+        parts.push(`pythonIndex(${primary}, ${start}, true)`);
+    } else {
+        parts.push('0');
+    }
+
+    if (stop !== null) {
+        parts.push(`pythonIndex(${primary}, ${stop}, true)`);
+    } else {
+        parts.push(`${primary}.length`);
+    }
+
+    let code = `.slice(${parts.join(', ')})`;
+    
+    if (hasStep && step && step !== '1') {
+        code += `.filter((_, i) => i % ${step} === 0)`;
+    }
+
+    return code;
 }
