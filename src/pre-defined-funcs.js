@@ -5,30 +5,11 @@ function pythonIndex(obj, index, isSlice = false) {
     return isSlice ? undefined : 0;
   }
 
-  // Handle dictionary access first
+  // Handle dictionary access
   if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
-    // For dictionaries, preserve the type of the key
-    // We need to check both string and numeric representations
-    if (obj.hasOwnProperty(index)) {
-      return index;
-    }
-    
-    // Try numeric conversion for string keys
-    const numIndex = Number(index);
-    if (!isNaN(numIndex) && obj.hasOwnProperty(numIndex)) {
-      return numIndex;
-    }
-    
-    // Try string conversion for numeric keys
-    if (typeof index === 'number' && obj.hasOwnProperty(String(index))) {
-      return String(index);
-    }
-    
-    // If we get here, the key doesn't exist
-    if (!isSlice) {
-      throw new Error("KeyError");
-    }
-    return index;
+    // Since we're using JSON.stringify for keys during dictionary creation,
+    // we need to do the same when looking up keys
+    return JSON.stringify(index);
   }
   
   // For arrays and strings
@@ -36,9 +17,9 @@ function pythonIndex(obj, index, isSlice = false) {
     const len = obj.length;
     let numIndex = Number(index);
     
-    // Handle non-numeric indices by throwing an error (Python would raise TypeError)
+    // Handle non-numeric indices by throwing an error
     if (isNaN(numIndex) && !isSlice) {
-      throw new Error("TypeError: indices must be integers, not ");
+      throw new Error("TypeError: indices must be integers");
     }
     
     // Convert negative indices to positive

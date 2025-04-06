@@ -42,5 +42,5 @@ export function visitKvpair(ctx) {
     //Process the key and value expressions
     const key = this.visit(ctx.expression(0)); // First expression (key)
     const value = this.visit(ctx.expression(1)); // Second expression (value)
-    return `${key}: ${value}`; // Format as key: value
+    return `JSON.stringify(${key}): ${value}`; // Format as key: value
 }
