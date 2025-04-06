@@ -7,9 +7,7 @@ function pythonIndex(obj, index, isSlice = false) {
 
   // Handle dictionary access
   if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
-    // Since we're using JSON.stringify for keys during dictionary creation,
-    // we need to do the same when looking up keys
-    return JSON.stringify(index);
+    return String(index);
   }
   
   // For arrays and strings
