@@ -92,8 +92,9 @@ export function visitPrimary(ctx) {
     }
 
     if (ctx.slices()) {
+      console.log("IM ON SLICES")
       // Handle slicing
-      return `${primary}${this.visit(ctx.slices())}`;
+      return `${primary}${visitSlices.call(this,ctx.slices(),primary)}`;
     }
   } else {
     // Handle atom cases
@@ -363,7 +364,7 @@ function splitArguments(argsText) {
   
   return result;
 }
-  export function visitSlices(ctx, primary) {
+export function visitSlices(ctx, primary) {
     const slices = [];
     
     for (let i = 0; i < ctx.children.length; i++) {
@@ -432,6 +433,6 @@ export function visitSlice(ctx, primary) { // Add primary as parameter
     const index = this.visit(ctx.named_expression());
     return `[pythonIndex(${primary}, ${index})]`;
   }
-  
+  return `[pythonIndex(${primary}, ${ctx.getText()})]`;
   return ctx.getText();
 }

@@ -95,7 +95,8 @@ export function visitTarget_with_star_atom(ctx) {
             // Handle t_primary '.' NAME
             return `${primary}.${ctx.NAME().getText()}`;
         } else if (ctx.slices()) {
-           return PrimaryElements.visitSlices.call(this,ctx.slices(),primary) ;
+           
+          return `${primary}${PrimaryElements.visitSlices.call(this,ctx.slices(),primary)}`;
         }
     } else if (ctx.star_atom()) {
         // Handle star_atom
@@ -183,7 +184,7 @@ export function visitSingle_subscript_attribute_target(ctx) {
         const property = ctx.NAME().getText();
         return `${primary}.${property}`; // JavaScript dot notation
     } else if (ctx.slices()) {
-       return PrimaryElements.visitSlices.call(this,ctx.slices(),primary) ;
+          return `${primary}${PrimaryElements.visitSlices.call(this,ctx.slices(),primary)}`;
     }
 
     throw new Error("Unsupported single_subscript_attribute_target structure."); // Raise an error for unsupported cases
@@ -216,7 +217,7 @@ export function visitT_primary(ctx) {
             // Handle t_primary '.' NAME
             return `${primary}.${ctx.NAME().getText()}`;
         } else if (ctx.slices()) {
-           return PrimaryElements.visitSlices.call(this,ctx.slices(),primary) ;
+          return `${primary}${PrimaryElements.visitSlices.call(this,ctx.slices(),primary)}`;
         } else if (ctx.genexp()) {
 	    //TODO SEE WHAT TO DO IN RELATION TO THISA
             // Handle t_primary genexp
