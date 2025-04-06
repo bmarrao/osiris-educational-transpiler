@@ -380,7 +380,7 @@ export function visitSlices(ctx, primary) {
     }
 
     if (slices.length === 1) {
-        return `${primary}${slices[0]}`;
+        return slices[0];
     }
     // Throw error before any return statement
     throw new Error("Translation error: more than one access in a slice is not permitted");
