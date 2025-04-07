@@ -423,10 +423,10 @@ export function visitSlice(ctx, primary, isTarget) {
             const startOmitted = start === null;
             const stopOmitted = stop === null;
 
-            // Correct boundary calculations
+            // FIX 1: Add +1 to adjustedStop calculation
             const adjustedStop = stopOmitted 
                 ? '0' 
-                : `pythonIndex(${primary}, ${stop}, true)`;  // Removed +1
+                : `(pythonIndex(${primary}, ${stop}, true) + 1)`; // Changed here
             const adjustedStart = startOmitted 
                 ? `${primary}.length` 
                 : `(pythonIndex(${primary}, ${start}, true) + 1)`;
