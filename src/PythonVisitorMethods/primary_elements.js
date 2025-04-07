@@ -150,7 +150,7 @@ function handleCollectionFunctions(primary, argsText) {
     case "items":
       return `Object.entries(${objectName})`;
     case "get": {
-      return `get(${objectName},${argsText})`;
+      return `get(String(${objectName}),${argsText})`;
     }
     case "update":
       return `Object.assign(${objectName}, ${argsText})`;

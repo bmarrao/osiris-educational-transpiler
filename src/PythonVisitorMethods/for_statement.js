@@ -48,8 +48,12 @@ export function visitFor_stmt(ctx) {
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
   let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
-  let jsCode;
-  console.log(iterable)
+  let jsCode = !this.localVars.includes(preDeclareTargets.trim()) 
+    ? `let ${preDeclareTargets.trim()}\n` 
+    : "";
+  
+  this.localVars.push(preDeclareTargets.trim()) 
+
   // Check if the iterable contains 'range('
   if (iterable.startsWith("range(")) {
     // Extract the arguments of the range function
@@ -80,14 +84,14 @@ export function visitFor_stmt(ctx) {
     // Generate the JavaScript for loop
     if (step.startsWith("-")) {
       // Handle negative step
-      jsCode = `let ${preDeclareTargets}\nfor (${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode += `for (${targets} = ${start}; ${targets} > ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     } else {
       // Handle positive step
-      jsCode = `let ${preDeclareTargets}\nfor (${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
+      jsCode += `for (${targets} = ${start}; ${targets} < ${stop}; ${targets} += ${step}) {\n${body}\n}`;
     }
   } else 
   {
-    jsCode = `let ${preDeclareTargets};\n 
+    jsCode +=` 
     if (typeof ${iterable}[Symbol.iterator] === "function") {
     // It's an iterable (Array, Set, Map, etc.), but not a string
         for (const ${targets} of ${iterable}) {\n${body}\n}
