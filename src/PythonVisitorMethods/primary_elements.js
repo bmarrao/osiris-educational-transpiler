@@ -386,28 +386,17 @@ export function visitSlices(ctx, primary) {
     throw new Error("Translation error: more than one access in a slice is not permitted");
 }
 
-
 export function visitSlice(ctx, primary) {
-    // Handle simple index access first (named_expression case)
-    console.log("1")
     if (ctx.named_expression()) {
-      console.log("1")
         const index = this.visit(ctx.named_expression());
         return `[pythonIndex(${primary}, ${index})]`;
     }
 
-    console.log("2")
-    // Handle slice operations (cases with :)
     const text = ctx.getText();
     const colonCount = (text.match(/:/g) || []).length;
-    
-    console.log("3")
-    // Split into components and handle different slice patterns
     const components = text.split(':');
     const hasStep = colonCount === 2;
 
-    console.log("1")
-    // Extract expressions with proper null handling
     const expressions = [];
     let exprIndex = 0;
     for (let i = 0; i < components.length; i++) {
@@ -419,30 +408,25 @@ export function visitSlice(ctx, primary) {
             exprIndex++;
         }
     }
-    // Pad with nulls for missing components
     while (expressions.length < 3) expressions.push(null);
 
     const [start, stop, step] = expressions;
 
-    // Handle negative steps
     if (hasStep) {
         const stepValue = step || '1';
-        console.log(`IS A NEGATIVE STEP AND THE VALUE IS ${stepValue}`)
         const isNegativeStep = stepValue.startsWith('-');
         
         if (isNegativeStep) {
-            const absStep = stepValue.replace('-', '');
+            const absStep = stepValue.replace('-', '') || '1';
             const startOmitted = start === null;
             const stopOmitted = stop === null;
 
-            // Python's negative step defaults
             const defaultStart = `${primary}.length - 1`;
             const defaultStop = '-1';
 
             const startExpr = startOmitted ? defaultStart : `pythonIndex(${primary}, ${start}, true)`;
             const stopExpr = stopOmitted ? defaultStop : `pythonIndex(${primary}, ${stop}, true)`;
 
-            // Adjust boundaries for reverse slicing
             const adjustedStop = stopOmitted ? 
                 '0' : 
                 `(pythonIndex(${primary}, ${stop}, true) + 1)`;
@@ -451,18 +435,17 @@ export function visitSlice(ctx, primary) {
                 `${primary}.length` : 
                 `(pythonIndex(${primary}, ${start}, true) + 1)`;
 
-            // Generate reverse slice
-            let code = `.slice(${adjustedStop}, ${adjustedStart}).reverse()`;
-            
-            if (absStep !== '1') {
-                code += `.filter((_, i) => i % ${absStep} === 0)`;
+            const slicedCode = `${primary}.slice(${adjustedStop}, ${adjustedStart})`;
+            const isStringCheck = `typeof ${primary} === 'string'`;
+
+            if (absStep === '1') {
+                return `(${isStringCheck} ? ${slicedCode}.split('').reverse().join('') : ${slicedCode}.reverse())`;
+            } else {
+                return `(${isStringCheck} ? ${slicedCode}.split('').reverse().filter((_, i) => i % ${absStep} === 0).join('') : ${slicedCode}.reverse().filter((_, i) => i % ${absStep} === 0))`;
             }
-            
-            return code;
         }
     }
 
-    // Handle positive steps
     const parts = [];
     if (start !== null) {
         parts.push(`pythonIndex(${primary}, ${start}, true)`);
