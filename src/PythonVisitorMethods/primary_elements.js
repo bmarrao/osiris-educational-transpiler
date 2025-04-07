@@ -423,11 +423,10 @@ export function visitSlice(ctx, primary, isTarget) {
             const startOmitted = start === null;
             const stopOmitted = stop === null;
 
-            // Calculate adjusted slice boundaries
+            // Correct boundary calculations
             const adjustedStop = stopOmitted 
                 ? '0' 
-                : `(pythonIndex(${primary}, ${stop}, true) + 1)`;
-            
+                : `pythonIndex(${primary}, ${stop}, true)`;  // Removed +1
             const adjustedStart = startOmitted 
                 ? `${primary}.length` 
                 : `(pythonIndex(${primary}, ${start}, true) + 1)`;
@@ -435,7 +434,6 @@ export function visitSlice(ctx, primary, isTarget) {
             const slicedCode = `${primary}.slice(${adjustedStop}, ${adjustedStart})`;
             const isStringCheck = `(typeof ${primary} === 'string')`;
 
-            // Handle step filtering only when needed
             if (absStep === '1') {
                 return `${isStringCheck} ? ${slicedCode}.split('').reverse().join('') : ${slicedCode}.reverse()`;
             } else {
@@ -451,9 +449,10 @@ export function visitSlice(ctx, primary, isTarget) {
 
     let code = `${primary}.slice(${parts.join(', ')})`;
     
-    // Add filter only for steps other than 1
+    // Add string handling for steps > 1
     if (hasStep && step && step !== '1') {
-        code += `.filter((_, i) => i % ${step} === 0)`;
+        const isStringCheck = `(typeof ${primary} === 'string')`;
+        code = `(${isStringCheck} ? ${code}.split('').filter((_, i) => i % ${step} === 0).join('') : ${code}.filter((_, i) => i % ${step} === 0))`;
     }
 
     return code;
