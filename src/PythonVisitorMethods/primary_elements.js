@@ -387,10 +387,10 @@ export function visitSlices(ctx, primary, isTarget) {
 export function visitSlice(ctx, primary, isTarget) {
     if (ctx.named_expression()) {
         const index = this.visit(ctx.named_expression());
-        return `${primary}[pythonIndex(${primary}, ${index})]`; // Added primary
+        return `${primary}[pythonIndex(${primary}, ${index})]`;
     }
-    
-    if (isTarget) {
+
+    if (!isTarget) {
         throw new Error("Translation error: Slicing is not permitted on a target");
     }
 
@@ -423,7 +423,7 @@ export function visitSlice(ctx, primary, isTarget) {
             const startOmitted = start === null;
             const stopOmitted = stop === null;
 
-            // Fixed slice parameters with proper parentheses
+            // Calculate adjusted slice boundaries
             const adjustedStop = stopOmitted 
                 ? '0' 
                 : `(pythonIndex(${primary}, ${stop}, true) + 1)`;
@@ -435,6 +435,7 @@ export function visitSlice(ctx, primary, isTarget) {
             const slicedCode = `${primary}.slice(${adjustedStop}, ${adjustedStart})`;
             const isStringCheck = `(typeof ${primary} === 'string')`;
 
+            // Handle step filtering only when needed
             if (absStep === '1') {
                 return `${isStringCheck} ? ${slicedCode}.split('').reverse().join('') : ${slicedCode}.reverse()`;
             } else {
@@ -443,13 +444,14 @@ export function visitSlice(ctx, primary, isTarget) {
         }
     }
 
-    // Handle normal slices
+    // Handle positive steps
     const parts = [];
     parts.push(start !== null ? `pythonIndex(${primary}, ${start}, true)` : '0');
     parts.push(stop !== null ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`);
 
-    let code = `${primary}.slice(${parts.join(', ')})`; // Primary included
+    let code = `${primary}.slice(${parts.join(', ')})`;
     
+    // Add filter only for steps other than 1
     if (hasStep && step && step !== '1') {
         code += `.filter((_, i) => i % ${step} === 0)`;
     }
