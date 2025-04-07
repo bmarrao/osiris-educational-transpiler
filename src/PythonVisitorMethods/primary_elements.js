@@ -94,7 +94,7 @@ export function visitPrimary(ctx) {
     if (ctx.slices()) {
       console.log("IM ON SLICES")
       // Handle slicing
-      return `${primary}${visitSlices.call(this,ctx.slices(),primary)}`;
+      return `${visitSlices.call(this,ctx.slices(),primary,true)}`;
     }
   } else {
     // Handle atom cases
@@ -364,14 +364,13 @@ function splitArguments(argsText) {
   
   return result;
 }
-export function visitSlices(ctx, primary) {
+export function visitSlices(ctx, primary, isTarget) {
     const slices = [];
-    
     for (let i = 0; i < ctx.children.length; i++) {
         const child = ctx.children[i];
         
         if (child.constructor.name.includes("SliceContext")) {
-            slices.push(visitSlice.call(this, child, primary));
+            slices.push(visitSlice.call(this, child, primary,isTarget));
         }
         else if (child.constructor.name.includes("Starred_expressionContext")) {
             // Fixed object syntax and added spread operator conversion
@@ -385,11 +384,14 @@ export function visitSlices(ctx, primary) {
     // Throw error before any return statement
     throw new Error("Translation error: more than one access in a slice is not permitted");
 }
-
-export function visitSlice(ctx, primary) {
+export function visitSlice(ctx, primary, isTarget) {
     if (ctx.named_expression()) {
         const index = this.visit(ctx.named_expression());
-        return `[pythonIndex(${primary}, ${index})]`;
+        return `${primary}[pythonIndex(${primary}, ${index})]`; // Added primary
+    }
+    
+    if (isTarget) {
+        throw new Error("Translation error: Slicing is not permitted on a target");
     }
 
     const text = ctx.getText();
@@ -421,45 +423,32 @@ export function visitSlice(ctx, primary) {
             const startOmitted = start === null;
             const stopOmitted = stop === null;
 
-            const defaultStart = `${primary}.length - 1`;
-            const defaultStop = '-1';
-
-            const startExpr = startOmitted ? defaultStart : `pythonIndex(${primary}, ${start}, true)`;
-            const stopExpr = stopOmitted ? defaultStop : `pythonIndex(${primary}, ${stop}, true)`;
-
-            const adjustedStop = stopOmitted ? 
-                '0' : 
-                `(pythonIndex(${primary}, ${stop}, true) + 1)`;
+            // Fixed slice parameters with proper parentheses
+            const adjustedStop = stopOmitted 
+                ? '0' 
+                : `(pythonIndex(${primary}, ${stop}, true) + 1)`;
             
-            const adjustedStart = startOmitted ? 
-                `${primary}.length` : 
-                `(pythonIndex(${primary}, ${start}, true) + 1)`;
+            const adjustedStart = startOmitted 
+                ? `${primary}.length` 
+                : `(pythonIndex(${primary}, ${start}, true) + 1)`;
 
             const slicedCode = `${primary}.slice(${adjustedStop}, ${adjustedStart})`;
-            const isStringCheck = `typeof ${primary} === 'string'`;
+            const isStringCheck = `(typeof ${primary} === 'string')`;
 
             if (absStep === '1') {
-                return `(${isStringCheck} ? ${slicedCode}.split('').reverse().join('') : ${slicedCode}.reverse())`;
+                return `${isStringCheck} ? ${slicedCode}.split('').reverse().join('') : ${slicedCode}.reverse()`;
             } else {
-                return `(${isStringCheck} ? ${slicedCode}.split('').reverse().filter((_, i) => i % ${absStep} === 0).join('') : ${slicedCode}.reverse().filter((_, i) => i % ${absStep} === 0))`;
+                return `${isStringCheck} ? ${slicedCode}.split('').reverse().filter((_, i) => i % ${absStep} === 0).join('') : ${slicedCode}.reverse().filter((_, i) => i % ${absStep} === 0)`;
             }
         }
     }
 
+    // Handle normal slices
     const parts = [];
-    if (start !== null) {
-        parts.push(`pythonIndex(${primary}, ${start}, true)`);
-    } else {
-        parts.push('0');
-    }
+    parts.push(start !== null ? `pythonIndex(${primary}, ${start}, true)` : '0');
+    parts.push(stop !== null ? `pythonIndex(${primary}, ${stop}, true)` : `${primary}.length`);
 
-    if (stop !== null) {
-        parts.push(`pythonIndex(${primary}, ${stop}, true)`);
-    } else {
-        parts.push(`${primary}.length`);
-    }
-
-    let code = `.slice(${parts.join(', ')})`;
+    let code = `${primary}.slice(${parts.join(', ')})`; // Primary included
     
     if (hasStep && step && step !== '1') {
         code += `.filter((_, i) => i % ${step} === 0)`;
