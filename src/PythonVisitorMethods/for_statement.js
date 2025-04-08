@@ -43,16 +43,21 @@ export function visitFor_stmt(ctx) {
     throw new Error("Translation error: Else blocks in for-loops are not supported");
   }
 
-  const targetsRet = this.visit(ctx.star_targets()); // Visit the targets (variables)
+  let jsCode = ""
+  
+  const targetsRet = this.visit(ctx.star_targets());
+  for (const target of targetsRet) {
+    jsCode += !this.localVars.includes(target)
+      ? `let ${target.trim()}\n`
+      : "";
+  }
+
   let targets = dealTargets(targetsRet,this.localVars)
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
   let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
-  let jsCode = !this.localVars.includes(preDeclareTargets.trim()) 
-    ? `let ${preDeclareTargets.trim()}\n` 
-    : "";
   
-  this.localVars.push(preDeclareTargets.trim()) 
+  
 
   // Check if the iterable contains 'range('
   if (iterable.startsWith("range(")) {

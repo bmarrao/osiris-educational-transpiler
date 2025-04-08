@@ -15,8 +15,9 @@ export function visitFor_if_clause(ctx) {
 
 export function visitListcomp(ctx) {
     const expr = this.visit(ctx.named_expression());
+    let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
-
+    this.localVars.length = length;
     return `(() => {
         let _result = [];
         for (let ${clause.targets} of ${clause.iterable}) {
@@ -29,7 +30,9 @@ export function visitListcomp(ctx) {
 
 export function visitSetcomp(ctx) {
     const expr = this.visit(ctx.named_expression());
+    let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
+    this.localVars.length = length;
 
     return `(() => {
         let _result = new Set();
@@ -45,8 +48,9 @@ export function visitGenexp(ctx) {
     const expr = ctx.assignment_expression() 
         ? this.visit(ctx.assignment_expression()) 
         : this.visit(ctx.expression());
+    let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
-
+    this.localVars.length = length;
     return `(() => {
         function* generator() {
             for (let ${clause.targets} of ${clause.iterable}) {
