@@ -217,7 +217,7 @@ export function visitT_primary(ctx) {
             // Handle t_primary '.' NAME
             return `${primary}.${ctx.NAME().getText()}`;
         } else if (ctx.slices()) {
-          return `${primaryElements.visitSlices.call(this,ctx.slices(),primary,false)}`;
+          return `${PrimaryElements.visitSlices.call(this,ctx.slices(),primary,false)}`;
         } else if (ctx.genexp()) {
 	    //TODO SEE WHAT TO DO IN RELATION TO THISA
             // Handle t_primary genexp
