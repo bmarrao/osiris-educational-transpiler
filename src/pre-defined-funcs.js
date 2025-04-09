@@ -536,7 +536,7 @@ var evalComparFun = "" +
 
 `function tokenize(expr) {
     const depths = getDepths(expr);
-    const operators = ['!=', '==', '<=', '>=', '<', '>', 'is not', 'not in', 'is', 'in']; // Prioritize longer operators first
+    const operators = ['!=', '==', '<=', '>=', '<', '>', ' is not ', ' not in ', ' is ', ' in ']; // Prioritize longer operators first
     const tokens = [];
     let currentToken = '';
     let i = 0;
