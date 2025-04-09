@@ -893,7 +893,6 @@ ${strFun}
 ${reprFun}
 ${getFunc}
 ${filterFunc}
-${getFunc}
 ${allFunc}
 ${pythonIndex}
 ${countFunc}
