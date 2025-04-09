@@ -1,3 +1,11 @@
+var funcOrd = `
+function ord(str) {
+    if (typeof str !== 'string' || [...str].length !== 1) {
+        throw new Error('Input must be a single character string');
+    }
+    return str.codePointAt(0);
+}
+`
 var pythonIndex = `
 function pythonIndex(obj, index, isSlice = false) {
   // Handle null/undefined indexes
@@ -674,6 +682,7 @@ var joinFunc = `function join(separator, iterable) {
 `;
 
 export var builtInPythonFuncs = `
+${funcOrd}
 ${map}
 ${enumerate}
 ${divmod}
