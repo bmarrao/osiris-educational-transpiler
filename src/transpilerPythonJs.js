@@ -318,7 +318,15 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         //console.log('Visiting is_bitwise_or');
         return ComparisonOperators.visitIs_bitwise_or.call(this, ctx);
     }
+    visitNotin_bitwise_or(ctx) {
+        //console.log('Visiting isnot_bitwise_or');
+        return ComparisonOperators.visitNotin_bitwise_or.call(this, ctx);
+    }
 
+    visitIn_bitwise_or(ctx) {
+        //console.log('Visiting is_bitwise_or');
+        return ComparisonOperators.visitIn_bitwise_or.call(this, ctx);
+    }
     visitBitwise_or(ctx) {
         //console.log('Visiting bitwise_or');
         return BitwiseOperators.visitBitwise_or.call(this, ctx);

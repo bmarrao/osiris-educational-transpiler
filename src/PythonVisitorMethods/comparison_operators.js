@@ -64,13 +64,13 @@ export function visitGt_bitwise_or(ctx) {
 
 export function visitNotin_bitwise_or(ctx) {
     // console.log('visitNotin_bitwise_or');
-    const right = this.visitBitwise_or(ctx.bitwise_or);
+    const right = this.visit(ctx.bitwise_or());
     return `not in ${right}`;  // JavaScript equivalent of "not in"
 }
 
 export function visitIn_bitwise_or(ctx) {
     // console.log('visitIn_bitwise_or');
-    const right = this.visitBitwise_or(ctx.bitwise_or);
+    const right = this.visit(ctx.bitwise_or());
     return ` in ${right}`;  // JavaScript equivalent of "not in"
 }
 
