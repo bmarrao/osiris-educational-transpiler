@@ -1,3 +1,4 @@
+Transofrm in primary next to primary.next().value
 def collatz_generator(n):
     while n != 1:
         yield n

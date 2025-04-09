@@ -338,44 +338,42 @@ var evalComparFun = "" +
 "    return depths; " +
 "  } " +
 
-"  function tokenize(expr) { " +
-"    const depths = getDepths(expr); " +
-"    const operators = ['is not', 'not in', '==', '!=', '<=', '>=', '<', '>', 'is', 'in']; " +
-"    const tokens = []; " +
-"    let currentToken = '', i = 0; " +
-"    while (i < expr.length) { " +
-"      let foundOp = null; " +
-"      for (const op of operators) { " +
-"        if (expr.substr(i, op.length) === op) { " +
-"          let isAtDepthZero = true; " +
-"          for (let j = 0; j < op.length; j++) { " +
-"            if (depths[i + j] !== 0) { isAtDepthZero = false; break; } " +
-"          } " +
-"          if (isAtDepthZero) { " +
-"            const before = i === 0 ? ' ' : expr[i - 1]; " +
-"            const after = i + op.length >= expr.length ? ' ' : expr[i + op.length]; " +
-"            if (/\\s|[(]/.test(before) && /\\s|[)]/.test(after)) { " +
-"              foundOp = op; " +
-"              break; " +
-"            } " +
-"          } " +
-"        } " +
-"      } " +
-"      if (foundOp) { " +
-"        if (currentToken.trim()) { " +
-"          tokens.push(currentToken.trim()); " +
-"          currentToken = ''; " +
-"        } " +
-"        tokens.push(foundOp.trim()); " +
-"        i += foundOp.length; " +
-"      } else { " +
-"        currentToken += expr[i]; " +
-"        i++; " +
-"      } " +
-"    } " +
-"    if (currentToken.trim()) tokens.push(currentToken.trim()); " +
-"    return tokens; " +
-"  } " +
+`function tokenize(expr) {
+    const depths = getDepths(expr);
+    const operators = ['!=', '==', '<=', '>=', '<', '>', 'is not', 'not in', 'is', 'in']; // Prioritize longer operators first
+    const tokens = [];
+    let currentToken = '';
+    let i = 0;
+
+    while (i < expr.length) {
+        let foundOp = null;
+        let opLength = 0;
+
+        // Check for all possible operators starting at current position
+        for (const op of operators) {
+            if (expr.startsWith(op, i)) {
+                foundOp = op;
+                opLength = op.length;
+                break;
+            }
+        }
+
+        if (foundOp) {
+            if (currentToken.trim()) {
+                tokens.push(currentToken.trim());
+                currentToken = '';
+            }
+            tokens.push(foundOp.trim());
+            i += opLength;
+        } else {
+            currentToken += expr[i];
+            i++;
+        }
+    }
+
+    if (currentToken.trim()) tokens.push(currentToken.trim());
+    return tokens;
+}` +
 
 "  function evaluateWithContext(valueStr, context) { " +
 "    const keys = Object.keys(context); " +
