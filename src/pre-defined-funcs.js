@@ -877,6 +877,7 @@ export var funcNames = [
   "pythonEqual",
   "filter",
   "all",
+  "pythonIndex",
   "get",
   "repr",
   "myPop",
