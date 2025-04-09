@@ -41,6 +41,13 @@ function count(iterable, value, start = 0, end = undefined) {
     
     if (start > end) return 0;
     
+    // Special case for empty string
+    if (value === '') {
+      // Python counts empty strings between each character and at the ends
+      // So a string of length n has n+1 empty strings
+      return end - start + 1;
+    }
+    
     // For single chars
     if (value.length === 1) {
       let count = 0;
@@ -54,15 +61,14 @@ function count(iterable, value, start = 0, end = undefined) {
     
     // For substrings (more complex)
     let count = 0;
-    let pos = start;
     const substring = iterable.slice(start, end);
+    let pos = 0;
     
-    // This is how Python's string.count behaves with overlapping substrings
-    while (true) {
-      pos = substring.indexOf(value, pos - start);
+    while (pos <= substring.length) {
+      pos = substring.indexOf(value, pos);
       if (pos === -1) break;
       count++;
-      pos += 1; // Move past the first character to avoid endless counting
+      pos += value.length; // Move past entire matched substring
     }
     return count;
   }
@@ -150,10 +156,6 @@ function count(iterable, value, start = 0, end = undefined) {
   
   throw new TypeError("Object is not iterable");
 }
-
-/**
- * Helper function to mimic Python's equality behavior
- */
 function pythonEqual(a, b) {
   // Handle NaN specially (in Python, NaN != NaN)
   if (Number.isNaN(a) && Number.isNaN(b)) {
@@ -184,6 +186,7 @@ function pythonEqual(a, b) {
   // Default comparison
   return a === b;
 }
+
 `
 var funcOrd = `
 function ord(str) {
