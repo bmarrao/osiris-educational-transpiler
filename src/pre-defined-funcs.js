@@ -869,6 +869,40 @@ var joinFunc = `function join(separator, iterable) {
 }
 `;
 
+
+
+export var funcNames = [
+  "ord",
+  "count",
+  "pythonEqual",
+  "filter",
+  "all",
+  "get",
+  "repr",
+  "myPop",
+  "sorted",
+  "max",
+  "min",
+  "type",
+  "sum",
+  "range",
+  "len",
+  "extend",
+  "join",
+  "str",
+  "any",
+  "osiris_builtin_convertPythonOperand",
+  "osiris_builtin_addition",
+  "osiris_builtin_subtraction",
+  "osiris_builtin_multiplication",
+  "osiris_builtin_python_evalPythonComparison",
+  "map",
+  "enumerate",
+  "divmod",
+  "round",
+  "zip",
+  "myRemove"
+];
 export var builtInPythonFuncs = `
 ${funcOrd}
 ${map}

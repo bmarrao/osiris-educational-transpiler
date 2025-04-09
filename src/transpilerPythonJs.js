@@ -26,6 +26,7 @@ import PythonParser  from './Python/PythonParser.js'; // Import the generated pa
 import PythonParserVisitor from './Python/PythonParserVisitor.js'; // Import the generated visitor base class
 import PythonLexer from "./Python/PythonLexer.js";
 import { flatten } from './tools/flatten.js';
+import { funcNames } from './pre-defined-funcs.js';
 
 //TODO ADD HANDLING FOR PRINT 
 
@@ -33,7 +34,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
     constructor(runOnBrowser=false) {
         super();
         this.globalvars = []; 
-        this.localVars = []
+        this.localVars = [...funcNames]
         this.inFunc = false ;
         this.inClass = false ;
         this.className="";
