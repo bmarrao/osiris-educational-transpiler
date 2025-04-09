@@ -62,10 +62,6 @@ export function visitGroup(ctx) {
     return "( " + inside + " )"; // Return formatted group
 }
 
-
-
-
-
 export function visitPrimary(ctx) {
   if (ctx.primary()) {
     let primary = this.visit(ctx.primary());
@@ -114,9 +110,11 @@ function handleFunctionCalls(primary, argsText,runOnBrowser) {
 
 
 function handleCollectionFunctions(primary, argsText) {
-  let [objectName, method] = primary.split('.');
+  let parts = primary.split('.');
+  const method = parts.pop();  // Take the last element as method
+  const objectName = parts.join('.');  // Join the rest as objectName
   const reverse = argsText.includes("reverse");
-
+  // I WANT METHOD TO BE THE LAST ELEMENT ON PRIMARY.spli('.') AND OBJECT NAME TO BE everything else 
   switch (method) {
     // ----- List Functions -----
     case "append":
