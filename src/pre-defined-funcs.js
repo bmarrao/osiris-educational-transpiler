@@ -857,12 +857,14 @@ var extendFunc = `function extend(arr, iterable) {
   arr.push(...iterable);
 }
 `
-var joinFunc = `function join(separator, iterable) {
-  if (!Array.isArray(iterable)) {
-    throw new TypeError('The second argument must be an array.');
+var joinFunc = `
+function join(separator, iterable) {
+  if (iterable == null || typeof iterable[Symbol.iterator] !== 'function') {
+    throw new TypeError('The second argument must be iterable.');
   }
 
-  return iterable.reduce((acc, curr, index) => {
+  const arr = Array.from(iterable);
+  return arr.reduce((acc, curr, index) => {
     if (index === 0) return curr;
     return acc + separator + curr;
   }, '');
