@@ -933,4 +933,5 @@ ${filterFunc}
 ${allFunc}
 ${pythonIndex}
 ${countFunc}
+${joinFunc}
 `;
