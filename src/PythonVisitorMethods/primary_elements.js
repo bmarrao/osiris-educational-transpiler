@@ -140,7 +140,7 @@ function handleCollectionFunctions(primary, argsText) {
     case "index":
       return `${objectName}.indexOf(${argsText})`;
     case "count":
-      return `${objectName}.filter(v => v === ${argsText}).length`;
+      return `count(${objectName}${argsText ? `, ${argsText}` : ''})`;
 
     // ----- Dictionary Functions -----
     case "keys":

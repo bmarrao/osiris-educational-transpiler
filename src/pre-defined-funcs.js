@@ -1,3 +1,190 @@
+var countFunc = `
+function count(iterable, value, start = 0, end = undefined) {
+  // Check if the object has its own count method (like Python's __count__)
+  if (iterable && typeof iterable.count === 'function' && 
+      (arguments.length <= 3 || end === undefined)) {
+    // Use the object's native count method if available and no end param
+    try {
+      if (arguments.length === 2) {
+        return iterable.count(value);
+      } else {
+        return iterable.count(value, start);
+      }
+    } catch (e) {
+      // Fall back to our implementation if the native method fails
+    }
+  }
+
+  // Handle non-iterables
+  if (iterable === null || iterable === undefined) {
+    throw new TypeError("'" + (iterable === null ? "null" : "undefined") + "' object is not iterable");
+  }
+
+  // Special case for strings
+  if (typeof iterable === 'string') {
+    // If value isn't a string or is longer than 1 char (for char counting)
+    if (typeof value !== 'string') {
+      return 0; // Python string.count() only counts string values
+    }
+    
+    // Set up indices properly (Python style)
+    const length = iterable.length;
+    if (start < 0) start = Math.max(0, length + start);
+    if (end === undefined) {
+      end = length;
+    } else if (end < 0) {
+      end = Math.max(0, length + end);
+    }
+    
+    start = Math.max(0, start);
+    end = Math.min(length, end);
+    
+    if (start > end) return 0;
+    
+    // For single chars
+    if (value.length === 1) {
+      let count = 0;
+      for (let i = start; i < end; i++) {
+        if (iterable[i] === value) {
+          count++;
+        }
+      }
+      return count;
+    }
+    
+    // For substrings (more complex)
+    let count = 0;
+    let pos = start;
+    const substring = iterable.slice(start, end);
+    
+    // This is how Python's string.count behaves with overlapping substrings
+    while (true) {
+      pos = substring.indexOf(value, pos - start);
+      if (pos === -1) break;
+      count++;
+      pos += 1; // Move past the first character to avoid endless counting
+    }
+    return count;
+  }
+  
+  // Try to use iterable protocol
+  if (typeof iterable[Symbol.iterator] === 'function') {
+    // Efficiently handle special cases without fully materializing
+    if (Array.isArray(iterable)) {
+      const length = iterable.length;
+      
+      // Handle indices properly
+      if (start < 0) start = Math.max(0, length + start);
+      if (end === undefined) {
+        end = length;
+      } else if (end < 0) {
+        end = Math.max(0, length + end);
+      }
+      
+      start = Math.max(0, start);
+      end = Math.min(length, end);
+      
+      if (start > end) return 0;
+      
+      let count = 0;
+      for (let i = start; i < end; i++) {
+        if (pythonEqual(iterable[i], value)) {
+          count++;
+        }
+      }
+      return count;
+    }
+    
+    // For other iterables, we might need to materialize the sequence
+    // to properly handle negative indices
+    let items;
+    try {
+      // Try to use length property if available
+      if (typeof iterable.length === 'number') {
+        items = Array.from({length: iterable.length}, (_, i) => iterable[i]);
+      } else {
+        items = Array.from(iterable);
+      }
+      
+      const length = items.length;
+      
+      // Handle indices properly
+      if (start < 0) start = Math.max(0, length + start);
+      if (end === undefined) {
+        end = length;
+      } else if (end < 0) {
+        end = Math.max(0, length + end);
+      }
+      
+      start = Math.max(0, start);
+      end = Math.min(length, end);
+      
+      if (start > end) return 0;
+      
+      let count = 0;
+      for (let i = start; i < end; i++) {
+        if (pythonEqual(items[i], value)) {
+          count++;
+        }
+      }
+      return count;
+    } catch (e) {
+      // Handle non-materializable iterables (e.g., infinite generators)
+      // This follows Python's behavior when using count with a slice of an iterator
+      let count = 0;
+      let i = 0;
+      
+      for (const item of iterable) {
+        if (i >= start && (end === undefined || i < end)) {
+          if (pythonEqual(item, value)) {
+            count++;
+          }
+        }
+        
+        i++;
+        if (end !== undefined && i >= end) break;
+      }
+      return count;
+    }
+  }
+  
+  throw new TypeError("Object is not iterable");
+}
+
+/**
+ * Helper function to mimic Python's equality behavior
+ */
+function pythonEqual(a, b) {
+  // Handle NaN specially (in Python, NaN != NaN)
+  if (Number.isNaN(a) && Number.isNaN(b)) {
+    return false;
+  }
+  
+  // Handle null/None
+  if (a === null && b === undefined) return true;
+  if (a === undefined && b === null) return true;
+  
+  // Handle numeric equality (Python allows 1 == 1.0 and 1 == True)
+  if (typeof a === 'number' && typeof b === 'boolean') {
+    return a === Number(b);
+  }
+  if (typeof a === 'boolean' && typeof b === 'number') {
+    return Number(a) === b;
+  }
+  
+  // Handle array/list and similar iterable comparisons
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!pythonEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  
+  // Default comparison
+  return a === b;
+}
+`
 var funcOrd = `
 function ord(str) {
     if (typeof str !== 'string' || [...str].length !== 1) {
@@ -709,4 +896,5 @@ ${filterFunc}
 ${getFunc}
 ${allFunc}
 ${pythonIndex}
+${countFunc}
 `;
