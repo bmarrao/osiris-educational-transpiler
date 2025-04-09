@@ -1,3 +1,15 @@
+
+Var seq not defined 
+def collatz(n, passos=0):
+    if n == 1:
+        return [1], passos
+    if n % 2 == 0:
+        seq, p = collatz(n // 2, passos + 1)
+    else:
+        seq, p = collatz(3 * n + 1, passos + 1)
+    return [n] + seq, p
+
+
 Transofrm in primary next to primary.next().value
 def collatz_generator(n):
     while n != 1:

@@ -12,8 +12,10 @@ export function visitComparison(ctx) {
         comparisonPairs.push(comparisonPair); 
     }
     let evalString = `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
+    evalString = evalString.replace(/this\./g, 'osiris_builtin_class.')
+    console.log(evalString)
     if(comparisonPairs.length >= 1 ) {
-        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars.map(v => v === "self" ? "this : this" : `${v}: ${v}`).join(", ")} })`;
+        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars.map(v => v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`).join(", ")} })`;
 
     }
     else 
