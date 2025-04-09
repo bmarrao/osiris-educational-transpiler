@@ -159,7 +159,7 @@ function handleCollectionFunctions(primary, argsText) {
 
     // ----- String Functions -----
     case "join":
-      return `${argsText}.join(${objectName})`;
+      return `join(${objectName},${argsText})`;
     case "upper":
       return `${objectName}.toUpperCase(${argsText})`;
     case "lower":

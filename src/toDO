@@ -24,15 +24,3 @@ genexp - next , list : implementar uma própria static function ?
 wildcard problem _ add variables wildcard_osiris_1 , ... 
 
 notas = list(map(float, input("Digite as notas separadas por espaço: ").split()))
-
-def juros_compostos_lista(valores):
-    p, r, t = valores
-    return p * (1 + r) ** t
-
-valores = [1000, 0.05, 3]
-print(juros_compostos_lista(valores))
-
-
-
-
-
