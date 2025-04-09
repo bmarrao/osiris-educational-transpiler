@@ -88,23 +88,21 @@ var filterFunc = `function filter(predicate, iterable) {
 
 var allFunc = `
 function all(iterable) {
-  // Get elements to check (Python iteration rules)
-  let elements;
-  
-  if (Array.isArray(iterable) || typeof iterable === 'string') {
-    elements = [...iterable];
-  } else if (iterable instanceof Set) {
-    elements = [...iterable];
-  } else if (iterable instanceof Map) {
-    elements = [...iterable.keys()];
-  } else if (typeof iterable === 'object' && iterable !== null) {
-    elements = Object.keys(iterable);
-  } else {
+  // Handle any iterable (including generators)
+  try {
+    let allTrue = true;
+    for (const element of iterable) {
+      if (!Boolean(element)) {
+        allTrue = false;
+        // Consume remaining elements to avoid "already started" errors
+        for (const _ of iterable) {}
+        break;
+      }
+    }
+    return allTrue;
+  } catch (e) {
     throw new TypeError("object is not iterable");
   }
-
-  // Python's all() behavior: True for empty, check truthiness
-  return elements.length === 0 ? true : elements.every(e => Boolean(e));
 }
 `
 var getFunc = `function get(obj, key, defaultValue = null) {
