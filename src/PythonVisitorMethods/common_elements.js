@@ -25,8 +25,8 @@ export function visitBlock(ctx) {
 export function visitDecorators(ctx) {
     //This may break in the future
     const decorator = this.visit(ctx.named_expression())[0]
-    // console.log("DECORATOR")
-    // console.log(decorator)
+//     // console.log("DECORATOR")
+//     // console.log(decorator)
     if (decorator === "property")
     {
         return "get "

@@ -1,3 +1,20 @@
+def collatz(n):
+    seq = []
+    passos = 0
+    while True:
+        seq.append(n)
+        if n == 1:
+            break
+        n = n // 2 if n % 2 == 0 else 3 * n + 1
+        passos += 1
+    return seq, passos
+
+s, p = collatz(6)
+print(" → ".join(str(x) for x in s))
+print("Passos:", p)
+
+it is adding 
+unpack = [collats(6)]
 
 Var seq not defined 
 def collatz(n, passos=0):

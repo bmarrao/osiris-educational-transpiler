@@ -8,7 +8,7 @@ function_def_raw
 */
 
 export function visitFunction_def(ctx) {
-    // console.log(1)
+//     // console.log(1)
     // Check if there are decorators
     let pre_function = "";
     if (ctx.decorators()) {
@@ -28,14 +28,14 @@ export function visitFunction_def_raw(ctx) {
     let params =""
     if (functionName === "__init__") 
     {
-        console.log(this.localVars)
-        console.log("TESTE")
+//         console.log(this.localVars)
+//         console.log("TESTE")
         this.localVars.push(`${this.className}`)
-        console.log(this.localVars)
+//         console.log(this.localVars)
         functionName = "constructor";
     }
     else if (this.inClass && functionName.slice(0, 2) === "__") {
-        console.log("HERE")
+//         console.log("HERE")
         functionName = "#" + functionName.slice(2);
     }
     else if(!(this.inClass)){
@@ -72,7 +72,7 @@ export function visitFunction_def_raw(ctx) {
         functionStr = `async ${functionStr}`;
     }
 
-    // console.log(4)
+//     // console.log(4)
     return functionStr;
 }
 

@@ -15,7 +15,7 @@ export function visitFor_if_clause(ctx) {
 }
 
 export function visitListcomp(ctx) {
-    console.log("Here")
+//     console.log("Here")
     let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
     const expr = this.visit(ctx.named_expression());
@@ -31,7 +31,7 @@ export function visitListcomp(ctx) {
 }
 
 export function visitSetcomp(ctx) {
-    console.log("2Here")
+//     console.log("2Here")
     let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
     const expr = this.visit(ctx.named_expression());
@@ -48,7 +48,7 @@ export function visitSetcomp(ctx) {
 }
 
 export function visitGenexp(ctx) {
-    console.log("4Here")
+//     console.log("4Here")
     let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
     const expr = ctx.assignment_expression()
@@ -68,7 +68,7 @@ export function visitGenexp(ctx) {
 }
 
 export function visitDictcomp(ctx) {
-    console.log("3Here")
+//     console.log("3Here")
     let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
     const [keyExpr, valueExpr] = this.visit(ctx.kvpair()).split(':').map(s => s.trim());

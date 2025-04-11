@@ -17,7 +17,7 @@ export function visitAtom(ctx) {
     }
     else if (ctx.strings())
     {
-        // console.log("Visit Strings Atom");
+//         // console.log("Visit Strings Atom");
         return this.visit(ctx.strings())
     } 
     else if (ctx.list() || ctx.listcomp()) 
@@ -25,7 +25,7 @@ export function visitAtom(ctx) {
         if(ctx.list())
         {
             const list = this.visit(ctx.list())
-            console.log(`list var is : ${list}`)
+//             console.log(`list var is : ${list}`)
             return list ; 
         }
         else 
@@ -88,7 +88,7 @@ export function visitPrimary(ctx) {
     }
 
     if (ctx.slices()) {
-      console.log("IM ON SLICES")
+//       console.log("IM ON SLICES")
       // Handle slicing
       return `${visitSlices.call(this,ctx.slices(),primary,true)}`;
     }
@@ -264,7 +264,7 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
 
 function handlePrint(argsText, runOnBrowser) {
   if (!argsText) {
-    return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+//     return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
   }
 
   let argsList = splitArguments(argsText);
@@ -274,10 +274,10 @@ function handlePrint(argsText, runOnBrowser) {
       return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
     }).join("");
     let template = `\`${parts}\``;
-    return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
+//     return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
   }
 
-  return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
+//   return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
 }
 
 function handleMinMax(primary, argsText, runOnBrowser) {

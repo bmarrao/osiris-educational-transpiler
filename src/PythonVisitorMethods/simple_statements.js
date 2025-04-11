@@ -1,10 +1,44 @@
 import { flatten }  from "../tools/flatten.js"
 
+function hasTopLevelComma(str) {
+  let paren = 0, bracket = 0, brace = 0;
+  let inString = false, stringChar = null;
 
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+
+    // Handle string literals to ignore commas inside them
+    if (inString) {
+      if (ch === stringChar && str[i - 1] !== "\\") {
+        inString = false;
+        stringChar = null;
+      }
+      continue;
+    } else if (ch === '"' || ch === "'" || ch === "`") {
+      inString = true;
+      stringChar = ch;
+      continue;
+    }
+
+    // Update counters for delimiters
+    if (ch === '(') paren++;
+    else if (ch === ')') paren--;
+    else if (ch === '[') bracket++;
+    else if (ch === ']') bracket--;
+    else if (ch === '{') brace++;
+    else if (ch === '}') brace--;
+
+    // Check for a top-level comma
+    if (ch === ',' && paren === 0 && bracket === 0 && brace === 0) {
+      return true;
+    }
+  }
+  return false;
+}
 function multipleTargets(targets, valuesStr) {
     let ret = "";
     let unpack ; 
-    if (valuesStr.trim()[0] === "[" || this.localVars.includes(valuesStr.trim()) ) {
+    if (!hasTopLevelComma("valuesStr")) {
         unpack = `osiris_iterable_unpacking = ${valuesStr};\n`;
     } else {
         unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
@@ -86,7 +120,7 @@ export function visitAssignment(ctx) {
       const targets = flatten(this.visit(ctx.star_targets()));
       const values = this.visit(ctx.star_expressions());
       let ret = '';
-      console.log(targets)
+//       console.log(targets)
       if (targets.length > 1)
       {
             
@@ -149,7 +183,7 @@ export function visitAssignment(ctx) {
 }
 
 export function visitAnnotatedRhs(ctx) {
-    // console.log("visitAnnotatedRhs");
+//     // console.log("visitAnnotatedRhs");
     // Check for 'yield_expr' first
     if (ctx.yield_expr()) {
         return this.visit(ctx.yield_expr()); // Visit the yield expression
@@ -165,10 +199,10 @@ export function visitAnnotatedRhs(ctx) {
 }
 
 export function visitAugassign(ctx) {
-    // console.log("visitAugassign");
-    // console.log("AUGASSIGN");
+//     // console.log("visitAugassign");
+//     // console.log("AUGASSIGN");
     const operator = ctx.getText(); // Get the operator (e.g., +=, -=, etc.)
-    // console.log(operator); 
+//     // console.log(operator); 
     // Return the operator if it's valid in JavaScript, or its equivalent
     switch (operator) {
         case '+=':
@@ -210,16 +244,7 @@ export function visitReturn_stmt(ctx) {
     return 'return;';
 }
 
-// Helper: Check for any comma at the "top level" (not inside parentheses/brackets)
-function hasTopLevelComma(expr) {
-    let balance = 0;
-    for (const char of expr) {
-        if (char === '(' || char === '[') balance++;
-        else if (char === ')' || char === ']') balance--;
-        else if (char === ',' && balance === 0) return true;
-    }
-    return false;
-}export function visitNonlocal_stmt(ctx) {
+export function visitNonlocal_stmt(ctx) {
     return '';
 }
 

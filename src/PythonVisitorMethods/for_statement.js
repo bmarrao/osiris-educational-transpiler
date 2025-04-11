@@ -66,7 +66,7 @@ export function visitFor_stmt(ctx) {
     const rangeArgs = splitArguments(inner);    // Default values for start, stop, and step
     let start = "0", stop, step = "1";
 
-    console.log(rangeArgs)
+//     console.log(rangeArgs)
     if (rangeArgs.length === 1) {
       // range(stop)
       stop = rangeArgs[0];
@@ -83,9 +83,9 @@ export function visitFor_stmt(ctx) {
       throw new Error("Translation error: Invalid range syntax");
     }
 
-    console.log(targets)
-    console.log(stop)
-    console.log(step)
+//     console.log(targets)
+//     console.log(stop)
+//     console.log(step)
     // Generate the JavaScript for loop
     if (step.startsWith("-")) {
       // Handle negative step

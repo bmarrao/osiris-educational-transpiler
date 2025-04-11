@@ -2,7 +2,7 @@ import * as PrimaryElements from './primary_elements.js';
 
 export function visitStar_targets(ctx) {
     
-    console.log('Visiting star_targets');
+//     console.log('Visiting star_targets');
     // Grammar Rule: star_targets
     // star_targets: star_target (',' star_target )* ','?
     //
@@ -14,7 +14,7 @@ export function visitStar_targets(ctx) {
     // `...args`
     // `...a, ...b`
     const targets = ctx.star_target().map(target => this.visit(target));
-    console.log(`Targets ${targets.join(', ')}`)
+//     console.log(`Targets ${targets.join(', ')}`)
     return targets; // Spread syntax for multiple star targets
 }
 

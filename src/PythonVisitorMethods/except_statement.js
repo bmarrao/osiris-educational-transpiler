@@ -15,7 +15,7 @@ export function visitExcept_block(ctx) {
     // If the exception type is not provided or is 'Exception', handle it as a general exception
     if (!exceptionType || exceptionType === 'Exception') {
         // Translate to a generic catch block in JavaScript with exception alias
-        // console.log(`IM RETURNING: catch (${exceptionAlias}) {\n${block}\n}`);
+//         // console.log(`IM RETURNING: catch (${exceptionAlias}) {\n${block}\n}`);
         return `catch (${exceptionAlias}) {\n${block}\n}`;
     } else {
         // Raise an error for unsupported exception types
