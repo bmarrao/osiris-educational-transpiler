@@ -1,6 +1,6 @@
 {
   "name": "osiris-educational-transpiler",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "type": "module",
   "description": "Transpiler intended for educational purpose that translates currently python code into javascript so that it can be run on a browser .",
   "main": "dist/bundle.js",

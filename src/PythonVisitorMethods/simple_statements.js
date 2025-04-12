@@ -38,7 +38,7 @@ function hasTopLevelComma(str) {
 function multipleTargets(targets, valuesStr) {
     let ret = "";
     let unpack ; 
-    if (!hasTopLevelComma("valuesStr")) {
+    if (!hasTopLevelComma(valuesStr)) {
         unpack = `osiris_iterable_unpacking = ${valuesStr};\n`;
     } else {
         unpack = `osiris_iterable_unpacking = [${valuesStr}];\n`;
