@@ -264,7 +264,7 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
 
 function handlePrint(argsText, runOnBrowser) {
   if (!argsText) {
-//     return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+     return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
   }
 
   let argsList = splitArguments(argsText);
@@ -274,10 +274,10 @@ function handlePrint(argsText, runOnBrowser) {
       return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
     }).join("");
     let template = `\`${parts}\``;
-//     return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
+     return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
   }
 
-//   return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
+   return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
 }
 
 function handleMinMax(primary, argsText, runOnBrowser) {
