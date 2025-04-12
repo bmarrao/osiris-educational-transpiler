@@ -36,6 +36,7 @@ function hasTopLevelComma(str) {
   return false;
 }
 function multipleTargets(targets, valuesStr) {
+    var preDeclare = this.inIf ? "var" : "let";
     let ret = "";
     let unpack ; 
     if (!hasTopLevelComma(valuesStr)) {
@@ -47,7 +48,7 @@ function multipleTargets(targets, valuesStr) {
             ret += unpack;
     } else {
             this.localVars.push("osiris_iterable_unpacking");
-            ret += `let ${unpack}`;
+            ret += `${preDeclare} ${unpack}`;
     }
     for (let i = 0; i < targets.length; i++) {
         let assignment = `${targets[i]} = osiris_iterable_unpacking[${i}];`;
@@ -55,7 +56,7 @@ function multipleTargets(targets, valuesStr) {
             ret += assignment;
         } else {
             this.localVars.push(targets[i]);
-            ret += `let ${assignment}`;
+            ret += `${preDeclare} ${assignment}`;
         }
         if (i < targets.length - 1) ret += '\n';
     }
@@ -75,6 +76,7 @@ let x = 5
 let x = 7 
 */
 export function visitAssignment(ctx) {
+    var preDeclare = this.inIf ? "var" : "let";
     // Handle simple assignment (name: expression '=' annotated_rhs)
     if (ctx.NAME() && ctx.expression()) {
         const variableName = ctx.NAME().getText();
@@ -89,8 +91,8 @@ export function visitAssignment(ctx) {
         {
             this.localVars.push(variableName);
             return annotatedRhs
-            ? `let ${variableName} = ${String(annotatedRhs).trim()};`
-            : `let ${variableName};`;
+            ? `${preDeclare} ${variableName} = ${String(annotatedRhs).trim()};`
+            : `${preDeclare} ${variableName};`;
         }
     }
     // TODO ADD TUPLE HANDLING IN HEREHandle assignment with parentheses (single_target or single_subscript_attribute_target): expression '=' annotated_rhs
@@ -107,8 +109,8 @@ export function visitAssignment(ctx) {
             this.localVars.push(target);
             // Return the JavaScript equivalent of assignment with parenthesis or subscript
             return annotatedRhs
-            ? `let ${target} = ${annotatedRhs};`
-            : `let ${target} ;`;
+            ? `${preDeclare} ${target} = ${annotatedRhs};`
+            : `${preDeclare} ${target} ;`;
          }
         // Return the JavaScript equivalent of assignment with parenthesis or subscript
     }
@@ -140,7 +142,7 @@ export function visitAssignment(ctx) {
                     ret += assignment;
                 } else {
                     this.localVars.push(targets[0]);
-                    ret += `let ${assignment}`;
+                    ret += `${preDeclare} ${assignment}`;
                 }
             }
         }
@@ -175,7 +177,7 @@ export function visitAssignment(ctx) {
         else if (ret != null)
         {
             this.localVars.push(target);
-            return `let ${ret}`;
+            return `${preDeclare} ${ret}`;
         }
     } 
     // Default case (if no condition matches)

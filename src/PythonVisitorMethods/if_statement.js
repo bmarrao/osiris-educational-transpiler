@@ -15,6 +15,7 @@ else_block
 export function visitIf_stmt(ctx) {
     // Visit the condition expression (named_expression)
     const condition = this.visit(ctx.named_expression());
+    this.inIf = true;
     // Visit the block of code that follows the condition
     let body = this.visit(ctx.block());
         // Handle elif_stmt or else_block
@@ -26,6 +27,7 @@ export function visitIf_stmt(ctx) {
         elifElse += this.visit(ctx.else_block()); // Visit else block
     }
 
+    this.inIf = false;
     // Construct the JavaScript if statement
     return `if (${condition}) {\n${body}\n}${elifElse}`;
 }
