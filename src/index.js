@@ -4,6 +4,7 @@ import PythonLexer from './Python/PythonLexer.js';
 import PythonCodeGenerator from './transpilerPythonJs.js';
 
 
+import * as pyBuiltins from './builtInFuncs.js';
 import { builtInPythonFuncs } from './pre-defined-funcs.js';
 
 /**
@@ -269,6 +270,7 @@ class Osiris
         this.code = "";
         this.transpiledCode = "";
         this.worker = null;
+        Object.assign(globalThis, pyBuiltins); // or just pass as context
     }
     
     /**
@@ -288,7 +290,6 @@ class Osiris
         this.code = code;
         //TODO ADD LATER LOGIC WITH THE LANGUAGE VAR
         this.transpiledCode = translatePython(this.code, false);
-        this.transpiledCode.code += builtInPythonFuncs
         return this.transpiledCode;
     }
 
@@ -311,6 +312,7 @@ class Osiris
         let Worker = window.Worker;
 
         let insideCode = translatePython(this.code, true);
+        insideCode += builtInPythonFuncs
         let runCodeStr = `async function main() {
           ${insideCode.code}
         };

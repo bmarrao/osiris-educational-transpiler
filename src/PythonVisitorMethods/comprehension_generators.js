@@ -1,9 +1,10 @@
 import { dealTargets } from '../tools/targets.js';
 
 export function visitFor_if_clauses(ctx) {
-    return ctx.for_if_clause().map(clause => this.visit(clause));
+    let x = ctx.for_if_clause().map(clause => this.visit(clause));
+    console.log(`x is ${x}`)
+    return x
 }
-
 export function visitFor_if_clause(ctx) {
     let targetsRet = dealTargets(this.visit(ctx.star_targets()),this.localVars) 
     return {
@@ -18,6 +19,7 @@ export function visitListcomp(ctx) {
 //     console.log("Here")
     let length = this.localVars.length;
     const [clause] = this.visit(ctx.for_if_clauses());
+    console.log(clause)
     const expr = this.visit(ctx.named_expression());
     this.localVars.length = length;
     return `(() => {

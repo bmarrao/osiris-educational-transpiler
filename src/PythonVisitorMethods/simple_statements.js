@@ -163,8 +163,20 @@ export function visitAssignment(ctx) {
         const augassign = this.visit(ctx.augassign());
         // Handle the augmented assignment
         let ret = null ;
-        if (augassign !== "floor") {  // Assuming "//=" is your floor operator
-             ret = `${target} ${augassign} ${expression};`;
+        if (augassign === "+=" || augassign === "*=" || augassign === "-=")
+        {
+            let funcName = "";
+            if (augassign === "+=") {
+                funcName = 'osiris_builtin_addition';
+            } else if (augassign === "-=") {
+                funcName = 'osiris_builtin_subtraction';
+            } else if (augassign === "*=") {
+                funcName = 'osiris_builtin_multiplication';
+            }
+            ret = `${target} = ${funcName}(${target}, ${expression});`; 
+        }
+        else if (augassign !== "floor") {  
+            ret = `${target} ${augassign} ${expression};`;
         } else {
             // For floor division (//=), use Math.floor to simulate the operation in JavaScript
             ret = `${target} = Math.floor(${target} / ${expression});`;

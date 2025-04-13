@@ -60,7 +60,7 @@ export function visitFor_stmt(ctx) {
   
 
   // Check if the iterable contains 'range('
-  if (iterable.startsWith("range(")) {
+  if (iterable.startsWith("osiris_builtin_range(")) {
     // Extract the arguments of the range function
     const inner = iterable.slice(6, -1);
     const rangeArgs = splitArguments(inner);    // Default values for start, stop, and step

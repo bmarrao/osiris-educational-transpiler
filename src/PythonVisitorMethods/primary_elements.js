@@ -11,6 +11,14 @@ export function visitAwait_primary(ctx) {
     }
 }
 
+function convertBuiltIn(name) {
+    const namesToConvert = ["count", "ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len", "extend", "join"];
+    if (namesToConvert.includes(name)) {
+        return `osiris_builtin_${name}`;
+    }
+    return name;
+}
+
 export function visitAtom(ctx) {
     if (ctx.tuple() || ctx.group() || ctx.genexp()) {
         return this.visit(ctx.tuple() || ctx.group() || ctx.genexp());
@@ -47,7 +55,7 @@ export function visitAtom(ctx) {
             // Handle the case for the Python None literal
             return 'null'; // Convert to JavaScript's null
     }
-  return ctx.getText() === "self" && this.inClass ? "this" : ctx.getText();
+  return ctx.getText() === "self" && this.inClass ? "this" : convertBuiltIn(ctx.getText());
  
 }
 export function visitGroup(ctx) {
@@ -137,8 +145,8 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.reverse()`;
     case "index":
       return `${objectName}.indexOf(${argsText})`;
-    case "count":
-      return `count(${objectName}${argsText ? `, ${argsText}` : ''})`;
+    case "osiris_builtin_count":
+      return `osiris_builtin_count(${objectName}${argsText ? `, ${argsText}` : ''})`;
 
     // ----- Dictionary Functions -----
     case "keys":
@@ -147,8 +155,8 @@ function handleCollectionFunctions(primary, argsText) {
       return `Object.values(${objectName})`;
     case "items":
       return `Object.entries(${objectName})`;
-    case "get": {
-      return `get(String(${objectName}),${argsText})`;
+    case "osiris_builtin_get": {
+      return `osiris_builtin_get(String(${objectName}),${argsText})`;
     }
     case "update":
       return `Object.assign(${objectName}, ${argsText})`;
@@ -203,10 +211,10 @@ function handleCollectionFunctions(primary, argsText) {
 
 function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
   switch (primary) {
-    case "all":
-      return `all(${argsText})`;
-    case "filter":
-      return `filter(${argsText})`;
+    case "osiris_builtin_all":
+      return `osiris_builtin_all(${argsText})`;
+    case "osiris_builtin_filter":
+      return `osiris_builtin_filter(${argsText})`;
     case "print":
       return handlePrint(argsText, runOnBrowser);
     case "min":
@@ -224,24 +232,24 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
       return `str(${argsText})`;
     case "str":
           return `any(${argsText})`;
-    case "enumerate":
-      return `enumerate(${argsText})`;
-    case "divmod":
-      return `divmod(${argsText})`;
-    case "round":
-      return `round(${argsText})`;
-    case "zip":
-      return `zip(${argsText})`;
-    case "sorted":
-      return `sorted(${argsText})`;
-    case "type":
-      return `type(${argsText})`;
-    case "sum":
-      return `sum(${argsText})`;
-    case "range":
-      return `range(${argsText})`;
-    case "len":
-      return `len(${argsText})`;
+    case "osiris_builtin_enumerate":
+      return `osiris_builtin_enumerate(${argsText})`;
+    case "osiris_builtin_divmod":
+      return `osiris_builtin_divmod(${argsText})`;
+    case "osiris_builtin_round":
+      return `osiris_builtin_round(${argsText})`;
+    case "osiris_builtin_zip":
+      return `osiris_builtin_zip(${argsText})`;
+    case "osiris_builtin_sorted":
+      return `osiris_builtin_sorted(${argsText})`;
+    case "osiris_builtin_type":
+      return `osiris_builtin_type(${argsText})`;
+    case "osiris_builtin_sum":
+      return `osiris_builtin_sum(${argsText})`;
+    case "osiris_builtin_range":
+      return `osiris_builtin_range(${argsText})`;
+    case "osiris_builtin_len":
+      return `osiris_builtin_len(${argsText})`;
     case "int":
       return `parseInt(${argsText})`;
     case "float":
@@ -302,8 +310,8 @@ function handleMinMax(primary, argsText, runOnBrowser) {
   }
 
   return keywordArg
-    ? `${primary}(${argsArray}, ${keywordArg})`
-    : `${primary}(${argsArray})`;
+    ? `osiris_builtin_${primary}(${argsArray}, ${keywordArg})`
+    : `osiris_builtin_${primary}(${argsArray})`;
 }
 
 // New function to properly split arguments while keeping string literals intact
