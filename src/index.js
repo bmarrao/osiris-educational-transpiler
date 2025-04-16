@@ -315,7 +315,7 @@ class Osiris
         let insideCode = translatePython(this.code, true);
         insideCode += builtInPythonFuncs
         let runCodeStr = `async function main() {
-          ${insideCode.code}
+          ${insideCode}
         };
         ${code_suffix}`;
         console.log(`CODE: ${runCodeStr}`);
