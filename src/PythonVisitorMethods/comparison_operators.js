@@ -15,8 +15,11 @@ export function visitComparison(ctx) {
         if(comparisonPairs.length >= 1 ) {
         evalString = evalString.replace(/this\./g, 'osiris_builtin_class.')
 //         console.log(evalString)
-
-        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars.map(v => v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`).join(", ")} })`;
+        console.log(`localVars [${this.localVars}]`)
+        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars
+        .map(v => v.trim() === "" ? null : (v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`))
+        .filter(Boolean)
+        .join(", ")} })`;
 
     }
     else 

@@ -1,7 +1,11 @@
 
 export function visitLambdef(ctx) {
+  let length = this.localVars.length;
   const params = ctx.lambda_params() ? this.visit(ctx.lambda_params()) : "";
+  const paramsList = params.split(",").map(p => p.trim());
+  this.localVars.push(...paramsList);
   const expr = this.visit(ctx.expression());
+  this.localVars.length =  length ;
   return `(${params}) => ${expr}`;
 }
 

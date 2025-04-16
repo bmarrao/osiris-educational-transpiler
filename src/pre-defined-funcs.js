@@ -449,7 +449,7 @@ function osiris_builtin_any(iterable){
 }
 `
 
-var convertFun =` function osiris_builtin_convertPythonOperand(value) {
+var convertFun =` function convertPythonOperand(value) {
     if (typeof value === 'boolean') {
         return value ? 1 : 0;
     }
@@ -894,7 +894,7 @@ export var funcNames = [
   "osiris_builtin_join",
   "osiris_builtin_str",
   "osiris_builtin_any",
-  "osiris_builtin_convertPythonOperand",
+  "convertPythonOperand",
   "osiris_builtin_addition",
   "osiris_builtin_subtraction",
   "osiris_builtin_multiplication",
