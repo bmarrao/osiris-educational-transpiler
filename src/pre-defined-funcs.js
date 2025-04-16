@@ -678,7 +678,7 @@ var enumerate = `function osiris_builtin_enumerate(iterable, start=0) {
     return result;
 }`;
 
-var divmod = `function osiris_builtin_divmod(x, y) {
+var divmod = `function divmod(x, y) {
   if (y === 0) {
     throw new Error("Division by zero");
   }
@@ -874,37 +874,39 @@ function osiris_builtin_join(separator, iterable) {
 
 
 export var funcNames = [
-  "ord",
-  "count",
-  "pythonEqual",
-  "filter",
-  "all",
+  "osiris_builtin_ord",
+  "osiris_builtin_count",
+  "osiris_builtin_pythonEqual",
+  "osiris_builtin_filter",
+  "osiris_builtin_all",
   "pythonIndex",
-  "get",
-  "repr",
-  "myPop",
-  "sorted",
-  "max",
-  "min",
-  "type",
-  "sum",
-  "range",
-  "len",
-  "extend",
-  "join",
-  "str",
-  "any",
+  "osiris_builtin_get",
+  "osiris_builtin_repr",
+  "osiris_builtin_myPop",
+  "osiris_builtin_sorted",
+  "osiris_builtin_max",
+  "osiris_builtin_min",
+  "osiris_builtin_type",
+  "osiris_builtin_sum",
+  "osiris_builtin_range",
+  "osiris_builtin_len",
+  "osiris_builtin_extend",
+  "osiris_builtin_join",
+  "osiris_builtin_str",
+  "osiris_builtin_any",
   "osiris_builtin_convertPythonOperand",
   "osiris_builtin_addition",
   "osiris_builtin_subtraction",
   "osiris_builtin_multiplication",
   "osiris_builtin_python_evalPythonComparison",
-  "map",
-  "enumerate",
-  "divmod",
-  "round",
-  "zip",
-  "myRemove"
+  "osiris_builtin_map",
+  "osiris_builtin_enumerate",
+  "osiris_builtin_divmod",
+  "osiris_builtin_round",
+  "osiris_builtin_zip",
+  "myRemove",
+  "myPop"
+
 ];
 export var builtInPythonFuncs = `
 ${funcOrd}
