@@ -197,7 +197,7 @@ function osiris_builtin_ord(str) {
 }
 `
 var pythonIndex = `
-function osiris_builtin_pythonIndex(obj, index, isSlice = false) {
+function pythonIndex(obj, index, isSlice = false) {
   // Handle null/undefined indexes
   if (index === null || index === undefined) {
     return isSlice ? undefined : 0;
