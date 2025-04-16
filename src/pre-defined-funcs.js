@@ -876,7 +876,7 @@ function osiris_builtin_join(separator, iterable) {
 export var funcNames = [
   "osiris_builtin_ord",
   "osiris_builtin_count",
-  "osiris_builtin_pythonEqual",
+  "pythonEqual",
   "osiris_builtin_filter",
   "osiris_builtin_all",
   "pythonIndex",
