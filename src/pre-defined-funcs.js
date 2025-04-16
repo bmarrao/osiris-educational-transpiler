@@ -882,7 +882,7 @@ export var funcNames = [
   "pythonIndex",
   "osiris_builtin_get",
   "osiris_builtin_repr",
-  "osiris_builtin_myPop",
+  "myPop",
   "osiris_builtin_sorted",
   "osiris_builtin_max",
   "osiris_builtin_min",
@@ -905,7 +905,6 @@ export var funcNames = [
   "osiris_builtin_round",
   "osiris_builtin_zip",
   "myRemove",
-  "myPop"
 
 ];
 export var builtInPythonFuncs = `
