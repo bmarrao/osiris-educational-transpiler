@@ -312,7 +312,7 @@ class Osiris
       try {
         let Worker = window.Worker;
 
-        let insideCode = translatePython(this.code, true);
+        let insideCode = translatePython(this.code, true).code;
         insideCode += builtInPythonFuncs
         let runCodeStr = `async function main() {
           ${insideCode}
