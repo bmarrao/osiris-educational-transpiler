@@ -145,7 +145,7 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.reverse()`;
     case "index":
       return `${objectName}.indexOf(${argsText})`;
-    case "osiris_builtin_count":
+    case "count":
       return `osiris_builtin_count(${objectName}${argsText ? `, ${argsText}` : ''})`;
 
     // ----- Dictionary Functions -----
