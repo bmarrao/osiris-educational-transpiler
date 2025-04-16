@@ -288,7 +288,7 @@ class Osiris
      */
     passCode(code) {
         this.code = code;
-        if (this.language.s.toLowerCase() === "python") {
+        if (this.language.toLowerCase() === "python") {
             this.transpiledCode = translatePython(this.code, false);
         }
         return this.transpiledCode;
