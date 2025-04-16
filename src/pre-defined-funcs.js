@@ -678,7 +678,7 @@ var enumerate = `function osiris_builtin_enumerate(iterable, start=0) {
     return result;
 }`;
 
-var divmod = `function divmod(x, y) {
+var divmod = `function osiris_builtin_divmod(x, y) {
   if (y === 0) {
     throw new Error("Division by zero");
   }
