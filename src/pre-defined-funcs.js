@@ -1,5 +1,5 @@
 var countFunc = `
-function count(iterable, value, start = 0, end = undefined) {
+function osiris_builtin_count(iterable, value, start = 0, end = undefined) {
   // Check if the object has its own count method (like Python's __count__)
   if (iterable && typeof iterable.count === 'function' && 
       (arguments.length <= 3 || end === undefined)) {
@@ -189,7 +189,7 @@ function pythonEqual(a, b) {
 
 `
 var funcOrd = `
-function ord(str) {
+function osiris_builtin_ord(str) {
     if (typeof str !== 'string' || [...str].length !== 1) {
         throw new Error('Input must be a single character string');
     }
@@ -197,7 +197,7 @@ function ord(str) {
 }
 `
 var pythonIndex = `
-function pythonIndex(obj, index, isSlice = false) {
+function osiris_builtin_pythonIndex(obj, index, isSlice = false) {
   // Handle null/undefined indexes
   if (index === null || index === undefined) {
     return isSlice ? undefined : 0;
@@ -243,7 +243,7 @@ function pythonIndex(obj, index, isSlice = false) {
 }
 `
 
-var filterFunc = `function filter(predicate, iterable) {
+var filterFunc = `function osiris_builtin_filter(predicate, iterable) {
   // Handle predicate (default to truthy check)
   if (typeof predicate !== 'function') {
     predicate = element => Boolean(element);
@@ -277,7 +277,7 @@ var filterFunc = `function filter(predicate, iterable) {
 `
 
 var allFunc = `
-function all(iterable) {
+function osiris_builtin_all(iterable) {
   // Handle any iterable (including generators)
   try {
     let allTrue = true;
@@ -295,7 +295,7 @@ function all(iterable) {
   }
 }
 `
-var getFunc = `function get(obj, key, defaultValue = null) {
+var getFunc = `function osiris_builtin_get(obj, key, defaultValue = null) {
   // Handle arrays (negative indices and bounds checks)
   if (Array.isArray(obj)) {
     const index = Number(key);
@@ -322,7 +322,7 @@ var getFunc = `function get(obj, key, defaultValue = null) {
 }
 `
 var reprFun = `
-function repr(value) {
+function osiris_builtin_repr(value) {
     // Helper for Python-like repr() (used inside collections)
     if (value === null || value === undefined) return 'None';
     if (typeof value === 'boolean') return value ? 'True' : 'False';
@@ -381,7 +381,7 @@ function repr(value) {
 
 var strFun = `
 // Main function: Python's str()
-function str(value) {
+function osiris_builtin_str(value) {
     // Handle null/undefined
     if (value === null || value === undefined) return 'None';
 
@@ -416,7 +416,7 @@ function str(value) {
 `
 
 var anyFun = `
-function any(iterable){
+function osiris_builtin_any(iterable){
 
     // Handle non-iterable inputs (Python-compatible errors)
     if (iterable === null || iterable === undefined) {
@@ -657,7 +657,7 @@ var evalComparFun = "" +
 "  return true; " +
 "}";
 
-var map = `function map(fn, ...iterables) {
+var map = `function osiris_builtin_map(fn, ...iterables) {
   const length = Math.max(...iterables.map(iterable => iterable.length));
   const result = [];
 
@@ -669,7 +669,7 @@ var map = `function map(fn, ...iterables) {
   return result;
 }`;
 
-var enumerate = `function enumerate(iterable, start=0) {
+var enumerate = `function osiris_builtin_enumerate(iterable, start=0) {
 
     const result = [];
     for (let index = start; index < iterable.length + start; index++) {
@@ -678,7 +678,7 @@ var enumerate = `function enumerate(iterable, start=0) {
     return result;
 }`;
 
-var divmod = `function divmod(x, y) {
+var divmod = `function osiris_builtin_divmod(x, y) {
   if (y === 0) {
     throw new Error("Division by zero");
   }
@@ -688,12 +688,12 @@ var divmod = `function divmod(x, y) {
   return [q, r];
 }`;
 
-var roundFunc = `function round(number, precision = 0) {
+var roundFunc = `function osiris_builtin_round(number, precision = 0) {
   const factor = Math.pow(10, precision);
   return (Math.round(number * factor) / factor);
 }`;
 
-var zip = `function zip(...arrays) {
+var zip = `function osiris_builtin_zip(...arrays) {
   // Check if the first argument is 'true' for unzipping
   if (arrays[0] === true) {
     const zipped = arrays.slice(1); // Remove the 'true' argument
@@ -787,7 +787,7 @@ var myPop = `function myPop(collection, ...args) {
   }
 }`;
 
-var sortedFunc = `function sorted(iterable, { key = null, reverse = false } = {}) {
+var sortedFunc = `function osiris_builtin_sorted(iterable, { key = null, reverse = false } = {}) {
   let arr = [...iterable];
   arr.sort((a, b) => {
     let valA = key ? key(a) : a;
@@ -797,17 +797,17 @@ var sortedFunc = `function sorted(iterable, { key = null, reverse = false } = {}
   return reverse ? arr.reverse() : arr;
 }`;
 
-var maxFunc = `function max(iterable, key = x => x) {
+var maxFunc = `function osiris_builtin_max(iterable, key = x => x) {
   if (!Array.isArray(iterable)) iterable = [...arguments]; // Allow separate args
   return iterable.reduce((max, item) => (key(item) > key(max) ? item : max));
 }`;
 
-var minFunc = `function min(iterable, key = x => x) {
+var minFunc = `function osiris_builtin_min(iterable, key = x => x) {
   if (!Array.isArray(iterable)) iterable = [...arguments];
   return iterable.reduce((min, item) => (key(item) < key(min) ? item : min));
 }`;
 
-var typeFunc = `function type(obj) {
+var typeFunc = `function osiris_builtin_type(obj) {
   if (obj === null) return "NoneType";
   if (Array.isArray(obj)) return "list";
   if (obj instanceof Function) return "function";
@@ -819,11 +819,11 @@ var typeFunc = `function type(obj) {
   return typeof obj; // fallback for other types
 }`;
 
-var sumFunc = `function sum(iterable, start = 0) {
+var sumFunc = `function osiris_builtin_sum(iterable, start = 0) {
   return iterable.reduce((acc, val) => acc + val, start);
 }`;
 
-var rangeFunc = `function range(start, stop, step = 1) {
+var rangeFunc = `function osiris_builtin_range(start, stop, step = 1) {
   if (stop === undefined) {
     stop = start;
     start = 0;
@@ -831,7 +831,7 @@ var rangeFunc = `function range(start, stop, step = 1) {
   return Array.from({ length: Math.max(0, Math.ceil((stop - start) / step)) }, (_, i) => start + i * step);
 }`;
 
-var lenFunc = `function len(input) {
+var lenFunc = `function osiris_builtin_len(input) {
   if (typeof input === "string" || Array.isArray(input)) {
     return input.length;
   }
@@ -853,12 +853,12 @@ var lenFunc = `function len(input) {
 
 `;
 
-var extendFunc = `function extend(arr, iterable) {
+var extendFunc = `function osiris_builtin_extend(arr, iterable) {
   arr.push(...iterable);
 }
 `
 var joinFunc = `
-function join(separator, iterable) {
+function osiris_builtin_join(separator, iterable) {
   if (iterable == null || typeof iterable[Symbol.iterator] !== 'function') {
     throw new TypeError('The second argument must be iterable.');
   }
