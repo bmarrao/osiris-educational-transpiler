@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+ <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema F: Tudo em família!</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG
+ WIDTH="464" HEIGHT="273" BORDER="0"
+  SRC="imagem.jpg"
+ ALT="image imagem", align = "right"></TD>
+ <!-- width 618 height 363 -->
+ </TR>
+  </TABLE>
+
+
+
+— Algo está mal no negócio da família!  Diz o padrinho da máfia
+local.  <br></br>
+
+—  Muitos querem mandar e poucos querem fazer. E temos ainda quem nos
+traia e fale 
+ com a polícia! Continua ele.  <br></br>
+
+— Tenho de mandar tratar do assunto! Afinal, sou ou não sou o padrinho
+aqui?
+ <br></br>
+
+
+  
+ 
+  
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+  
+Qual o desfecho de uma ordem que o padrinho dá:
+Será executada? Ficará por executar? Ou a polícia será informada?<br></br>
+
+Admita que a família tem \(m\) membros, além do padrinho, os quais são identificados por
+inteiros de \(0\) a \(m-1\).
+O que o membro \(i\) da família faz quando recebe uma ordem é
+representado por um inteiro \(f_i\),  que pode significar uma de três coisas:
+
+<ul>
+ <li> Se \(f_i<0\) ou \(f_i\geq m\), 
+      o membro \(i\) da família conta à  polícia!  É um
+ <em>informador</em>.</li>
+ <li> Se \(i \neq f_i\) e \(0\leq f_i < m\),
+      então o membro \(i\) da família gosta de dar ordens e 
+      ordena ao membro \(f_i\) que faça o que lhe foi pedido. 
+      É um <em>mandrião</em>.</li>
+<li>No caso que resta, quando \(i=f_i\), 
+      o membro \(i\) da familia é alguém que faz o que lhe é pedido. 
+      É um <em>executante</em>, bem ao gosto do padrinho.     
+</li>
+</ul>
+
+
+Pretendemos um programa que calcule o número de mandriões pelos
+quais é preciso passar até chegar a um executante, quando a ordem é
+dada a um determinado membro da família.  
+Por exemplo, na família:
+
+<P>
+
+<IMG
+ WIDTH="426" HEIGHT="80" BORDER="0"
+  SRC="array_familia.png"
+ ALT="image exemplo familia", align = "center">
+ <!-- width 426 height 80 -->
+
+<P>
+
+
+<!--
+\(
+  \begin{array}[h]{cccccccccc}
+    0&1&2&3  &4&5&6&7&8&9\\\hline
+        \multicolumn{1}{|c|}{2}
+     &\multicolumn{1}{|c|}{3}
+       &\multicolumn{1}{|c|}{8} 
+         &\multicolumn{1}{|c|}{10} 
+             &\multicolumn{1}{|c|}{6} 
+               &\multicolumn{1}{|c|}{5}
+                 &\multicolumn{1}{|c|}{7}
+                   &\multicolumn{1}{|c|}{9}
+                     &\multicolumn{1}{|c|}{5}
+                       &\multicolumn{1}{|c|}{6}\\\hline
+  \end{array}
+\)
+  -->
+
+se a ordem for dada ao membro \(5\),
+que é um executante, a ordem passa por \(0\) (zero) mandriões.
+Mas, se a ordem fosse dada ao membro \(0\), 
+passaria por \(3\) mandriões: 
+o mandrião 0 passaria a ordem a 2,
+o mandrião 2 passaria a ordem a 8 e 
+o mandrião 8 passaria a ordem a 5,
+que a executaria ( \(0\to 2\to 8 \to 5\)).<br></br>
+
+Há situações em que o número de mandriões não está definido. 
+Designamo-las por caso <TT>POLICIA</TT> e caso <TT>INCOMPETENTE</TT>.
+No primeiro caso, a ordem acaba na polícia.
+Por exemplo, se a ordem for dada ao membro \(1\), este passa-a ao informador \(3\).
+No segundo caso, a ordem não chega à polícia mas também não é executada.
+Por  exemplo, se a ordem for dada ao membro \(4\), 
+fica a circular por alguns membros da família: 
+\(4 \to 6 \to 7 \to 9 \to 6  \to 7 \to 9 \to 6  \to 7\to \ldots\)
+
+
+
+
+
+
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+
+A primeira linha da entrada tem um inteiro \(m\), 
+que representa o número de elementos da família (para além do padrinho).
+Seguem-se \(m\) linhas, cada uma com um inteiro \(f_i\), que indica o que o
+membro \(i\) faz (começando pelo membro \(0\) e terminando no membro \(m-1\)).
+Depois, há uma linha com um inteiro, \(k\), 
+que indica a quem o padrinho dá a ordem.
+
+
+
+
+ 
+<H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+
+
+
+
+ <P>
+  
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 < m \leq 1000\) </TD>
+<TD ALIGN="LEFT">
+Número de membros da família (para além do padrinho)</TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 \leq k < m\) </TD>
+<TD ALIGN="LEFT">Membro a quem o padrinho dá a ordem
+</TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(-3000 \leq f_i \leq  3000\) </TD>
+<TD ALIGN="LEFT"> Indica o que o membro \(i\) faz (para \(i = 0, 1, \dots, m-1\))
+</TD></TR>
+
+</TABLE>
+
+
+<P>
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+O output tem uma linha com:
+<ul>
+  <li> a palavra "<TT>POLICIA</TT>",
+      caso a ordem acabe na polícia;</li>
+ <li> a palavra "<TT>INCOMPETENTE</TT>",
+      caso a ordem não seja executada nem acabe na polícia;</li>
+ <li> um inteiro que representa o número de mandriões pelos quais a ordem passa, 
+      caso seja executada.</li>
+</ul>
+
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+10
+2
+3
+8
+10
+6
+5
+7
+9
+5
+6
+4
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+INCOMPETENTE
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+10
+2
+3
+8
+10
+6
+5
+7
+9
+5
+6
+0
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+3
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001700000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00017100000000000000">
+Input</A>
+</H3>
+<PRE>
+12
+6
+2
+8
+3
+10
+19
+8
+-2
+7
+11
+10
+1
+9
+</PRE>
+
+<H3><A NAME="SECTION00017200000000000000">
+Output</A>
+</H3>
+<PRE>
+POLICIA
+</PRE>
+
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2024
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

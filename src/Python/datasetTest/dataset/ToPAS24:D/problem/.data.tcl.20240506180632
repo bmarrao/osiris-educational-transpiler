@@ -1,0 +1,19 @@
+set        Fatal {Variable with invalid value <code>Timeout</code>: <br>Unreadable file <code>Description</code>: Description.html<br>Check <a target='select' href='373447726654563?data+data/contests/ToPAS24/problems/D/tests'><code>tests</code></a><br>}
+set      Warning {Undefined variable <code>Color</code><br>Unreadable file <code>Program</code>: Program<br>}
+set         Name D
+set        Color {}
+set        Title {Não metas água!}
+set   Difficulty {}
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program Program
+set  Environment Environment
+set      Timeout {}
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

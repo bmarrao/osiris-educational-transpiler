@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+ <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema E: Vai um?</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG
+ WIDTH="523" HEIGHT="294" BORDER="0"
+  SRC="adicao.png"
+ ALT="image adicao", align = "right"></TD>
+ <!-- width 701 height 392 -->
+ </TR>
+ <TR><TD><em><small><small>https://www.youtube.com/watch?v=Twe2Hmg6ghM</small></small></TD></TR>
+ </TABLE>
+
+
+
+
+Segundo o <em>Programa e Metas Curriculares para  
+Matemática  do Ensino Básico</em>, de 2013, é fundamental que os
+alunos adquiram "fluência de cálculo e destreza na aplicação dos quatro algoritmos,
+próprios do sistema decimal", associados às quatro operações sobre os
+números naturais. <br></br>
+
+ 
+Aprender a somar parece ter muito que se lhe diga.  
+As metas para o 
+1º Ano referem "Adições cuja soma seja inferior a 100", para o
+2ºAno, "Adições cuja soma seja inferior a 1000" e, para o  3ºAno, "Algoritmos da adição e da subtração envolvendo números até um
+milhão". <br></br>
+
+Queremos simplesmente explorar uma das várias estratégias que se
+ensinam para a soma,  a
+designada por "conta em pé". Para \(28+45 = ? \), começa-se pelas
+unidades, \(8 + 5=13\). Como excede 9, fica 3 nas unidades,
+e  "vai 1", para a posição seguinte, ou seja, para as dezenas. Como
+\(1+2+4 = 7\) não excede 9, já não vai nada para as centenas, e
+conclui-se que \(28 + 45 = 73\). <br></br>
+
+Vamos agora tentar um exemplo maior,  \(5489649 + 759340613 = ? \),
+com a "conta em pé". <br></br>
+
+
+<!--
+\begin{array}{cccccccccccc}
+     \fbox{0}    & \fbox{0} &  \fbox{1} &                   \fbox{0} & \fbox{1}          &    \fbox{1} &
+        \fbox{1}   & \fbox{0} & \fbox{1} & \fbox{0} & \leftarrow
+        \mbox{o que vai?}\\
+              &&& 5& 4 & 8 &9  & 6& 4& 9 &&\\
++ & 7 & 5 & 9 & 3 &  4 & 0 & 6 & 1 & 3 && \\
+\cline{1-10}
+& 7 & 6 & 4 & 8 & 3 & 0 & 2 & 6 &2
+\end{array}
+-->
+
+ <P>
+<IMG
+ WIDTH="650" HEIGHT="126" BORDER="0"
+  SRC="contaE_1.png"
+ ALT="image contaE_1", align = "center">
+ <P>
+
+
+
+Por vezes, erramos a conta.  Se admitirmos que nunca nos enganamos quando somamos números
+inferiores a 10, quantas vezes nos esquecemos do "e vai 1" no
+exemplo seguinte?
+
+
+<P>
+<IMG
+ WIDTH="643" HEIGHT="128" BORDER="0"
+  SRC="contaE_2.png"
+ ALT="image contaE_2", align = "center">
+<P>
+
+<!--
+\begin{array}{cccccccccccc}
+& \fbox{1}     &  \fbox{1} &                   \fbox{0} & \fbox{0}          &    \fbox{0} &
+        \fbox{0}   & \fbox{0} & \fbox{1} & \fbox{0} & \leftarrow
+        \mbox{o que vai?}\\
+              &&& 5& 9 & 7 &9  & 6& 4& 9 &&\\
++ && 9 & 9 & 9 &  2 & 0 & 6 & 1 & 3 && \\
+\cline{1-10}
+& 1 & 0 & 4 & 8 & 9 & 9 & 2 & 6 &2
+\end{array}
+$$
+-->
+
+
+Duas vezes: quando passamos de \(6+6\) para \(9+0\) e quando passamos de
+\(9+9\) para \(5+9\). Os restantes algarismos errados são consequência
+destes erros e, por isso, não contam.
+
+
+ 
+  
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+
+ 
+Escreva um programa que, dados dois inteiros positivos \(x\) e \(y\), e o
+resultado \(r\) que obtivemos para \(x+y\), possivelmente errado, indique quantas vezes nos
+esquecemos do "e vai 1".
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+
+
+A primeira linha tem três inteiros positivos, \(m\), \(n\) e \(p\), separados por
+um espaço, que são o número de dígitos de \(x\), de \(y\) e de \(r\),
+respetivamente. Seguem-se três linhas, com \(m\), \(n\) e \(p\) inteiros (de 0 a
+9) separados por espaços, que
+são os dígitos de \(x\), \(y\) e \(r\), lidos 
+da esquerda para a direita, segundo a representação habitual,
+sem zeros à esquerda.
+
+
+
+ 
+<H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+
+
+
+
+ <P>
+  
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \le m \le 1000\) </TD>
+<TD ALIGN="LEFT">
+Número de dígitos de \(x\)</TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \le n \le 1000\) </TD>
+<TD ALIGN="LEFT"> Número de dígitos de \(y\)
+</TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(\max(m,n) \le p \le \max(m,n)+1 \) </TD>
+<TD ALIGN="LEFT"> Número de dígitos de \(r\)
+</TD></TR>
+
+</TABLE>
+
+
+<P>
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+O output tem um inteiro não negativo, 
+que é o número de esquecimentos de "e vai 1".
+
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+2 2 2
+2 8
+4 5
+6 3
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+1
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+7 9 9
+5 4 8 9 6 4 9
+7 5 9 3 4 0 6 1 3
+7 6 4 8 3 0 2 6 2
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+0
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001700000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00017100000000000000">
+Input</A>
+</H3>
+<PRE>
+8 7 9
+9 9 9 2 0 6 1 3
+5 9 7 9 6 4 9
+1 0 4 8 9 9 2 6 2
+</PRE>
+
+<H3><A NAME="SECTION00017200000000000000">
+Output</A>
+</H3>
+<PRE>
+2
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001800000000000000">
+Exemplo 4</A>
+</H2>
+
+<H3><A NAME="SECTION00018100000000000000">
+Input</A>
+</H3>
+<PRE>
+1 1 1
+4
+8
+2
+</PRE>
+
+<H3><A NAME="SECTION00018200000000000000">
+Output</A>
+</H3>
+<PRE>
+1
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001900000000000000">
+Exemplo 5</A>
+</H2>
+
+<H3><A NAME="SECTION00019100000000000000">
+Input</A>
+</H3>
+<PRE>
+8 5 9
+9 9 9 2 0 6 1 3
+7 9 6 4 9
+1 0 0 0 0 0 2 6 2
+</PRE>
+
+<H3><A NAME="SECTION00019200000000000000">
+Output</A>
+</H3>
+<PRE>
+0
+</PRE>
+
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2024
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

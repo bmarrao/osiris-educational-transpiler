@@ -1,0 +1,21 @@
+subdirectorys . Import with "Osiris/python" or "Osiris/rust" 
+
+Teste de hipótese
+
+Adicionar escrita 
+
+Teste nos agnis : entrar resolver exercicios, tirar os dados do agni.
+Transofrm in primary next to primary.next().value
+def collatz_generator(n):
+    while n != 1:
+        yield n
+        n = n // 2 if n % 2 == 0 else 3 * n + 1
+    yield 1
+
+Print in python is different than javascript make a function for print that takes tthat into consideration
+
+Create input function 
+
+comprehension generators dont work properly for more than one for 
+
+notas = list(map(float, input("Digite as notas separadas por espaço: ").split()))

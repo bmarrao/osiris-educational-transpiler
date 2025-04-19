@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name C
+set        Color Yellow
+set        Title {Convites para os amigos}
+set   Difficulty {}
+set         Type {}
+set  Description C.html
+set          PDF PDF.pdf
+set      Program convites_pbv.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

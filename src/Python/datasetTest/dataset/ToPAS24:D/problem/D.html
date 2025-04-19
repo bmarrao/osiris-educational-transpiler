@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+ <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema D: Não metas água!</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG
+ WIDTH="317" HEIGHT="447" BORDER="0"
+  SRC="Jarros.png"
+ ALT="image jarros", align = "right"></TD>
+ <!-- width 529 height 745 -->
+ </TR>
+  </TABLE>
+
+  
+Imaginemos que temos de medir \(1L\) (um litro) de água, mas só temos dois
+jarros, um de \(3L\) e outro de \(2L\) . Uma solução será encher o jarro de \(3L\) de
+uma torneira, depois o de \(2L\)  com a água do primeiro,  que ficará
+exatamente com \(1L\) . Mas se tivermos um jarro de \(5L\)  e outro de \(2L\)?
+Podemos encher o de \(5L\)  da torneira, encher o de \(2L\) com esta água,
+esvaziar esse jarro na pia, e voltar a enchê-lo com os \(3L\)  remanescentes
+do jarro maior, que fica apenas com \(1L\). <br></br>
+
+Estes <em>puzzles</em>, que requerem medir volumes usando vários jarros não
+graduados, são um clássico em Inteligência Artificial. Podemos
+recorrer apenas a operações de três tipos: encher completamente um jarro a
+partir de uma torneira; esvaziar completamente um jarro para uma pia;
+ou encher um jarro com o conteúdo de outro. Neste último caso, ou o
+jarro que recebe a água fica completamente cheio, ou o jarro que
+fornece a água fica completamente vazio.<br></br>
+
+No final de uma sequência de operações destas, <b>um dos jarros
+deverá ter um determinado volume alvo</b>.
+Estes volumes, quer o alvo, quer a capacidade dos jarros, costumam ser valores
+inteiros positivos, todos na mesma unidade (litro, por exemplo).
+ 
+
+
+  
+ 
+  
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+  
+Escreva um programa que recebe a descrição de um <em>puzzle</em> e uma
+sequência de operações, e determina se essa sequência é uma solução do
+<em>puzzle</em>, ou não.
+
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+
+O input começa com a descrição do <em>puzzle</em>, 
+que é seguida por uma sequência de operações.<br></br>
+
+A descrição do <em>puzzle</em> começa com \(N+1\) linhas,
+cada uma com um único inteiro.
+As primeiras \(N\) linhas têm as capacidades \(C_i\) dos \(N\) jarros,
+ou seja, o número na \(i\)-ésima linha representa a capacidade do jarro número \(i\)
+(para \(i=1,2,\ldots,N\)).
+A última destas linhas tem o valor 0.
+Segue-se uma linha com um inteiro \(A\), que é o alvo a atingir.<br></br>
+
+Finalmente, as operações são
+descritas por \(S\) linhas,
+cada uma com dois inteiros, \(F\) e \(D\), 
+em que \(F\) representa a fonte da água e \(D\) o destino dessa água, 
+com o seguinte significado:
+<br></br>
+
+<TABLE CELLPADDING=3 BORDER="0" ALIGN="CENTER">
+<TR><TD ALIGN="LEFT">
+\(F = 0\) </TD>
+<TD ALIGN="LEFT">
+a fonte da água é a torneira; </TD></TR>
+<TR><TD ALIGN="LEFT">
+\(0 < F \le N\) </TD>
+<TD ALIGN="LEFT">a fonte da água é o jarro número \(F\);
+</TD></TR>
+<TR><TD ALIGN="LEFT">
+\(D = 0\) </TD>
+<TD ALIGN="LEFT">o destino da água é a pia;
+</TD></TR>
+<TR><TD ALIGN="LEFT">
+\(0 < D \le N\) </TD>
+<TD ALIGN="LEFT">o destino da água é o jarro número \(D\).
+</TD></TR>
+
+</TABLE>
+
+
+Esta sequência termina com uma linha com dois zeros (<TT>0 0</TT>).
+
+ 
+<H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+
+
+
+
+ <P>
+  
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(2 \leq N < 10\) </TD>
+<TD ALIGN="LEFT">
+Número de jarros </TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq A < 10\) </TD>
+<TD ALIGN="LEFT">Alvo a atingir</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq C_i < 10\) </TD>
+<TD ALIGN="LEFT">Capacidade do jarro número  \(i\) (para
+  \(i=1,2,\ldots,N\))</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 \leq F \leq N\) </TD>
+<TD ALIGN="LEFT"> Fonte da água numa operação</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 \leq D \leq N\) </TD>
+<TD ALIGN="LEFT"> Destino da água numa operação</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq S \leq 15\) </TD>
+<TD ALIGN="LEFT"> Tamanho da sequência de operações</TD>
+</TR>
+
+</TABLE>
+
+
+
+<P>
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+O output deve ter uma única linha com uma única palavra, em maiúsculas:
+"<TT>CERTO</TT>", se a sequência de operações for uma solução do <em>puzzle</em>;
+"<TT>ERRADO</TT>", no caso contrário.
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+2
+3
+0
+1
+0 2
+2 1
+0 0
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+CERTO
+</PRE> 
+<P>
+
+
+ 
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+5
+2
+0
+1
+0 1
+1 2
+2 0
+1 2
+0 0
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+CERTO
+</PRE>
+
+ <P>
+ 
+
+<H2><A NAME="SECTION00017000000000000000">
+Exemplo 3</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00017100000000000000">
+Input</A>
+</H3>
+<PRE>
+3
+6
+9
+0
+2
+0 1
+1 2
+2 0
+0 0
+</PRE>
+<P>
+
+<H3><A NAME="SECTION00017200000000000000">
+Output</A>
+</H3>
+<PRE>
+ERRADO
+</PRE>
+
+
+
+
+<P> 
+<BR><HR>
+<ADDRESS>
+ToPAS'2024
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+

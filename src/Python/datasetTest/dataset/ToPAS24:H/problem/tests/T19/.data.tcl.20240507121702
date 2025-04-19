@@ -1,0 +1,9 @@
+set        Fatal {Unreadable file <code>input</code>: input<br>}
+set      Warning {File input not readable<br>}
+set         args {}
+set        input input
+set       output out_small_19.txt
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

@@ -1,0 +1,19 @@
+set        Fatal {Unreadable file <code>Description</code>: Description.html<br>}
+set      Warning {Undefined variable <code>Color</code><br>}
+set         Name A
+set        Color {}
+set        Title {Encontros e desencontro}
+set   Difficulty {}
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program encounters_mm.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

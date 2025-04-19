@@ -1,0 +1,19 @@
+set        Fatal {Ficheiro ilegível <code>Descrição</code>: Description.html<br>}
+set      Warning {}
+set         Name C
+set        Color Yellow
+set        Title {Onda de Calor}
+set   Difficulty Easy
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program HeatWave.java
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+   <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema D: E o vencedor é...</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG WIDTH="410" HEIGHT="390" BORDER="0"
+  SRC="cards.png"
+ ALT="image cards", align = "right"></TD>
+ </TR>
+ </TABLE>
+
+
+Um grupo de amigos gosta muito de jogos com cartas. 
+No outro dia descobriram um jogo muito engraçado. 
+O jogo usa apenas as cartas numeradas de 1 a 10 (o ás representa o 1) 
+de um baralho usual de cartas. 
+Logo, há 40 cartas em jogo (10 de cada naipe).
+
+Inicialmente, cada jogador recebe 5 cartas e,
+ao longo do jogo, vai trocando cartas (uma por uma) com outros jogadores. 
+Quando o jogo termina, conta-se a pontuação de cada jogador, 
+a qual depende das 5 cartas que tivper na mão. 
+Ganha quem tiver a maior pontuação,
+podendo haver vários vencedores.
+
+A pontuação é a soma de várias parcelas: 
+<ul>
+  <li> por cada par de cartas com o mesmo número \(n\), 
+      conta-se \(3\times n\) pontos; </li>
+<li> por cada trio de cartas com o mesmo número \(n\), 
+      conta-se \(5 \times n\) pontos; </li>
+<li>  por cada quadra de cartas com o mesmo número \(n\) 
+      conta-se \(10\times n\) pontos; 
+      <li>
+o resto das cartas (que aparecem isoladamente) contam apenas o seu número.
+      </li>
+ </ul>
+A pontuação é obtida pela soma de todos estes valores, 
+tendo em conta que nenhuma carta pode contar para duas parcelas diferentes. 
+
+Vejamos um exemplo com três jogadores. 
+Um dos jogadores termina o jogo com 1 ás, 1 três, 1 quatro e 2 cincos;
+a sua pontuação é 23 ( \(23 = 1+3+4+3\times 5\) ).
+Outro jogador acaba com 2 ases, 1 quatro, 1 cinco e 1 sete;
+a sua pontuação é 19 (\(19 = 3\times 1 + 4 + 5 + 7\) ).
+No fim do jogo, o terceiro jogador tem 4 dois e 1 três;
+a sua pontuação é 23 (\(23 = 10\times 2 + 3\) ).
+Este jogo teria 2 vencedores, ambos com 23 pontos.
+
+Os amigos gostam do jogo, 
+mas queriam ter um programa que calculasse o resultado final, 
+para se focarem na parte divertida do jogo. 
+Consegues ajudá-los? 
+
+
+ 
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+Escreva um programa que,
+dadas as cartas nas mãos dos jogadores,
+calcula quantos vencedores houve e qual a pontuação dos vencedores.
+
+
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+ 
+A primeira linha do input tem um número inteiro, \(J\),
+que representa o número de jogadores.
+Cada uma das \(J\) linhas seguintes tem cinco inteiros,
+\(n_1, n_2, \ldots, n_5\), 
+separados por um espaço,
+que correspondem aos números das cartas na mão de um jogador,
+no final do jogo.
+Não há mais de 4 cartas de cada número 
+no conjunto das mãos dos jogadores.
+
+
+
+
+ <H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+ 
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(2 \leq J \leq 8\)
+</TD>
+<TD ALIGN="LEFT"> Número de jogadores
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq n_i \leq 10\) </TD>
+<TD ALIGN="LEFT">Número de uma carta (para \(i=1,2,\ldots,5\) )</TD>
+</TR>
+</TABLE>
+
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+
+O output tem uma linha com dois inteiros: 
+o primeiro é o número de vencedores do jogo e 
+o segundo é a pontuação dos vencedores.
+
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+4
+1 6 10 6 1
+3 3 9 3 2
+5 10 3 5 10
+4 7 4 4 4
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+1 48
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+3
+5 3 5 4 1
+7 5 1 1 4
+2 2 3 2 2
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+2 23
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2023
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

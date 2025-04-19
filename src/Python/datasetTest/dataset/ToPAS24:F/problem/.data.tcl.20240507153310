@@ -1,0 +1,19 @@
+set        Fatal {Variable with invalid value <code>Timeout</code>: <br>}
+set      Warning {Undefined variable <code>Color</code><br>Unreadable file <code>Program</code>: prog.c<br>}
+set         Name F
+set        Color {}
+set        Title {Tudo em família!}
+set   Difficulty {}
+set         Type {}
+set  Description F.html
+set          PDF PDF.pdf
+set      Program prog.c
+set  Environment Environment
+set      Timeout {}
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

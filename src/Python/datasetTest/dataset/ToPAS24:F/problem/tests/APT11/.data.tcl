@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input apt11.in
+set       output apt11.out
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

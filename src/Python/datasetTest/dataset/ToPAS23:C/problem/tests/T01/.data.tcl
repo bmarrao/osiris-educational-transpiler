@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input Test0.in
+set       output Test0.out
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

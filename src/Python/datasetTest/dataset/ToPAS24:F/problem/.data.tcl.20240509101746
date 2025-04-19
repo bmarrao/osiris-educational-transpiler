@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name F
+set        Color Red
+set        Title {Tudo em família!}
+set   Difficulty {}
+set         Type {}
+set  Description F.html
+set          PDF PDF.pdf
+set      Program mafia_slc.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

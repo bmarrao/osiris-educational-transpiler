@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name F
+set        Color Red
+set        Title {Medições adocicadas}
+set   Difficulty {}
+set         Type {}
+set  Description F.html
+set          PDF PDF.pdf
+set      Program apt_medicoes.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

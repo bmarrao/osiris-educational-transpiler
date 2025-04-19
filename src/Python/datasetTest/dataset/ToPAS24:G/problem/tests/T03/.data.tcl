@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input random3.in
+set       output random3.out
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

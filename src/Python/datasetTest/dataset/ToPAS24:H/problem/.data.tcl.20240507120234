@@ -1,0 +1,19 @@
+set        Fatal {Undefined variable <code>Title</code><br>Variable with invalid value <code>Timeout</code>: <br>Unreadable file <code>Description</code>: Description.html<br>Check <a target='select' href='7274405405518788?data+data/contests/ToPAS24/problems/H/tests'><code>tests</code></a><br>}
+set      Warning {Unreadable file <code>Program</code>: Program<br>}
+set         Name H
+set        Color {Zega Zinga, Zoga Zonga}
+set        Title {}
+set   Difficulty {}
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program Program
+set  Environment Environment
+set      Timeout {}
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

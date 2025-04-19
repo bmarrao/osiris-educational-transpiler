@@ -1,0 +1,5 @@
+set        Fatal {Check <a target='select' href='7274405405518788?data+data/contests/ToPAS24/problems/F/tests/T0_3'><code>T0_3</code></a><br>Check <a target='select' href='7274405405518788?data+data/contests/ToPAS24/problems/F/tests/T0_1'><code>T0_1</code></a><br>Check <a target='select' href='7274405405518788?data+data/contests/ToPAS24/problems/F/tests/T0_2'><code>T0_2</code></a><br>}
+set      Warning {}
+set   Definition Definition
+set         Pack Pack
+set         Test {T0_1 T0_2 T0_3}

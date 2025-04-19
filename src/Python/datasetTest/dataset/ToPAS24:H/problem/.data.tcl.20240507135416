@@ -1,0 +1,19 @@
+set        Fatal {Variable with invalid value <code>Timeout</code>: <br>Unreadable file <code>Description</code>: Description.html<br>}
+set      Warning {Undefined variable <code>Color</code><br>Unreadable file <code>Program</code>: Program<br>}
+set         Name H
+set        Color {}
+set        Title {Zega Zinga, Zoga Zonga}
+set   Difficulty {}
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program Program
+set  Environment Environment
+set      Timeout {}
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

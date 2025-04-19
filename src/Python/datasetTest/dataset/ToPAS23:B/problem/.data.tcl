@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name B
+set        Color HotPink
+set        Title {Nove e Meia}
+set   Difficulty Easy
+set         Type {}
+set  Description B.html
+set          PDF PDF.pdf
+set      Program noveEMeio.java
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

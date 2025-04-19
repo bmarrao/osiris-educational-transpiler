@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input in20_20_0V.txt
+set       output out20_20_0V.txt
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+
+<head>
+<script type="text/javascript" id="MathJax-script" async
+ src="../../tex-svg.js"></script>
+</head>
+
+<BODY>
+
+<H1><A NAME="SECTION0005000000000000000">
+Problema E: Shallow fake sunflower</A>
+</H1>
+
+<P>
+<BR>
+
+<IMG
+ WIDTH="280" HEIGHT="350" BORDER="0"
+ SRC="Van_gogh.jpg"
+ ALT="image Van_gogh", align = right>
+
+<P>
+Nas redes sociais humanas proliferam as <em>deep fakes</em>.
+Nas dos girassóis o problema ainda são as falsificações grosseiras
+(<em>shallow fakes</em>) de fotografias de girassóis famosos.
+A imagem da direita é de um quadro de van Gogh. <!-- (c.f.\ \url{https://creativecommons.org/licenses/by/3.0},
+\url{https://commons.wikimedia.org/wiki/File:Van_gogh,_girasoli,_188_o_1899,_02.JPG}).-->
+<P>
+
+Felizmente os <em>hackers</em> parecem ignorar algo importante sobre a disposição
+das sementes de girassol no centro das flores.  
+<P>
+
+As sementes estão alinhadas em espirais, umas que evoluem a partir do
+centro no sentido horário (a verde na figura em baixo, à esquerda) e 
+outras no
+sentido contrário (a vermelho na figura em baixo, à direita). 
+E há  uma relação
+entre o número de espirais nos dois sentidos: são sempre dois números
+consecutivos na sequência de Fibonacci!   
+No exemplo ilustrado nas figuras, há 55 espirais no sentido horário e 34 espirais no sentido anti-horário.
+
+
+<DIV>
+ <TABLE CELLPADDING=3 ALIGN="CENTER">
+   <TR><TD>
+<IMG ALIGN="CENTER"
+ WIDTH="300" HEIGHT="300" BORDER="0"
+ SRC="left.png"
+ ALT="image left", align = right>
+</TD><TD>
+ <IMG ALIGN="CENTER"
+ WIDTH="300" HEIGHT="300" BORDER="0"
+ SRC="right.png"
+ ALT="image right", align = right>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+
+A sequência de Fibonacci começa pelos números 0 e 1; ou seja, \(F_0 = 0\)
+e \(F_1 = 1\). Os valores seguintes da sequência são dados pela fórmula
+recursiva \(F_n = F_{n-1}+ F_{n-2}\) (i.e., para \(n \geq 2\), o valor de \(F_n\) corresponde à soma dos dois valores anteriores). Os primeiros valores da sequência
+são os seguintes: 
+
+<PRE>
+                        0   1   1   2   3   5   8   13   21   34   55   …
+</PRE>
+
+
+
+
+<H2><A NAME="SECTION00051000000000000000">
+Tarefa</A>
+</H2>
+
+A GiraMeta - a empresa que controla as principais redes sociais de
+girassóis - contratou-nos para desenvolver um programa que deteta  
+<em>shallow fakes</em> nas fotografias publicadas. Já temos o módulo
+que conta o número de espirais em cada um dos sentidos - horário e
+anti-horário. Alguns girassóis são transgénicos e têm                
+imensas espirais! Precisamos agora de um programa que determine quais são os
+pares que correspondem a girassóis verdadeiros. Ou seja, cujos números
+de espirais em cada sentido são números consecutivos da sequência de
+Fibonacci. 
+
+
+<H2><A NAME="SECTION00052000000000000000">
+Input</A>
+</H2>
+
+
+A primeira linha do input contém um inteiro, \(N\), que é o número de fotografias a analisar.
+Seguem-se \(N\) linhas, cada uma com dois inteiros, \(A\) e \(B\),
+que indicam os números de espirais em
+sentido horário e anti-horário 
+da fotografia de um girassol. 
+
+
+
+<H2><A NAME="SECTION00053000000000000000">
+Restrições</A>
+
+
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq N \leq 200\)
+</TD>
+<TD ALIGN="LEFT"> Número de fotografias
+</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+
+\(0 \leq A \leq 20\,000\) </TD>
+<TD ALIGN="LEFT"> Número de espirais no sentido horário de uma fotografia</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+
+\(0 \leq B \leq 20\,000\)</TD>
+<TD ALIGN="LEFT"> Número de espirais no sentido anti-horário de uma fotografia</TD>
+</TR>
+</TABLE>
+
+<P>
+
+
+
+
+<H2><A NAME="SECTION00054000000000000000">
+Output</A>
+</H2>
+
+O output tem uma linha por cada fotografia, pela ordem definida no input.
+Cada linha tem uma palavra, que classifica os valores correspondentes do input. Essa palavra é: 
+<code>"OK"</code> (sem aspas), se os dois valores forem números consecutivos da sequência de Fibonacci; 
+<code>"FAKE"</code> (sem aspas), no caso contrário.
+De notar que os valores <b>não</b> têm que estar por ordem crescente 
+para serem números consecutivos da sequência de Fibonacci.
+
+<P>
+
+<H2><A NAME="SECTION00055000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00055100000000000000">
+Input</A>
+</H3>
+<PRE>
+3
+1 1
+3 5
+2 5
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00055200000000000000">
+Output</A>
+</H3>
+<PRE>
+OK
+OK
+FAKE
+</PRE> 
+<P>
+<H2><A NAME="SECTION0005600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00056100000000000000">
+Input</A>
+</H3>
+<PRE>
+7
+13 21
+13 22
+21 13
+34 13
+34 21
+21 21
+21 34
+</PRE>
+
+<H3><A NAME="SECTION00056200000000000000">
+Output</A>
+</H3>
+<PRE>
+OK
+FAKE
+OK
+FAKE
+OK
+FAKE
+OK
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2022
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name E
+set        Color MediumOrchid
+set        Title {Vai um?}
+set   Difficulty {}
+set         Type {}
+set  Description E.html
+set          PDF PDF.pdf
+set      Program prog_apt.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

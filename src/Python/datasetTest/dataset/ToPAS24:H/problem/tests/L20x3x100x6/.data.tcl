@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input in20x3x100x6.txt
+set       output out20x3x100x6.txt
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

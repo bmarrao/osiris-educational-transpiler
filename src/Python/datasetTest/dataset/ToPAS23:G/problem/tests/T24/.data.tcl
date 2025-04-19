@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input in_apt24.txt
+set       output out_apt24.txt
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

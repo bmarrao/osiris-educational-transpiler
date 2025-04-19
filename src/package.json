@@ -3,7 +3,11 @@
   "version": "1.0.10",
   "type": "module",
   "description": "Transpiler intended for educational purpose that translates currently python code into javascript so that it can be run on a browser .",
-  "main": "dist/bundle.js",
+    "exports": {
+    ".": "./Python/dist/bundle.js",
+    "./python": "./Python/dist/bundle.js"
+  },
+  "main": "./Python/dist/bundle.js",
   "directories": {
     "example": "examples"
   },

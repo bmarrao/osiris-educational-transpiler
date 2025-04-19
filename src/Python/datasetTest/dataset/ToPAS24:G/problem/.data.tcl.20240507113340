@@ -1,0 +1,19 @@
+set        Fatal {Variable with invalid value <code>Timeout</code>: <br>}
+set      Warning {Undefined variable <code>Color</code><br>}
+set         Name G
+set        Color {}
+set        Title {Festa da empresa}
+set   Difficulty {}
+set         Type {}
+set  Description G.html
+set          PDF PDF.pdf
+set      Program empresa_pbv.py
+set  Environment Environment
+set      Timeout {}
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

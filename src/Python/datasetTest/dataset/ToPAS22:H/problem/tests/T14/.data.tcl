@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input 14.in
+set       output 14.out
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

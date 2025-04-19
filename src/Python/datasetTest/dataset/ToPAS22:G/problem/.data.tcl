@@ -1,0 +1,19 @@
+set        Fatal {}
+set      Warning {}
+set         Name G
+set        Color Cyan
+set        Title {Validar códigos de livros}
+set   Difficulty {}
+set         Type {}
+set  Description G.html
+set          PDF PDF.pdf
+set      Program mainISBN.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+ <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema A: Encontros e desencontros</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG
+ WIDTH="347" HEIGHT="282" BORDER="0"
+  SRC="encontrosFig.jpg"
+ ALT="image encontros", align = "right"></TD>
+ <!-- width 5203 height 4229 -->
+ </TR>
+<TR><TD>
+ <em><small><small>Designed by brgfx / Freepik</small></small></em>
+ </TD></TR>
+ </TABLE>
+
+
+
+
+ 
+O Alex e a Bia são primos direitos que gostam de atividades ao ar livre.
+Ultimamente, 
+o Alex vai jogar à bola com os amigos,
+numa zona do parque chamada <em>campo</em>,
+enquanto a Bia prefere dar um grande passeio de bicicleta,
+passando sempre pelo campo.
+Por isso, às vezes encontram-se.<br></br>
+
+Se souberes o período em que o Alex está no campo e
+o instante em que a Bia passa por lá de bicicleta,
+consegues dizer se os dois primos se encontram ou se se desencontram? <br></br>
+
+Por exemplo, 
+se o Alex estiver no campo das 15:10 às 17:15 e
+a Bia passar por lá às 15:20, os dois primos encontram-se.
+Mas, se a Bia passar pela zona onde o primo joga à bola às 15:08,
+já não se encontram. <br></br>
+
+O período em que o Alex está no campo é definido por dois instantes no mesmo dia: 
+o instante em que chega ao campo e 
+o instante em que sai do campo.
+É óbvio que a saída nunca ocorre antes da chegada.
+Os primos <em>encontram-se</em> se a Bia passar pelo campo enquanto o Alex lá está,
+considerando-se que ele está no campo nos instantes em que chega e em que sai. 
+
+
+
+ 
+  
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+
+Escreva um programa que, 
+dados o período em que o Alex está no campo e 
+o instante em que a Bia passa por lá,
+indica se os dois primos se encontram.
+
+
+
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+ 
+O input tem três linhas, 
+cada uma com dois números inteiros, \(h\) e \(m\), 
+que representam o instante \(h:m\) (\(h\) horas e \(m\) minutos). 
+A primeira linha tem o instante em que o Alex chega ao campo.
+A segunda linha tem o instante em que o Alex sai do campo 
+(que é igual ou posterior ao instante em que o Alex chega ao campo).
+A terceira linha tem o instante em que a Bia passa pelo campo.
+
+
+ 
+<H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+
+ 
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 \leq h \leq 23\) </TD>
+<TD ALIGN="LEFT">
+Horas de um instante</TD></TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(0 \leq m \leq 59\) </TD>
+<TD ALIGN="LEFT"> Minutos de um instante
+</TD></TR>
+</TABLE>
+
+<P>
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+
+O output tem uma única linha, com:
+"<TT>Encontram-se</TT>", 
+se os dois primos se encontram;
+"<TT>Desencontram-se</TT>", 
+nos restantes casos.
+
+
+
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+15 10
+17 15
+15 20
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+Encontram-se
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+15 10
+17 15
+15 8
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+Desencontram-se
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001700000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00017100000000000000">
+Input</A>
+</H3>
+<PRE>
+9 7
+9 7
+9 7
+</PRE>
+
+<H3><A NAME="SECTION00017200000000000000">
+Output</A>
+</H3>
+<PRE>
+Encontram-se
+</PRE>
+
+<P>
+<H2><A NAME="SECTION0001800000000000000">
+Exemplo 4</A>
+</H2>
+
+<H3><A NAME="SECTION00018100000000000000">
+Input</A>
+</H3>
+<PRE>
+14 0
+17 59
+18 5
+</PRE>
+
+<H3><A NAME="SECTION00018200000000000000">
+Output</A>
+</H3>
+<PRE>
+Desencontram-se
+</PRE>
+
+
+
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2024
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

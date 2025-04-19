@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input in_small_15.txt
+set       output out_small_15.txt
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

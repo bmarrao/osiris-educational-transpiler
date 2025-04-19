@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+   <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema E: Miradouros</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG WIDTH="255" HEIGHT="198" BORDER="0"
+  SRC="turistas1.png"
+ ALT="image turistas1", align = "right"></TD>
+ </TR>
+ </TABLE>
+
+
+ Os principais miradouros de Faro, Lisboa e Porto são:
+<ul>
+  <li><b>Faro:</b>
+      Arco da Vila, Monte de Faro;</li>
+<li><b>Lisboa:</b>
+      Graça, 
+      Senhora do Monte,
+      São Pedro de Alcântara,
+      Santa Luzia,
+      Santa Catarina,
+      Monte Agudo,
+      Penha de França,
+      São Jorge;</li>
+<li><b>Porto:</b>
+      Sé Catedral,
+      Igreja dos Grilos,
+      Torre dos Clérigos,
+      Serra do Pilar,
+      Vitória,
+      Jardins do Palácio de Cristal.
+</li>
+</ul>
+
+Todos os miradouros são locais muito apreciados pelos turistas,
+que têm uma aplicação no telemóvel para registar os miradouros que visitaram.
+Por exemplo, se forem registadas cinco visitas,
+aos miradouros
+Graça,
+Monte de Faro,
+Vitória,
+Vitória e
+Graça,
+os miradouros mais visitados são (por ordem alfabética)
+Graça e Vitória, cada um com duas visitas.
+
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+
+Escreva um programa que, 
+dados os nomes dos miradouros visitados pelos turistas, 
+indica
+quantas visitas foram registadas (no total),
+quantas visitas foram efetuadas ao(s) miradouro(s) mais visitado(s) e
+qual ou quais foram os miradouros mais visitados.
+
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+
+ 
+O input tem \(N+1\) linhas. 
+Cada uma das \(N\) primeiras linhas tem o nome de um miradouro. 
+Como o registo das visitas é gerado por uma aplicação, 
+o nome do miradouro 
+é sempre um dos nomes apresentados na tabela seguinte, <!-- ~\ref{tab:my_label}, -->
+escrito em maiúsculas e sem acentos nem cedilhas.
+A última linha do input tem a palavra <code>FIM</code>. 
+
+<P>
+
+<table style="border:1px solid black;margin-left:auto;margin-right:auto;padding:4px;">
+<!--<TABLE CELLPADDING=2 border="1">-->
+<TR><TD ALIGN="LEFT">
+<b>Nome do Miradouro</b>
+</TD>
+<TD ALIGN="LEFT"> <b>Cidade</b></TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+ARCO DA VILA
+</TD>
+<TD ALIGN="LEFT">Faro</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+GRACA
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+IGREJA DOS GRILOS
+</TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+  JARDINS DO PALACIO DE CRISTAL
+  </TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+MONTE AGUDO
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+MONTE DE FARO
+</TD>
+<TD ALIGN="LEFT">Faro</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+PENHA DE FRANCA
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SANTA CATARINA
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SANTA LUZIA
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SAO JORGE
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SAO PEDRO DE ALCANTARA
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SE CATEDRAL
+</TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SENHORA DO MONTE
+</TD>
+<TD ALIGN="LEFT">Lisboa</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+SERRA DO PILAR
+</TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+TORRE DOS CLERIGOS
+</TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+<TR><TD ALIGN="LEFT">
+VITORIA
+</TD>
+<TD ALIGN="LEFT">Porto</TD>
+</TR>
+</table>
+
+
+ <H2><A NAME="SECTION00013000000000000000">
+Restrições</A>
+</H2>
+
+ 
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq N \leq 1\,000\)
+</TD>
+<TD ALIGN="LEFT"> Número de visitas registadas</TD>
+</TR>
+</TABLE>
+
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+A primeira linha tem dois valores inteiros que indicam, respetivamente, 
+o número total de visitas registadas e 
+o número de visitas efetuadas ao(s) miradouro(s) mais visitado(s). 
+Cada uma das restantes linhas tem o nome de um dos miradouros mais visitados e 
+o nome da respetiva cidade, separados por um espaço. 
+Estas linhas ocorrem por ordem alfabética de nome do miradouro. 
+Os nomes dos miradouros devem ser escritos em maiúsculas 
+e sem acentos nem cedilhas.
+Os nomes das cidades devem ser escritos como habitualmente:
+a primeira letra é maiúscula e as restantes em minúsculas.
+
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+GRACA
+MONTE DE FARO
+VITORIA
+VITORIA
+GRACA
+FIM
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+5 2
+GRACA Lisboa
+VITORIA Porto
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+GRACA
+ARCO DA VILA
+PENHA DE FRANCA
+SANTA LUZIA
+VITORIA
+ARCO DA VILA
+PENHA DE FRANCA
+VITORIA
+PENHA DE FRANCA
+PENHA DE FRANCA
+SENHORA DO MONTE
+FIM
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+11 4
+PENHA DE FRANCA Lisboa
+</PRE>
+
+
+
+
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+GRACA
+ARCO DA VILA
+SANTA LUZIA
+MONTE DE FARO
+VITORIA
+SE CATEDRAL
+ARCO DA VILA
+VITORIA
+GRACA
+FIM
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+9 2
+ARCO DA VILA Faro
+GRACA Lisboa
+VITORIA Porto
+</PRE>
+<P>
+
+<BR><HR>
+<ADDRESS>
+ToPAS'2023
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+

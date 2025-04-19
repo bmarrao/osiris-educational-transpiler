@@ -1,0 +1,19 @@
+set        Fatal {Unreadable file <code>Description</code>: Description.html<br>}
+set      Warning {Undefined variable <code>Color</code><br>}
+set         Name E
+set        Color {}
+set        Title {Vai um?}
+set   Difficulty {}
+set         Type {}
+set  Description Description.html
+set          PDF PDF.pdf
+set      Program prog_apt.c
+set  Environment Environment
+set      Timeout 1
+set Static_corrector {}
+set Dynamic_corrector {}
+set Original_location {}
+set       images images
+set        tests tests
+set        Start {}
+set         Stop {}

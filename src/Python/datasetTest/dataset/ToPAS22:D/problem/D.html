@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+
+<head>
+<script type="text/javascript" id="MathJax-script" async
+ src="../../tex-svg.js"></script>
+</head>
+
+<BODY>
+
+<H1><A NAME="SECTION0004000000000000000">
+Problema D: Trilhos de números</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+<IMG
+ WIDTH="280" HEIGHT="196" BORDER="0"
+ SRC="trilho1.jpg"
+ ALT="image trilho1", align = right>
+  </TD>
+</TR>
+
+<TR><TD>
+
+<IMG
+ WIDTH="280" HEIGHT="196" BORDER="0"
+   SRC="trilho2.jpg"
+ ALT="image trilho2", align = right>
+  </TD>
+</TR>
+</TABLE>
+
+<P>
+
+A Mariazinha gosta muito de labirintos e está a aprender os números. A professora de matemática deu-lhe vários cartões de uma atividade em que ela tem de descobrir um trilho de um algarismo num labirinto.
+A figura da direita tem dois desses cartões: no cartão de cima, 
+pretende-se encontrar o trilho do número 1 para a abelha; no cartão de baixo, quer-se descobrir o trilho do número 2 para a borboleta. O trilho é um caminho composto por ocorrências vizinhas do número assinalado, que começa ao lado do inseto e termina junto à flor.
+<P>
+
+Para simplificar o problema, os labirintos são retangulares e o trilho começa sempre na posição do canto superior esquerdo. A Mariazinha tem de desenhar uma bola à volta desse número. Para avançar, a Mariazinha tem de colocar uma bola noutra ocorrência do mesmo número que ainda não esteja dentro de uma bola e que se encontre imediatamente acima (C), à direita (D), abaixo (B) ou à esquerda (E) da última bola desenhada. O trilho só está completo quando já não for possível avançar. A descrição do trilho corresponde à sequência de letras 'C', 'D', 'B' e 'E' que identificam os movimentos efetuados pelo inseto.
+<P>
+
+A figura abaixo tem um exemplo (que corresponde ao Exemplo 3).
+Em <b>(a)</b>, apresenta-se o labirinto, que tem 3 linhas e 5 colunas.
+Em  <b>(b)</b>,  mostra-se a primeira bola desenhada pela Mariazinha (à volta 
+do número 2).
+A construção do trilho continua de <b>(c)</b>  a  <b>(h)</b> : em cada um destes passos há uma nova bola e uma nova letra na descrição do caminho.
+A descrição do trilho é BBDDCD e a soma dos números do trilho (os que estão dentro de bolas) é 14.
+
+<DIV>
+<IMG ALIGN="CENTER"
+ WIDTH="785" HEIGHT="297" BORDER="0"
+ SRC="tabelas.png"
+ ALT="image tabelas", align = right>
+</DIV>
+
+
+
+<H2><A NAME="SECTION00041000000000000000">
+Tarefa</A>
+</H2>
+
+Faça um programa que, dado um labirinto, escreva na consola a descrição do trilho e a soma de todos os números do trilho. 
+<P>
+Garante-se que a Mariazinha nunca tem várias alternativas: em cada passo, ou pode desenhar uma bola numa única posição ou já não pode desenhar mais bolas. Também se garante que o trilho tem, pelo menos, dois números (logo, a sua descrição tem alguma letra).
+
+<H2><A NAME="SECTION00042000000000000000">
+Input</A>
+</H2>
+
+Na primeira linha existem dois números inteiros, \(L\) e \(C\), que representam, respetivamente, o número de linhas e o número de colunas do labirinto.
+As  \(L\) linhas seguintes descrevem o labirinto.
+Cada uma dessas linhas tem  \(C\) algarismos de 1 a 9, separados por um espaço.
+
+
+<H2><A NAME="SECTION00043000000000000000">
+Restrições</A>
+
+
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq L \leq 50\)
+</TD>
+<TD ALIGN="LEFT"> Número de linhas do labirinto
+</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+
+\(1 \leq C \leq 50\) </TD>
+<TD ALIGN="LEFT"> Número de colunas do labirinto</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+
+\(2 \leq LC \)</TD>
+<TD ALIGN="LEFT"> Número de algarismos no labirinto</TD>
+</TR>
+</TABLE>
+
+<P>
+
+
+
+
+<H2><A NAME="SECTION00044000000000000000">
+Output</A>
+</H2>
+A primeira linha do output tem a descrição do trilho (que é uma sequência não vazia de letras maiúsculas 'C', 'D', 'B' e 'E'). 
+A segunda linha tem a soma de todos os números do trilho.
+
+
+<P>
+
+<H2><A NAME="SECTION00045000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00045100000000000000">
+Input</A>
+</H3>
+<PRE>
+5 8
+1 1 1 1 4 8 1 2
+2 3 2 1 7 5 4 1
+1 1 1 1 2 6 7 3
+1 9 2 4 1 2 1 4
+1 1 1 1 1 3 3 3
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00045200000000000000">
+Output</A>
+</H3>
+<PRE>
+DDDBBEEEBBDDDDC
+16
+</PRE> 
+<P>
+<H2><A NAME="SECTION0004600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00046100000000000000">
+Input</A>
+</H3>
+<PRE>
+4 5
+9 9 4 9 9
+2 9 2 9 7
+2 9 2 9 1
+2 9 9 9 1
+</PRE>
+
+<H3><A NAME="SECTION00046200000000000000">
+Output</A>
+</H3>
+<PRE>
+DBBBDDCCCD
+99
+</PRE>
+
+<H2><A NAME="SECTION0004700000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00047100000000000000">
+Input</A>
+</H3>
+<PRE>
+3 5
+2 3 4 5 6
+2 4 2 2 7
+2 2 2 3 2
+</PRE>
+
+<H3><A NAME="SECTION00047200000000000000">
+Output</A>
+</H3>
+<PRE>
+BBDDCD
+14
+</PRE>
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2022
+</ADDRESS>
+</BODY>
+</HTML>

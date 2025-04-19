@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+
+<head>
+<script type="text/javascript" id="MathJax-script" async
+ src="../../tex-svg.js"></script>
+</head>
+
+<BODY>
+
+<H1><A NAME="SECTION0006000000000000000">
+Problema F: Medições adocicadas</A>
+</H1>
+
+<P>
+<BR>
+
+<IMG
+ WIDTH="267" HEIGHT="267" BORDER="0"
+ SRC="copo_graduado.jpg"
+ ALT="image copo_graduado", align = right>
+
+<P>
+
+
+
+Ufa, mas que calor!
+No refeitório da escola, a Mariana está a fazer experiências com sumo de laranja.
+Em cada experiência, ela coloca um copo graduado sobre a prateleira da máquina do sumo e abre a torneira.
+A cada segundo, o nível do sumo no copo sobe uma quantidade <b>inteira
+positiva</b> \(K\).
+Repare que o copo pode não começar vazio.
+Assim, sendo o nível que o sumo apresentava inicialmente no copo um
+<b>inteiro não negativo</b> \(I\), no momento em que a Mariana abre
+a torneira o nível do sumo é \(I\), um segundo depois é \(I+K\), dois
+segundos depois é \(I+2K\), e assim por diante.
+<P>
+
+Após um intervalo de tempo pré-determinado, a experiência acaba.
+Pode considerar que a capacidade do copo é suficiente para conter todo o sumo durante a experiência, isto é, em nenhum momento o conteúdo do copo transborda.
+
+
+<P>
+
+
+O objetivo da Mariana é, a cada segundo, observar o nível de sumo que o copo marca e anotá-lo no seu caderno.  
+Acontece que, no final de cada experiência, um pouco de sumo caiu sobre o caderno, tornando alguns dos valores da sequência ilegíveis.
+Que trapalhada!
+Se ao menos a Mariana tivesse rabiscado em algum lado os valores de \(I\) e de \(K\)...
+<P>
+
+É capaz de ajudar a Mariana a confirmar que a sequência por ela apontada antes de sujar o caderno com sumo poderia realmente ser válida ou dizer se, com o calor que fazia, ela se enganou? 
+
+
+
+
+
+<H2><A NAME="SECTION00061000000000000000">
+Tarefa</A>
+</H2>
+
+Escreva um programa que,
+dada a sequência de valores apontados pela Mariana no seu caderno,
+possivelmente com alguns valores ilegíveis,
+determina se a sequência original poderia ser válida.
+
+
+
+
+<H2><A NAME="SECTION00062000000000000000">
+Input</A>
+</H2>
+
+A primeira linha do input contém um inteiro, \(E\), que corresponde ao número de experiências (independentes) realizadas.
+Para cada experiência, é fornecida a seguinte informação:
+
+<ul>
+  <li> A primeira linha relativa a uma experiência contém um inteiro,
+  \(N\), que é o tamanho da sequência apontada no caderno.</li>
+  
+  <li> A segunda linha contém uma sequência de \(N\) inteiros, separados
+  por um espaço. Cada elemento da sequência é um número entre \(-1\) e
+  \(1\,000\,000\). Os elementos que ficaram ilegíveis com o sumo são
+  representados com o valor \(-1\).</li>
+
+</ul>
+  
+
+
+
+<H2><A NAME="SECTION00063000000000000000">
+Restrições</A>
+
+
+
+<P>
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+\(1 \leq E \leq 10\)
+</TD>
+<TD ALIGN="LEFT"> Número de experiências
+</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+
+\(1 \leq N \leq 10\,000\) </TD>
+<TD ALIGN="LEFT">  Tamanho de uma sequência</TD>
+</TR>
+<TR><TD ALIGN="LEFT"> </TD><TD ALIGN="LEFT">
+</TD></TR>
+</TABLE>
+
+<P>
+
+
+
+
+<H2><A NAME="SECTION00064000000000000000">
+Output</A>
+</H2>
+
+O output tem uma linha por cada experiência, pela ordem definida no input.
+Cada linha tem a palavra: <code>"Possivel"</code> (sem aspas nem
+acento), se houver pelo menos uma forma de a respetiva sequência
+original ser válida;
+<code>"Impossivel"</code> (sem aspas nem acento), no caso contrário.
+
+
+<P>
+
+<H2><A NAME="SECTION00065000000000000000">
+Exemplo</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00065100000000000000">
+Input</A>
+</H3>
+<PRE>
+5
+3
+4 -1 6
+3
+4 5 6
+3
+4 -1 4
+5
+-1 -1 4 6 -1
+3
+-1 -1 -1
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00065200000000000000">
+Output</A>
+</H3>
+<PRE>
+Possivel
+Possivel
+Impossivel
+Possivel
+Possivel
+</PRE> 
+<P>
+
+
+<H3><A NAME="SECTION00065300000000000000">
+Explicação</A>
+</H3>
+
+
+<ul>
+  <li> Na primeira experiência, o sumo tornou ilegível o segundo
+  elemento da sequência, que poderia ser \(5\). </li>
+<li> Na segunda experiência, o sumo não tornou ilegível nenhum dos elementos da sequência e ela é válida, com \(I=4\) e \(K=1\).</li>
+<li> Na terceira experiência, se os valores apontados estivessem corretos, a torneira teria de ter estado fechada durante a experiência.</li>
+<li> Na quarta experiência, a sequência original poderia ser \(0\;\, 2\;\, 4\;\, 6\;\, 8\). </li>
+<li> Na quinta experiência, \(7\;\, 20\;\, 33\) é uma das sequências originais válidas possíveis. </li>
+</ul>
+
+
+<P>
+<BR><HR>
+<ADDRESS>
+ToPAS'2022
+</ADDRESS>
+</BODY>
+</HTML>

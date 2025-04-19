@@ -1,0 +1,9 @@
+set        Fatal {}
+set      Warning {}
+set         args {}
+set        input apt04.in
+set       output apt04.out
+set      context context
+set       Points {}
+set     Feedback {}
+set         Show {}

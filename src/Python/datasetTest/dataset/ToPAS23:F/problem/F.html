@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+
+<HTML>
+<HEAD>
+   <script type="text/javascript" id="MathJax-script" async
+           src="../../tex-svg.js"></script>
+</HEAD>
+<BODY>
+
+<H1><A NAME="SECTION00010000000000000000">
+Problema F: 4-em-linha</A>
+</H1>
+
+<P>
+<BR>
+
+<TABLE CELLPADDING=2 ALIGN="RIGHT">
+<TR><TD>
+  
+<IMG
+ WIDTH="365" HEIGHT="273" BORDER="0"
+  SRC="Connect_4_Board_and_Box.jpg"
+ ALT="image Connect4", align="center"></TD>
+ </TR>
+ </TABLE>
+
+
+<em>4-em-linha</em> (em inglês, "<em>Connect 4</em>") é
+um jogo para dois jogadores.
+Cada um escolhe uma cor e, em
+seguida, revezam-se, colocando 
+fichas dessa cor numa grade de 7 colunas e 6 linhas, 
+mantida na vertical.<br>
+
+O objetivo do jogo é colocar 4 ou mais fichas <em>em linha</em>,
+ou seja, fazer uma linha de 4 ou mais fichas da cor do jogador 
+na vertical, horizontal ou diagonal.
+Na imagem à direita, 
+o jogador amarelo ganhou o jogo.<br>
+
+O jogo termina assim que algum jogador o vence
+(há 4 ou mais fichas desse jogador em linha) ou
+quando a grade está completa (tem 42 fichas).
+ 
+<H2><A NAME="SECTION00011000000000000000">
+Tarefa</A>
+</H2>
+
+Escreva um programa que lê uma configuração de um jogo 
+(um estado da grade) e
+indica 
+se algum jogador venceu e qual.
+
+ <H2><A NAME="SECTION00012000000000000000">
+Input</A>
+</H2>
+Para facilitar, 
+identificamos as fichas dos dois jogadores
+com as letras maiúsculas <b>X</b> e <b>O</b>.
+O input consiste na descrição da grade:
+tem 6 linhas, cada uma com 7 carateres. 
+Cada caráter é <b>X</b>, <b>O</b>  ou <b>.</b>  (ponto),
+conforme a respetiva posição da grade tem uma ficha ou está vazia.
+Pode assumir que a grade corresponde a uma situação de jogo válida.
+Portanto, se há vencedor,
+a última ficha colocada é desse jogador e 
+tem de ser a ficha mais alta de uma coluna.
+
+
+ 
+
+
+<H2><A NAME="SECTION00014000000000000000">
+Output</A>
+</H2>
+
+
+O output tem uma linha com <code>GANHOU X</code>,
+<code>GANHOU O</code>, <code>JOGANDO</code> ou <code>EMPATE</code>, conforme algum
+jogador ganhou, o jogo ainda não terminou ou o jogo terminou (a grade
+está totalmente preenchida) e ninguém ganhou.
+
+<H2><A NAME="SECTION00015000000000000000">
+Exemplo 1</A>
+</H2>
+
+<P>
+
+<H3><A NAME="SECTION00015100000000000000">
+Input</A>
+</H3>
+<PRE>
+.......
+.......
+....O..
+X...O..
+X...O..
+X..XOOX
+</PRE> 
+
+<P>
+
+<H3><A NAME="SECTION00015200000000000000">
+Output</A>
+</H3>
+<PRE>
+GANHOU O
+</PRE> 
+
+<P>
+<H2><A NAME="SECTION0001600000000000000">
+Exemplo 2</A>
+</H2>
+
+<H3><A NAME="SECTION00016100000000000000">
+Input</A>
+</H3>
+<PRE>
+.......
+.......
+O..X.O.
+X..OXX.
+XXOXOX.
+XOXOOOX
+</PRE>
+
+<H3><A NAME="SECTION00016200000000000000">
+Output</A>
+</H3>
+<PRE>
+GANHOU X
+</PRE>
+
+<P>
+
+
+
+<H2><A NAME="SECTION0001700000000000000">
+Exemplo 3</A>
+</H2>
+
+<H3><A NAME="SECTION00017100000000000000">
+Input</A>
+</H3>
+<PRE>
+.......
+.......
+.......
+X.XX...
+OXOO...
+XOXO...
+</PRE>
+
+<H3><A NAME="SECTION00017200000000000000">
+Output</A>
+</H3>
+<PRE>
+JOGANDO
+</PRE>
+
+<P>
+
+
+
+<H2><A NAME="SECTION0001800000000000000">
+Exemplo 4</A>
+</H2>
+
+<H3><A NAME="SECTION00018100000000000000">
+Input</A>
+</H3>
+<PRE>
+XOXOXXO
+OOXXOOO
+XXOXOXX
+OXXXOOX
+OXOOXXO
+OOOXXOX
+</PRE>
+
+<H3><A NAME="SECTION00018200000000000000">
+Output</A>
+</H3>
+<PRE>
+EMPATE
+</PRE>
+
+<P>
+
+
+
+
+
+
+
+
+<BR><HR>
+<ADDRESS>
+ToPAS'2023
+</ADDRESS>
+</BODY>
+</HTML>
+
+
+
+
+
+
+
+
+
+
