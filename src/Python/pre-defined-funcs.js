@@ -457,8 +457,8 @@ var convertFun =` function convertPythonOperand(value) {
 }
 `
 var additionFun=`function osiris_builtin_addition(a, b) {
-    a = osiris_builtin_convertPythonOperand(a);
-    b = osiris_builtin_convertPythonOperand(b);
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a + b;
@@ -472,8 +472,8 @@ var additionFun=`function osiris_builtin_addition(a, b) {
 }
 `
 var subtractFun = `function osiris_builtin_subtraction(a, b) {
-    a = osiris_builtin_convertPythonOperand(a);
-    b = osiris_builtin_convertPythonOperand(b);
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a - b;
@@ -483,8 +483,8 @@ var subtractFun = `function osiris_builtin_subtraction(a, b) {
 }
 `
 var multiplyFun = `function osiris_builtin_multiplication(a, b) {
-    a = osiris_builtin_convertPythonOperand(a);
-    b = osiris_builtin_convertPythonOperand(b);
+    a = convertPythonOperand(a);
+    b = convertPythonOperand(b);
 
     if (typeof a === 'number' && typeof b === 'number') {
         return a * b;
