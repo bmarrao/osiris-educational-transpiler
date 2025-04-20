@@ -1,8 +1,11 @@
 import Osiris from "./index.js"
 
 const input = `
-def func():
-  print(list(filter(lambda x: x > 0, [-1, 0, 1])))
+def x():
+   name = input('What is your name? ');
+   print (f"Hello, {name}!");
+   age = input('How old are you? ');
+   print(f"You are {age} years old.");
 `
 
 

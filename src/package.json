@@ -1,6 +1,6 @@
 {
   "name": "osiris-educational-transpiler",
-  "version": "1.0.11",
+  "version": "1.0.13",
   "type": "module",
   "description": "Transpiler intended for educational purpose that translates currently python code into javascript so that it can be run on a browser .",
   "exports": {
@@ -19,7 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "acorn": "^8.14.0",
-    "antlr4": "^4.13.2"
+    "antlr4": "^4.13.2",
+    "readline-sync": "^1.4.10"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

@@ -1,7 +1,6 @@
 
 # Ignore everything
 *
-
 # Allow .gitignore itself
 !.gitignore
 
@@ -32,3 +31,6 @@
 
 !transpilerPythonJs.js
 !builtInFuncs.js
+
+/Python/datasetTest/
+/Python/datasetTest/**

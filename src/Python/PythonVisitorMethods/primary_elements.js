@@ -221,7 +221,7 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
     case "max":
       return handleMinMax(primary, argsText);
     case "input":
-      return runOnBrowser ? `await waitForInput(${argsText})` : `prompt(${argsText})`;
+      return runOnBrowser ? `await waitForInput(${argsText})` : `input(${argsText})`;
     case "abs":
       return `Math.abs(${argsText})`;
     case "map":
