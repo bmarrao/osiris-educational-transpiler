@@ -1,9 +1,0 @@
-set        Fatal {Ficheiro ilegível <code>input</code>: input9<br>Ficheiro ilegível <code>output</code>: output9<br>}
-set      Warning {File input9 not readable<br>File output9 not readable<br>}
-set         args {}
-set        input input9
-set       output output9
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

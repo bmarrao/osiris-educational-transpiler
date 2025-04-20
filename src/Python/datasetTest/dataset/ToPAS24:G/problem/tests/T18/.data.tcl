@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input random18.in
-set       output random18.out
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

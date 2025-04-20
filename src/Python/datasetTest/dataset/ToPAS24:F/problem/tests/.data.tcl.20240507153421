@@ -1,5 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set   Definition Definition
-set         Pack Pack
-set         Test {APT01 APT02 APT03 APT04 APT05 APT06 APT07 APT08 APT09 APT10 APT11}

@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input apt01.txt
-set       output apt01_out.txt
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

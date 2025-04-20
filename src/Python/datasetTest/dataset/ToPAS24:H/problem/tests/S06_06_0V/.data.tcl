@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input in06_06_0V.txt
-set       output out06_06_0V.txt
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

@@ -1,5 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set   Definition Definition
-set         Pack Pack
-set         Test {L20_20_0V L20x2x100x4 L20x3x100x6 L20x4x100x10 }

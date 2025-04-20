@@ -1,9 +1,0 @@
-h, m= map(int,input().split())
-h2, m2= map(int,input().split())
-h3, m3= map(int,input().split())
-
-if h3 >h2 or h3 < h and m3 < m2 or m3< m:
-    print ("Desencontram-se")
-
-else: 
-    print ("Encontram-se")

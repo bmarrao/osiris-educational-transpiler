@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input in_apt13.txt
-set       output out_apt13.txt
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

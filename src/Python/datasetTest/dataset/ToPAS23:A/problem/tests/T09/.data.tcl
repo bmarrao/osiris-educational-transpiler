@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input input9
-set       output output9
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

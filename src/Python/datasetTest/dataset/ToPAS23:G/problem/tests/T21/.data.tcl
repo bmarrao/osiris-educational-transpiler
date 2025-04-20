@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input in_apt21.txt
-set       output out_apt21.txt
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

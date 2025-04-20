@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input apt02.in
-set       output apt02.out
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

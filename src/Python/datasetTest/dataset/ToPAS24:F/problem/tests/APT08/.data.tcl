@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input apt08.in
-set       output apt08.out
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

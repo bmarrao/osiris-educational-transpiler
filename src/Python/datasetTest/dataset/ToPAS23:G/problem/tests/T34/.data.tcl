@@ -1,9 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set         args {}
-set        input in38.txt
-set       output out38.txt
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

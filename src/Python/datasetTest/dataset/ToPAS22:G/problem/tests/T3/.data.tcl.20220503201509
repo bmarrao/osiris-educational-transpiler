@@ -1,9 +1,0 @@
-set        Fatal {Ficheiro ilegível <code>input</code>: input<br>}
-set      Warning {File input not readable<br>}
-set         args {}
-set        input input
-set       output output3
-set      context context
-set       Points {}
-set     Feedback {}
-set         Show {}

@@ -1,5 +1,0 @@
-set        Fatal {}
-set      Warning {}
-set   Definition Definition
-set         Pack Pack
-set         Test {T100_100_0V T100_100_1stV T100_100_5000V T100_100_9000V T100_100_90V T100_100_lastV }
