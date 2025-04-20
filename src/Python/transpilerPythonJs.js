@@ -89,7 +89,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         return GeneralStatements.visitStatement_newline.call(this, ctx);
     }
 
-    visitImport_stmts(ctx)
+    visitImport_stmt(ctx)
     {
         throw new Error('Transpiler Error: Import statements are not supported.');
     }

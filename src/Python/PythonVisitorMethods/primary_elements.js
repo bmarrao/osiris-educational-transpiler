@@ -12,7 +12,7 @@ export function visitAwait_primary(ctx) {
 }
 
 function convertBuiltIn(name) {
-    const namesToConvert = ["count", "ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len",  "divmod", "extend", "join"];
+    const namesToConvert = ["count", "ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len",  "divmod", "extend", "int", "join"];
     if (namesToConvert.includes(name)) {
         return `osiris_builtin_${name}`;
     }
@@ -182,6 +182,8 @@ function handleCollectionFunctions(primary, argsText) {
       return `${objectName}.trimStart(${argsText})`;
     case "rstrip":
       return `${objectName}.trimEnd(${argsText})`;
+    case "split":
+      return `${objectName}.split(${argsText || '" "'})`;
     case "splitlines":
       return `${objectName}.split(/\r?\n/)`;
     // ----- Set Functions -----

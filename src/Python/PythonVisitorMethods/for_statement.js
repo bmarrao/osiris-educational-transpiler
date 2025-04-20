@@ -56,13 +56,10 @@ export function visitFor_stmt(ctx) {
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
   let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
-  
-  
-
-  // Check if the iterable contains 'range('
+  console.log(iterable)
   if (iterable.startsWith("osiris_builtin_range(")) {
     // Extract the arguments of the range function
-    const inner = iterable.slice(6, -1);
+    const inner = iterable.slice(21, -1);
     const rangeArgs = splitArguments(inner);    // Default values for start, stop, and step
     let start = "0", stop, step = "1";
 

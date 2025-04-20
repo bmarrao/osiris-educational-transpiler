@@ -1,18 +1,41 @@
 import Osiris from "./index.js"
-
+import readlineSync from 'readline-sync';
 const input = `
-def x():
-   name = input('What is your name? ');
-   print (f"Hello, {name}!");
-   age = input('How old are you? ');
-   print(f"You are {age} years old.");
+def main():
+    num = int(input())
+
+    n = int(input())
+
+    ia = 0
+
+    for i in range(n):
+        ab = int(input())
+        if num >= ab > ia:
+            ia = ab
+
+    if ia != 0:
+        print(ia)
+    else:
+        print("No free lunch")
+
+
+if __name__ == "__main__":
+    main()
+
 `
 
 
 const transpilerPython = new Osiris("python");
 const transpiledCode = transpilerPython.passCode(input);
-console.log(transpiledCode.code); 
-
-const fct = eval(`(${transpiledCode.code})`);
-fct.call(null) // fct.call(null, ...args);
-
+console.log(transpiledCode)
+/*
+if(transpiledCode.sucess)
+{
+    console.log(transpiledCode.code); 
+    eval(transpiledCode.code);
+}
+else 
+{
+    console.log("Translation ERROR"); 
+}
+*/

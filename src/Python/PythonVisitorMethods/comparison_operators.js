@@ -12,7 +12,11 @@ export function visitComparison(ctx) {
         comparisonPairs.push(comparisonPair); 
     }
     let evalString = `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
-        if(comparisonPairs.length >= 1 ) {
+    
+    if (evalString === '__name__ == "__main__"') {
+            return 'true';
+    }
+    if(comparisonPairs.length >= 1 ) {
         evalString = evalString.replace(/this\./g, 'osiris_builtin_class.')
 //         console.log(evalString)
         console.log(`localVars [${this.localVars}]`)
@@ -24,6 +28,7 @@ export function visitComparison(ctx) {
     }
     else 
     {
+        
         return evalString;
     }
 }
