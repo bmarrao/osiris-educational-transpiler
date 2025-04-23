@@ -133,6 +133,8 @@ function handleCollectionFunctions(primary, argsText) {
       let [index, element] = argsText.split(',').map(arg => arg.trim());
       return `${objectName}.splice(${index}, 0, ${element})`;
     }
+    case "copy":
+      return `osiris_builtin_copy(${objectName})`;
     case "pop":
       return `myPop(${objectName}${argsText ? `, ${argsText}` : ''})`;
     case "remove":

@@ -1,3 +1,42 @@
+export function osiris_builtin_copy(iterable, options = {}) {
+  // Handle null or undefined
+  if (iterable === null || iterable === undefined) {
+    return iterable;
+  }
+
+  // Handle Arrays (similar to list.copy() in Python)
+  if (Array.isArray(iterable)) {
+    return [...iterable];
+  }
+
+  // Handle Objects (similar to dict.copy() in Python)
+  if (typeof iterable === 'object' && iterable.constructor === Object) {
+    return { ...iterable };
+  }
+
+  // Handle Sets
+  if (iterable instanceof Set) {
+    return new Set(iterable);
+  }
+
+  // Handle Maps
+  if (iterable instanceof Map) {
+    return new Map(iterable);
+  }
+
+  // Handle other iterables like typed arrays
+  if (typeof iterable[Symbol.iterator] === 'function') {
+    try {
+      return [...iterable];
+    } catch (e) {
+      throw new TypeError("Cannot copy this type of iterable");
+    }
+  }
+
+  // For non-iterables or unsupported types
+  throw new TypeError("Object is not iterable or is not supported by copy()");
+}
+
 export function osiris_builtin_int(value, base = 10) {
     if (typeof value === 'boolean') {
         return value ? 1 : 0;
