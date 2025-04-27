@@ -1,8 +1,15 @@
+Add evalSingle on every possible if()
+
 Teste de hipótese
 
 Adicionar escrita
 
-Teste nos agnis : entrar resolver exercicios, tirar os dados do agni.
+def eh_primo(n):
+    if n < 2:
+        return "Não é primo"
+    divisores = [i for i in range(2, n) if n % i == 0]
+    return "Não é primo" if divisores else "É primo"
+
 Transofrm in primary next to primary.next().value
 def collatz_generator(n):
     while n != 1:

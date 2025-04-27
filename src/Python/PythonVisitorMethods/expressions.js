@@ -37,8 +37,12 @@ export function visitExpression(ctx) {
 
 //     // console.log(2)
     // Translate Python ternary (x if y else z) to JavaScript (y ? x : z)
-    const condition = this.visit(disjunctions[1]);
+    console.log("\n\n\nTeste") 
     const trueExpr = this.visit(disjunctions[0]);
+    let condition = this.visit(disjunctions[1]);
+    if (!condition.includes('osiris_builtin_python_evalPythonComparison')){
+        condition = `osirisEvalSingle(${condition})`   
+    }
     const falseExpr = this.visit(ctx.expression());
 
     return `${condition} ? ${trueExpr} : ${falseExpr}`;

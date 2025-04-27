@@ -10,7 +10,9 @@ export function visitStatements(ctx) {
     for (let i = 0; i < statements.length; i++) {
         const statementCtx = statements[i];
         // Add the result of visiting the statement
+        console.log(results)
         results += this.visit(statementCtx);
+        console.log(results)
 
         // Add a newline if it's not the last statement
         if (i < statements.length - 1) {

@@ -1,3 +1,35 @@
+var evalSingleFunc = 
+`
+osirisEvalSingle(value) {
+    // Check for Python's None
+    if (value === null || value === undefined) {
+        return false;
+    }
+    // Handle booleans
+    if (typeof value === 'boolean') {
+        return value;
+    }
+    // Handle numbers
+    if (typeof value === 'number') {
+        return value !== 0 && !Number.isNaN(value);
+    }
+    // Handle strings
+    if (typeof value === 'string') {
+        return value.length > 0;
+    }
+    // Handle arrays (Python lists)
+    if (Array.isArray(value)) {
+        return value.length > 0;
+    }
+    // Handle objects (Python dicts)
+    if (value.constructor === Object) {
+        return Object.keys(value).length > 0;
+    }
+    // For other object types (e.g., instances of classes), default to truthy
+    return true;
+}
+`
+
 var copyFunc = `
 function osiris_builtin_copy(iterable, options = {}) {
   // Handle null or undefined
@@ -949,7 +981,11 @@ var typeFunc = `function osiris_builtin_type(obj) {
 }`;
 
 var sumFunc = `function osiris_builtin_sum(iterable, start = 0) {
-  return iterable.reduce((acc, val) => acc + val, start);
+  let total = start;
+  for (const val of iterable) {
+    total += val;
+  }
+  return total;
 }`;
 
 var rangeFunc = `function osiris_builtin_range(start, stop, step = 1) {
@@ -998,9 +1034,40 @@ function osiris_builtin_join(separator, iterable) {
     return acc + separator + curr;
   }, '');
 }
-`;
-
-
+`
+/*
+var formatPrint = `osirisFormatPrint(strArgs) {
+  const parts = strArgs.split(',').map(p => p.trim());
+  
+  let sep = ' ';
+  let end = '\n';
+  let args = [];
+  
+  // Parse keywords from the end
+  let i = parts.length - 1;
+  while (i >= 0) {
+    const part = parts[i];
+    const keywordMatch = part.match(/^(sep|end)\s*=\s*(['"])(.*?)\\2$/); // <-- Fixed: \\2
+    
+    if (!keywordMatch) break;
+    
+    const [_, key, __, value] = keywordMatch;
+    if (key === 'sep') sep = value;
+    if (key === 'end') end = value;
+    i--;
+  }
+  
+  // Process remaining arguments (strip quotes)
+  args = parts.slice(0, i + 1).map(arg => {
+    const quotedMatch = arg.match(/^(['"])(.*)\\1$/); // <-- Also fixed: \\1
+    return quotedMatch ? quotedMatch[2] : arg;
+  });
+  
+  return args.join(sep) + end;
+}
+`
+;
+*/
 
 export var funcNames = [
   "osiris_builtin_ord",
@@ -1035,9 +1102,11 @@ export var funcNames = [
   "osiris_builtin_int",
   "osiris_builtin_zip",
   "myRemove",
-
+  "osirisEvalSingle"
 ];
+
 export var builtInPythonFuncs = `
+${evalSingleFunc}
 ${funcOrd}
 ${map}
 ${enumerate}

@@ -13,9 +13,11 @@ export function visitComparison(ctx) {
     }
     let evalString = `${left} ${comparisonPairs.join(' ')}`.replace(/\s+/g, ' ').trim(); // Ensure single space between tokens
     
-    if (evalString === '__name__ == "__main__"') {
-            return 'true';
+    
+    if (evalString === '__name__ == "__main__"' || evalString === "__name__ == '__main__'") {
+        return 'true';
     }
+
     if(comparisonPairs.length >= 1 ) {
         evalString = evalString.replace(/this\./g, 'osiris_builtin_class.')
 //         console.log(evalString)
@@ -24,7 +26,6 @@ export function visitComparison(ctx) {
         .map(v => v.trim() === "" ? null : (v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`))
         .filter(Boolean)
         .join(", ")} })`;
-
     }
     else 
     {

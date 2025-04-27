@@ -1,20 +1,11 @@
-// If statement
-// ------------
-
-/*
-if_stmt
-    : 'if' named_expression ':' block (elif_stmt | else_block?)
-    ;
-elif_stmt
-    : 'elif' named_expression ':' block (elif_stmt | else_block?)
-    ;
-else_block
-    : 'else' ':' block;
-*/
-
 export function visitIf_stmt(ctx) {
     // Visit the condition expression (named_expression)
-    const condition = this.visit(ctx.named_expression());
+    let condition = this.visit(ctx.named_expression());
+    console.log(condition)
+    if (!condition.includes('osiris_builtin_python_evalPythonComparison')){
+        condition = `osirisEvalSingle(${condition})`   
+    }
+    console.log(condition)
     this.inIf = true;
     // Visit the block of code that follows the condition
     let body = this.visit(ctx.block());
@@ -34,18 +25,24 @@ export function visitIf_stmt(ctx) {
 
 export function visitElif_stmt(ctx) {
     // Visit the condition expression (named_expression)
-    const condition = this.visit(ctx.named_expression());
-    // Visit the block of code that follows the condition
+    let condition = this.visit(ctx.named_expression());
+    if (!condition.includes('osiris_builtin_python_evalPythonComparison')) {
+        condition = `osirisEvalSingle(${condition})`;
+    }
+
     let body = this.visit(ctx.block());
-    
     // Handle elif_stmt or else_block
     let elseV = '';
+
     if (ctx.else_block()) {
         elseV += this.visit(ctx.else_block()); // Visit else block
     }
-
-    // Construct the JavaScript if statement
+    if (ctx.elif_stmt()) {
+        elseV += this.visit(ctx.elif_stmt()); // Visit else block
+    }
     return `else if (${condition}) {\n${body}\n}${elseV}`;
+
+
 }
 
 export function visitElse_block(ctx) {

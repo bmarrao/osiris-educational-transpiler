@@ -12,10 +12,15 @@ export function visitFor_if_clause(ctx) {
         async: !!ctx.ASYNC(),
         targets: targetsRet,
         iterable: this.visit(ctx.disjunction(0)),
-        conditions: ctx.disjunction().slice(1).map(cond => this.visit(cond))
+        conditions: ctx.disjunction().slice(1).map(cond => {
+            let condition = this.visit(cond);
+            if (!condition.includes('osiris_builtin_python_evalPythonComparison')) {
+                condition = `osirisEvalSingle(${condition})`;
+            }
+            return condition;
+        }),
     };
 }
-
 function buildNestedLoops(clauses, innerCode) {
     let loopCode = innerCode;
     for (const clause of clauses.reverse()) {
