@@ -13,7 +13,12 @@ export function visitAwait_primary(ctx) {
 
 function convertBuiltIn(name) {
     const namesToConvert = ["ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len",  "divmod", "extend", "int", "join"];
-    if (namesToConvert.includes(name)) {
+    if (namesToConvert.includes(name)) 
+    {
+        if (name === "str" && this.localVars.include(name))
+        {
+          return name ;
+        }
         return `osiris_builtin_${name}`;
     }
     return name;
@@ -276,22 +281,54 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
 
 function handlePrint(argsText, runOnBrowser) {
   if (!argsText) {
-     return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+    return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
   }
 
   let argsList = splitArguments(argsText);
-  if (argsList.length > 1) {
-    const parts = argsList.map(arg => {
-      arg = arg.trim();
-      return /^['"`].*['"`]$/.test(arg) ? arg.slice(1, -1) : `\${${arg}}`;
-    }).join("");
-    let template = `\`${parts}\``;
-     return runOnBrowser ? `postMessage(${template})` : `console.log(${template});`;
-  }
+  let positionalArgs = [];
+  let sepValue = "' '";
+  let endValue = "'\\n'";
 
-   return runOnBrowser ? `postMessage(${argsText})` : `console.log(${argsText});`;
+  // Extract sep and end parameters
+  argsList.forEach(arg => {
+    const trimmedArg = arg.trim();
+    if (trimmedArg.startsWith('sep=')) {
+      sepValue = parseValue(trimmedArg.slice(4));
+    } else if (trimmedArg.startsWith('end=')) {
+      endValue = parseValue(trimmedArg.slice(4));
+    } else {
+      positionalArgs.push(trimmedArg);
+    }
+  });
+
+  // Process positional arguments with proper string conversion
+  const processedArgs = positionalArgs.map(arg => {
+    if (/^['"`].*['"`]$/.test(arg)) {
+      // Handle string literals
+      const quote = arg[0];
+      return `${quote}${arg.slice(1, -1).replace(/\\/g, '\\\\')}${quote}`;
+    }
+    // Handle variables with explicit string conversion
+    return `String(${arg})`;
+  });
+
+  const joinedExpr = processedArgs.length > 0 
+    ? `[${processedArgs.join(', ')}].join(${sepValue}) + ${endValue}`
+    : endValue;
+
+  return runOnBrowser 
+    ? `postMessage(${joinedExpr})` 
+    : `console.log(${joinedExpr});`;
 }
 
+function parseValue(value) {
+  value = value.trim();
+  if (/^['"`]/.test(value)) {
+    const quote = value[0];
+    return `${quote}${value.slice(1, -1).replace(/\\/g, '\\\\')}${quote}`;
+  }
+  return value;
+}
 function handleMinMax(primary, argsText, runOnBrowser) {
   if (!argsText) return '';
 

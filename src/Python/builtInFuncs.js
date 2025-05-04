@@ -805,7 +805,7 @@ export function osiris_builtin_count(iterable, value, start = 0, end = undefined
   }
   
   // Try to use iterable protocol
-  if (typeof iterable[Symbol.iterator] === 'export function') {
+  if (typeof iterable[Symbol.iterator] === 'function') {
     // Efficiently handle special cases without fully materializing
     if (Array.isArray(iterable)) {
       const length = iterable.length;
