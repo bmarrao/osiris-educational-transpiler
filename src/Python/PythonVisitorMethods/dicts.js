@@ -12,7 +12,7 @@ export function visitDict(ctx) {
     {
         keyValuePairs = ""
     }
-    return `{${keyValuePairs.replace(/\s+/g, '')}}`; // Wrap the key-value pairs in curly braces for a JavaScript object
+    return `{${keyValuePairs}}`; // Wrap the key-value pairs in curly braces for a JavaScript object
 }
 
 export function visitDouble_starred_kvpairs(ctx) {

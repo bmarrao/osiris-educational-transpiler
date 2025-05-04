@@ -15,7 +15,7 @@ function convertBuiltIn(name) {
     const namesToConvert = ["ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len",  "divmod", "extend", "int", "join"];
     if (namesToConvert.includes(name)) 
     {
-        if (name === "str" && this.localVars.include(name))
+        if ((name === "max" || name === "sum" || name === "min" || name === "str") && this.localVars.include(name))
         {
           return name ;
         }
