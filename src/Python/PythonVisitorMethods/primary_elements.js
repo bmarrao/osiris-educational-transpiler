@@ -11,11 +11,11 @@ export function visitAwait_primary(ctx) {
     }
 }
 
-function convertBuiltIn(name) {
+function convertBuiltIn(name, localVars) {
     const namesToConvert = ["ord", "filter", "all", "get", "repr", "str", "any", "map", "enumerate", "round", "zip", "sorted", "max", "min", "type", "sum", "range", "len",  "divmod", "extend", "int", "join"];
     if (namesToConvert.includes(name)) 
     {
-        if ((name === "max" || name === "sum" || name === "min" || name === "str") && this.localVars.include(name))
+        if ((name === "max" || name === "sum" || name === "min" || name === "str") && localVars.includes(name))
         {
           return name ;
         }
@@ -60,7 +60,7 @@ export function visitAtom(ctx) {
             // Handle the case for the Python None literal
             return 'null'; // Convert to JavaScript's null
     }
-  return ctx.getText() === "self" && this.inClass ? "this" : convertBuiltIn(ctx.getText());
+  return ctx.getText() === "self" && this.inClass ? "this" : convertBuiltIn(ctx.getText(),this.localVars);
  
 }
 export function visitGroup(ctx) {
