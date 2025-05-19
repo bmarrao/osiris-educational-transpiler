@@ -33,7 +33,8 @@ import { funcNames } from './pre-defined-funcs.js';
 export default class PythonCodeGenerator extends PythonParserVisitor {
     constructor(runOnBrowser=false) {
         super();
-        this.globalvars = []; 
+        this.globalvars = [];
+        this.builtInFuncNames = funcNames;
         this.localVars = [...funcNames]
         this.inFunc = false ;
         this.inClass = false ;
@@ -41,6 +42,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
         this.className="";
         this.classes = [] ;
         this.iterable = 0 ;
+        this.iterableFor = 0 ;
         this.case= {}
         this.runOnBrowser = runOnBrowser
     }
@@ -91,7 +93,7 @@ export default class PythonCodeGenerator extends PythonParserVisitor {
 
     visitImport_stmt(ctx)
     {
-        throw new Error('Transpiler Error: Import statements are not supported.');
+        return "";
     }
     visitSimple_stmts(ctx) {
         //console.log('Visiting simple_stmts');

@@ -1,53 +1,48 @@
 import Osiris from "./index.js"
 const transpilerPython = new Osiris("python");
 
-
-const testInput = ["GRACA","ARCO DA VILA","PENHA DE FRANCA","SANTA LUZIA","VITORIA","SAO JORGE","ARCO DA VILA","PENHA DE FRANCA","VITORIA","PENHA DE FRANCA","PENHA DE FRANCA","SENHORA DO MONTE","FIM",""];
-                    let inputPtr = 0;
+                    const testInput = ["5 8","1 1 1 1 4 8 1 2","2 3 2 1 7 5 4 1","1 1 1 1 2 6 7 3","1 9 2 4 1 2 1 4","1 1 1 1 1 3 3 3",""];
+                    let ptr = 0;
                     function mockInput() {
-                        if (inputPtr >= testInput.length) throw new Error('Not enough input provided');
-                        return testInput[inputPtr++];
+                        if (ptr >= testInput.length) throw new Error('Not enough input');
+                        return testInput[ptr++];
                     }
-                let cidade = "";
-let cidades = {"ARCODAVILA":0,"GRACA":0,"IGREJADOSGRILOS":0,"JARDINSDOPALACIODECRISTAL":0,"MONTEAGUDO":0,"MONTEDEFARO":0,"PENHADEFRANCA":0,"SANTACATARINA":0,"SANTALUZIA":0,"SAOJORGE":0,"SAOPEDRODEALCANTARA":0,"SECATEDRAL":0,"SENHORADOMONTE":0,"SERRADOPILAR":0,"TORREDOSCLERIGOS":0,"VITORIA":0};
-let capitais = {"ARCODAVILA":"Faro","GRACA":"Lisboa","IGREJADOSGRILOS":"Porto","JARDINSDOPALACIODECRISTAL":"Porto","MONTEAGUDO":"Lisboa","MONTEDEFARO":"Faro","PENHADEFRANCA":"Lisboa","SANTACATARINA":"Lisboa","SANTALUZIA":"Lisboa","SAOJORGE":"Lisboa","SAOPEDRODEALCANTARA":"Lisboa","SECATEDRAL":"Porto","SENHORADOMONTE":"Lisboa","SERRADOPILAR":"Porto","TORREDOSCLERIGOS":"Porto","VITORIA":"Porto"};
-let count = 0;
-let cidades_max = [];
-let max = 0;
-while (osiris_builtin_python_evalPythonComparison('cidade != "FIM"', { osiris_builtin_ord: osiris_builtin_ord, osiris_builtin_count: osiris_builtin_count, pythonEqual: pythonEqual, osiris_builtin_filter: osiris_builtin_filter, osiris_builtin_all: osiris_builtin_all, pythonIndex: pythonIndex, osiris_builtin_get: osiris_builtin_get, osiris_builtin_repr: osiris_builtin_repr, myPop: myPop, osiris_builtin_sorted: osiris_builtin_sorted, osiris_builtin_max: osiris_builtin_max, osiris_builtin_min: osiris_builtin_min, osiris_builtin_type: osiris_builtin_type, osiris_builtin_sum: osiris_builtin_sum, osiris_builtin_range: osiris_builtin_range, osiris_builtin_len: osiris_builtin_len, osiris_builtin_extend: osiris_builtin_extend, osiris_builtin_join: osiris_builtin_join, osiris_builtin_str: osiris_builtin_str, osiris_builtin_any: osiris_builtin_any, convertPythonOperand: convertPythonOperand, osiris_builtin_addition: osiris_builtin_addition, osiris_builtin_subtraction: osiris_builtin_subtraction, osiris_builtin_multiplication: osiris_builtin_multiplication, osiris_builtin_python_evalPythonComparison: osiris_builtin_python_evalPythonComparison, osiris_builtin_map: osiris_builtin_map, osiris_builtin_enumerate: osiris_builtin_enumerate, osiris_builtin_divmod: osiris_builtin_divmod, osiris_builtin_round: osiris_builtin_round, osiris_builtin_int: osiris_builtin_int, osiris_builtin_zip: osiris_builtin_zip, myRemove: myRemove, osirisEvalSingle: osirisEvalSingle, cidade: cidade, cidades: cidades, capitais: capitais, count: count, cidades_max: cidades_max, max: max })) {
-		cidade = mockInput();
-		if (osiris_builtin_python_evalPythonComparison('cidade != "FIM"', { osiris_builtin_ord: osiris_builtin_ord, osiris_builtin_count: osiris_builtin_count, pythonEqual: pythonEqual, osiris_builtin_filter: osiris_builtin_filter, osiris_builtin_all: osiris_builtin_all, pythonIndex: pythonIndex, osiris_builtin_get: osiris_builtin_get, osiris_builtin_repr: osiris_builtin_repr, myPop: myPop, osiris_builtin_sorted: osiris_builtin_sorted, osiris_builtin_max: osiris_builtin_max, osiris_builtin_min: osiris_builtin_min, osiris_builtin_type: osiris_builtin_type, osiris_builtin_sum: osiris_builtin_sum, osiris_builtin_range: osiris_builtin_range, osiris_builtin_len: osiris_builtin_len, osiris_builtin_extend: osiris_builtin_extend, osiris_builtin_join: osiris_builtin_join, osiris_builtin_str: osiris_builtin_str, osiris_builtin_any: osiris_builtin_any, convertPythonOperand: convertPythonOperand, osiris_builtin_addition: osiris_builtin_addition, osiris_builtin_subtraction: osiris_builtin_subtraction, osiris_builtin_multiplication: osiris_builtin_multiplication, osiris_builtin_python_evalPythonComparison: osiris_builtin_python_evalPythonComparison, osiris_builtin_map: osiris_builtin_map, osiris_builtin_enumerate: osiris_builtin_enumerate, osiris_builtin_divmod: osiris_builtin_divmod, osiris_builtin_round: osiris_builtin_round, osiris_builtin_int: osiris_builtin_int, osiris_builtin_zip: osiris_builtin_zip, myRemove: myRemove, osirisEvalSingle: osirisEvalSingle, cidade: cidade, cidades: cidades, capitais: capitais, count: count, cidades_max: cidades_max, max: max })) {
-				count = osiris_builtin_addition(count, 1);
-				console.log(`teste ${cidades[pythonIndex(cidades, cidade)]}`)
-				cidades[pythonIndex(cidades, cidade)] = osiris_builtin_addition(cidades[pythonIndex(cidades, cidade)],1);
-				if (osiris_builtin_python_evalPythonComparison('osiris_builtin_max == 0', { osiris_builtin_ord: osiris_builtin_ord, osiris_builtin_count: osiris_builtin_count, pythonEqual: pythonEqual, osiris_builtin_filter: osiris_builtin_filter, osiris_builtin_all: osiris_builtin_all, pythonIndex: pythonIndex, osiris_builtin_get: osiris_builtin_get, osiris_builtin_repr: osiris_builtin_repr, myPop: myPop, osiris_builtin_sorted: osiris_builtin_sorted, osiris_builtin_max: osiris_builtin_max, osiris_builtin_min: osiris_builtin_min, osiris_builtin_type: osiris_builtin_type, osiris_builtin_sum: osiris_builtin_sum, osiris_builtin_range: osiris_builtin_range, osiris_builtin_len: osiris_builtin_len, osiris_builtin_extend: osiris_builtin_extend, osiris_builtin_join: osiris_builtin_join, osiris_builtin_str: osiris_builtin_str, osiris_builtin_any: osiris_builtin_any, convertPythonOperand: convertPythonOperand, osiris_builtin_addition: osiris_builtin_addition, osiris_builtin_subtraction: osiris_builtin_subtraction, osiris_builtin_multiplication: osiris_builtin_multiplication, osiris_builtin_python_evalPythonComparison: osiris_builtin_python_evalPythonComparison, osiris_builtin_map: osiris_builtin_map, osiris_builtin_enumerate: osiris_builtin_enumerate, osiris_builtin_divmod: osiris_builtin_divmod, osiris_builtin_round: osiris_builtin_round, osiris_builtin_int: osiris_builtin_int, osiris_builtin_zip: osiris_builtin_zip, myRemove: myRemove, osirisEvalSingle: osirisEvalSingle, cidade: cidade, cidades: cidades, capitais: capitais, count: count, cidades_max: cidades_max, max: max })) {
-						max = cidades[pythonIndex(cidades, cidade)];
-						cidades_max.push(cidade)
+                function main() {
+		let osiris_iterable_unpacking = osiris_builtin_map(osiris_builtin_int, mockInput().split(" "));
+		let x = osiris_iterable_unpacking[0];
+		let y = osiris_iterable_unpacking[1];
+		let tabela = [];
+		let i
+		for (i = 0; i < x; i += 1) {
+				tabela.push(Array.from(osiris_builtin_map(osiris_builtin_int, mockInput().split(" "))))
+		}
+		let pos = [0,0];
+		let mov = "0";
+		let n = 1;
+		let mm = tabela[pythonIndex(tabela, 0)][pythonIndex(tabela[pythonIndex(tabela, 0)], 0)];
+		while (true) {
+				if (osiris_builtin_python_evalPythonComparison("osiris_builtin_addition(pos[pythonIndex(pos, 0)],1) < x", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("tabela[pythonIndex(tabela, osiris_builtin_addition(pos[pythonIndex(pos, 0)],1))][pythonIndex(tabela[pythonIndex(tabela, osiris_builtin_addition(pos[pythonIndex(pos, 0)],1))], pos[pythonIndex(pos, 1)])] == mm", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("mov[pythonIndex(mov, - 1)] != \"C\"", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm })) {
+						pos[pythonIndex(pos, 0)] = osiris_builtin_addition(pos[pythonIndex(pos, 0)], 1);
+						n = osiris_builtin_addition(n, 1);
+						mov = osiris_builtin_addition(mov, "B");
+				}else if (osiris_builtin_python_evalPythonComparison("osiris_builtin_subtraction(pos[pythonIndex(pos, 0)],1) >= 0", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("tabela[pythonIndex(tabela, osiris_builtin_subtraction(pos[pythonIndex(pos, 0)],1))][pythonIndex(tabela[pythonIndex(tabela, osiris_builtin_subtraction(pos[pythonIndex(pos, 0)],1))], pos[pythonIndex(pos, 1)])] == mm", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("mov[pythonIndex(mov, - 1)] != \"B\"", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm })) {
+						pos[pythonIndex(pos, 0)] = osiris_builtin_subtraction(pos[pythonIndex(pos, 0)], 1);
+						n = osiris_builtin_addition(n, 1);
+						mov = osiris_builtin_addition(mov, "C");
+				}else if (osiris_builtin_python_evalPythonComparison("osiris_builtin_addition(pos[pythonIndex(pos, 1)],1) < y", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("tabela[pythonIndex(tabela, pos[pythonIndex(pos, 0)])][pythonIndex(tabela[pythonIndex(tabela, pos[pythonIndex(pos, 0)])], osiris_builtin_addition(pos[pythonIndex(pos, 1)],1))] == mm", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("mov[pythonIndex(mov, - 1)] != \"E\"", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm })) {
+						pos[pythonIndex(pos, 1)] = osiris_builtin_addition(pos[pythonIndex(pos, 1)], 1);
+						n = osiris_builtin_addition(n, 1);
+						mov = osiris_builtin_addition(mov, "D");
+				}else if (osiris_builtin_python_evalPythonComparison("osiris_builtin_subtraction(pos[pythonIndex(pos, 1)],1) >= 0", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("tabela[pythonIndex(tabela, pos[pythonIndex(pos, 0)])][pythonIndex(tabela[pythonIndex(tabela, pos[pythonIndex(pos, 0)])], osiris_builtin_subtraction(pos[pythonIndex(pos, 1)],1))] == mm", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm }) && osiris_builtin_python_evalPythonComparison("mov[pythonIndex(mov, - 1)] != \"D\"", { main: main, osiris_iterable_unpacking: osiris_iterable_unpacking, x: x, y: y, tabela: tabela, i: i, pos: pos, mov: mov, n: n, mm: mm })) {
+						pos[pythonIndex(pos, 1)] = osiris_builtin_subtraction(pos[pythonIndex(pos, 1)], 1);
+						n = osiris_builtin_addition(n, 1);
+						mov = osiris_builtin_addition(mov, "E");
 				}else {
-						if (osiris_builtin_python_evalPythonComparison('cidades[pythonIndex(cidades, cidade)] > osiris_builtin_max', { osiris_builtin_ord: osiris_builtin_ord, osiris_builtin_count: osiris_builtin_count, pythonEqual: pythonEqual, osiris_builtin_filter: osiris_builtin_filter, osiris_builtin_all: osiris_builtin_all, pythonIndex: pythonIndex, osiris_builtin_get: osiris_builtin_get, osiris_builtin_repr: osiris_builtin_repr, myPop: myPop, osiris_builtin_sorted: osiris_builtin_sorted, osiris_builtin_max: osiris_builtin_max, osiris_builtin_min: osiris_builtin_min, osiris_builtin_type: osiris_builtin_type, osiris_builtin_sum: osiris_builtin_sum, osiris_builtin_range: osiris_builtin_range, osiris_builtin_len: osiris_builtin_len, osiris_builtin_extend: osiris_builtin_extend, osiris_builtin_join: osiris_builtin_join, osiris_builtin_str: osiris_builtin_str, osiris_builtin_any: osiris_builtin_any, convertPythonOperand: convertPythonOperand, osiris_builtin_addition: osiris_builtin_addition, osiris_builtin_subtraction: osiris_builtin_subtraction, osiris_builtin_multiplication: osiris_builtin_multiplication, osiris_builtin_python_evalPythonComparison: osiris_builtin_python_evalPythonComparison, osiris_builtin_map: osiris_builtin_map, osiris_builtin_enumerate: osiris_builtin_enumerate, osiris_builtin_divmod: osiris_builtin_divmod, osiris_builtin_round: osiris_builtin_round, osiris_builtin_int: osiris_builtin_int, osiris_builtin_zip: osiris_builtin_zip, myRemove: myRemove, osirisEvalSingle: osirisEvalSingle, cidade: cidade, cidades: cidades, capitais: capitais, count: count, cidades_max: cidades_max, max: max })) {
-								max = cidades[pythonIndex(cidades, cidade)];
-								cidades_max = [];
-								cidades_max.push(cidade)
-						}else {
-								if (osiris_builtin_python_evalPythonComparison('cidades[pythonIndex(cidades, cidade)] == osiris_builtin_max', { osiris_builtin_ord: osiris_builtin_ord, osiris_builtin_count: osiris_builtin_count, pythonEqual: pythonEqual, osiris_builtin_filter: osiris_builtin_filter, osiris_builtin_all: osiris_builtin_all, pythonIndex: pythonIndex, osiris_builtin_get: osiris_builtin_get, osiris_builtin_repr: osiris_builtin_repr, myPop: myPop, osiris_builtin_sorted: osiris_builtin_sorted, osiris_builtin_max: osiris_builtin_max, osiris_builtin_min: osiris_builtin_min, osiris_builtin_type: osiris_builtin_type, osiris_builtin_sum: osiris_builtin_sum, osiris_builtin_range: osiris_builtin_range, osiris_builtin_len: osiris_builtin_len, osiris_builtin_extend: osiris_builtin_extend, osiris_builtin_join: osiris_builtin_join, osiris_builtin_str: osiris_builtin_str, osiris_builtin_any: osiris_builtin_any, convertPythonOperand: convertPythonOperand, osiris_builtin_addition: osiris_builtin_addition, osiris_builtin_subtraction: osiris_builtin_subtraction, osiris_builtin_multiplication: osiris_builtin_multiplication, osiris_builtin_python_evalPythonComparison: osiris_builtin_python_evalPythonComparison, osiris_builtin_map: osiris_builtin_map, osiris_builtin_enumerate: osiris_builtin_enumerate, osiris_builtin_divmod: osiris_builtin_divmod, osiris_builtin_round: osiris_builtin_round, osiris_builtin_int: osiris_builtin_int, osiris_builtin_zip: osiris_builtin_zip, myRemove: myRemove, osirisEvalSingle: osirisEvalSingle, cidade: cidade, cidades: cidades, capitais: capitais, count: count, cidades_max: cidades_max, max: max })) {
-										cidades_max.push(cidade)
-								}
-						}
+						break;
 				}
 		}
+		process.stdout.write([String(mov.slice(pythonIndex(mov, 1, true), mov.length)), String(osiris_builtin_multiplication(n,mm))].join("\n") + '\n');
 }
-console.log([String(count), String(osiris_builtin_max)].join(' ') + '\n');
-cidades_max = osiris_builtin_sorted(cidades_max);
-let i
- 
-    if (typeof cidades_max[Symbol.iterator] === "function") {
-    // It's an iterable (Array, Set, Map, etc.), but not a string
-        for (const i of cidades_max) {
-		console.log([String(i), String(capitais[pythonIndex(capitais, i)])].join(' ') + '\n');
+if (osirisEvalSingle(true)) {
+		main()
 }
-    } else if (typeof cidades_max === "object" && cidades_max !== null) {
-        for (const i in cidades_max) {
-		console.log([String(i), String(capitais[pythonIndex(capitais, i)])].join(' ') + '\n');
-}
-    }
-

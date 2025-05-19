@@ -1,5 +1,4 @@
-Add evalSingle on every possible if()
-
+Find a way on evalComparison to not pass that context so explicitly because the code becomes really hard to redad -> TO DO THIS ADD STATIC CONTEXT THE BUILTIN FUNC AND PASS ONLY THE OTHER STUFF ADD CODE FOR THIS
 Teste de hipótese
 
 Adicionar escrita

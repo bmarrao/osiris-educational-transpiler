@@ -1,3 +1,21 @@
+var clearFunc = 
+`
+function osirisClear(target) {
+  if (target instanceof Set || target instanceof Map) {
+    // clears Set or Map
+    target.clear();
+  } else if (Array.isArray(target)) {
+    // clears Array
+    target.length = 0;
+  } else if (target !== null && typeof target === 'object') {
+    // clears plain Object (like Python dict)
+    Object.keys(target).forEach(key => delete target[key]);
+  } else {
+    throw new TypeError('This type does not support clear()');
+  }
+}
+`
+
 var evalSingleFunc = 
 `
 osirisEvalSingle(value) {
@@ -1102,7 +1120,8 @@ export var funcNames = [
   "osiris_builtin_int",
   "osiris_builtin_zip",
   "myRemove",
-  "osirisEvalSingle"
+  "osirisEvalSingle",
+  "osirisClear"
 ];
 
 export var builtInPythonFuncs = `
@@ -1139,4 +1158,5 @@ ${countFunc}
 ${joinFunc}
 ${joinFunc}
 ${funcInt}
+${clearFunc}
 `;

@@ -132,6 +132,8 @@ function handleCollectionFunctions(primary, argsText) {
     // ----- List Functions -----
     case "append":
       return `${objectName}.push(${argsText})`;
+    case "clear":
+      return `osirisClear(${objectName})`;
     case "extend":
       return `${objectName}.push(...${argsText})`;
     case "insert": {
@@ -175,6 +177,8 @@ function handleCollectionFunctions(primary, argsText) {
     // ----- String Functions -----
     case "join":
       return `osiris_builtin_join(${objectName},${argsText})`;
+    case "replace":
+      return `${objectName}.replaceAll(${argsText})`;
     case "upper":
       return `${objectName}.toUpperCase(${argsText})`;
     case "lower":
@@ -280,8 +284,46 @@ function handleNonCollectionFunctionCalls(primary, argsText, runOnBrowser) {
 }
 
 function handlePrint(argsText, runOnBrowser) {
+  function parseValue(value) {
+  value = value.trim();
+  if (/^['"`]/.test(value)) {
+    const quote = value[0];
+    let content = value.slice(1, -1);
+
+    // Convert Python escape sequences to actual characters
+    content = content.replace(/\\(.)/g, (match, char) => {
+      switch (char) {
+        case 'n': return '\n';   // Newline
+        case 't': return '\t';   // Tab
+        case 'r': return '\r';   // Carriage return
+        case 'b': return '\x08'; // Backspace (ASCII 08)
+        case 'f': return '\f';   // Form feed
+        case 'v': return '\v';   // Vertical tab
+        case '\\': return '\\';  // Backslash
+        default: return match;   // Leave unrecognized escapes
+      }
+    });
+
+    // Escape special characters for JavaScript string literals
+    content = content
+      .replace(/\\/g, '\\\\')    // Escape backslashes
+      .replace(/\n/g, '\\n')     // Newline
+      .replace(/\t/g, '\\t')     // Tab
+      .replace(/\r/g, '\\r')     // Carriage return
+      .replace(/\x08/g, '\\b')   // Backspace (using hex code)
+      .replace(/\f/g, '\\f')     // Form feed
+      .replace(/\v/g, '\\v');    // Vertical tab
+
+    // Escape the quote character if needed
+    if (quote === "'") content = content.replace(/'/g, "\\'");
+    else if (quote === '"') content = content.replace(/"/g, '\\"');
+    return `${quote}${content}${quote}`;
+  }
+  return value;
+}
+
   if (!argsText) {
-    return runOnBrowser ? 'postMessage("\\n")' : 'console.log("\\n");';
+    return runOnBrowser ? 'postMessage("\\n")' : 'process.stdout.write("\\n")';
   }
 
   let argsList = splitArguments(argsText);
@@ -289,26 +331,34 @@ function handlePrint(argsText, runOnBrowser) {
   let sepValue = "' '";
   let endValue = "'\\n'";
 
-  // Extract sep and end parameters
   argsList.forEach(arg => {
-    const trimmedArg = arg.trim();
-    if (trimmedArg.startsWith('sep=')) {
-      sepValue = parseValue(trimmedArg.slice(4));
-    } else if (trimmedArg.startsWith('end=')) {
-      endValue = parseValue(trimmedArg.slice(4));
+    if (typeof arg === 'string') {
+      const trimmedArg = arg.trim();
+      if (trimmedArg.startsWith('{') && trimmedArg.endsWith('}')) {
+        const content = trimmedArg.slice(1, -1).trim();
+        content.split(',').forEach(pair => {
+          const [key, value] = pair.split(':').map(s => s.trim());
+          if (key === 'sep') sepValue = parseValue(value);
+          if (key === 'end') endValue = parseValue(value);
+        });
+      } else if (trimmedArg.startsWith('sep=')) {
+        sepValue = parseValue(trimmedArg.slice(4));
+      } else if (trimmedArg.startsWith('end=')) {
+        endValue = parseValue(trimmedArg.slice(4));
+      } else {
+        positionalArgs.push(trimmedArg);
+      }
     } else {
-      positionalArgs.push(trimmedArg);
+      positionalArgs.push(arg);
     }
   });
 
-  // Process positional arguments with proper string conversion
   const processedArgs = positionalArgs.map(arg => {
     if (/^['"`].*['"`]$/.test(arg)) {
-      // Handle string literals
       const quote = arg[0];
-      return `${quote}${arg.slice(1, -1).replace(/\\/g, '\\\\')}${quote}`;
+      const content = arg.slice(1, -1).replace(/\\/g, '\\\\');
+      return `${quote}${content}${quote}`;
     }
-    // Handle variables with explicit string conversion
     return `String(${arg})`;
   });
 
@@ -318,16 +368,7 @@ function handlePrint(argsText, runOnBrowser) {
 
   return runOnBrowser 
     ? `postMessage(${joinedExpr})` 
-    : `console.log(${joinedExpr});`;
-}
-
-function parseValue(value) {
-  value = value.trim();
-  if (/^['"`]/.test(value)) {
-    const quote = value[0];
-    return `${quote}${value.slice(1, -1).replace(/\\/g, '\\\\')}${quote}`;
-  }
-  return value;
+    : `process.stdout.write(${joinedExpr});`;
 }
 function handleMinMax(primary, argsText, runOnBrowser) {
   if (!argsText) return '';

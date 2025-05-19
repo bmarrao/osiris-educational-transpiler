@@ -46,13 +46,16 @@ export function visitFor_stmt(ctx) {
   let jsCode = ""
   
   const targetsRet = this.visit(ctx.star_targets());
-  for (const target of targetsRet) {
-    jsCode += !this.localVars.includes(target)
-      ? `let ${target.trim()}\n`
+  let newTargets = []
+  for (const target of targetsRet) 
+  {
+    newTargets.push(target.replace(/[()]/g, '').trim()) 
+    jsCode += !this.localVars.includes(target.replace(/[()]/g, '').trim())
+      ? `let ${target.replace(/[()]/g, '').trim()}\n`
       : "";
   }
 
-  let targets = dealTargets(targetsRet,this.localVars)
+  let targets = dealTargets(newTargets,this.localVars)
   const iterable = this.visit(ctx.star_expressions()); // Visit the iterable expression
   const body = this.visit(ctx.block()); // Visit the main block
   let preDeclareTargets = targets.replace(/^\[(.*)\]$/, "$1");
@@ -93,13 +96,16 @@ export function visitFor_stmt(ctx) {
     }
   } else 
   {
-    jsCode +=` 
-    if (typeof ${iterable}[Symbol.iterator] === "function") {
+    jsCode +=
+    `
+    let osiris_for_iterable${this.iterableFor} = ${iterable}
+    if (typeof osiris_for_iterable${this.iterableFor}[Symbol.iterator] === "function") {
     // It's an iterable (Array, Set, Map, etc.), but not a string
-        for (const ${targets} of ${iterable}) {\n${body}\n}
-    } else if (typeof ${iterable} === "object" && ${iterable} !== null) {
-        for (const ${targets} in ${iterable}) {\n${body}\n}
+        for (const ${targets} of osiris_for_iterable${this.iterableFor}) {\n${body}\n}
+    } else if (typeof osiris_for_iterable${this.iterableFor} === "object" && osiris_for_iterable${this.iterableFor} !== null) {
+        for (const ${targets} in osiris_for_iterable${this.iterableFor}) {\n${body}\n}
     }`;
+    this.iterableFor += 1
   }
 
   return jsCode;

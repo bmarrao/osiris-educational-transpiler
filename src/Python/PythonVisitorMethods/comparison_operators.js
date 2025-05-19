@@ -20,10 +20,9 @@ export function visitComparison(ctx) {
 
     if(comparisonPairs.length >= 1 ) {
         evalString = evalString.replace(/this\./g, 'osiris_builtin_class.')
-//         console.log(evalString)
-        console.log(`localVars [${this.localVars}]`)
-        return `osiris_builtin_python_evalPythonComparison('${evalString}', { ${this.localVars
-        .map(v => v.trim() === "" ? null : (v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`))
+        console.log(this.builtInFuncNames)
+        return `osiris_builtin_python_evalPythonComparison(${JSON.stringify(evalString)}, { ${this.localVars
+        .map(v => (v.trim() === "" || this.builtInFuncNames.includes(v) ) ? null : (v === "self" ? "osiris_builtin_class : this" : `${v}: ${v}`))
         .filter(Boolean)
         .join(", ")} })`;
     }

@@ -1,36 +1,29 @@
-/*
-export function osirisFormatPrint(strArgs) {
-  console.log(strArgs)
-    const parts = strArgs.split(',').map(p => p.trim());
-  
-  let sep = ' ';
-  let end = '\n';
-  let args = [];
-  
-  // Parse keywords from the end
-  let i = parts.length - 1;
-  while (i >= 0) {
-    const part = parts[i];
-    const keywordMatch = part.match(/^(sep|end)\s*=\s*(['"])(.*?)\2$/);
-    
-    if (!keywordMatch) break;
-    
-    const [_, key, __, value] = keywordMatch;
-    if (key === 'sep') sep = value;
-    if (key === 'end') end = value;
-    i--;
+import { funcNames } from './pre-defined-funcs.js';
+
+// monta um mapa nome→função a partir do array funcNames
+const functionMap = Object.fromEntries(
+  funcNames
+    .map(name => {
+      const fn = eval(name);
+      return (typeof fn === 'function') ? [name, fn] : null;
+    })
+    .filter(Boolean)
+);
+
+export function osirisClear(target) {
+  if (target instanceof Set || target instanceof Map) {
+    // clears Set or Map
+    target.clear();
+  } else if (Array.isArray(target)) {
+    // clears Array
+    target.length = 0;
+  } else if (target !== null && typeof target === 'object') {
+    // clears plain Object (like Python dict)
+    Object.keys(target).forEach(key => delete target[key]);
+  } else {
+    throw new TypeError('This type does not support clear()');
   }
-  
-  // Process remaining arguments (strip quotes)
-  args = parts.slice(0, i + 1).map(arg => {
-    // Remove surrounding quotes while preserving escaped ones
-    const quotedMatch = arg.match(/^(['"])(.*)\1$/);
-    return quotedMatch ? quotedMatch[2] : arg;
-  });
-  
-  return args.join(sep) + end;
 }
-*/
 export function osirisEvalSingle(value) {
     // Check for Python's None
     if (value === null || value === undefined) {
@@ -137,6 +130,7 @@ export function osiris_builtin_int(value, base = 10) {
                 detectedBase = 8;
                 remaining = remaining.slice(2);
             } else if (remaining.startsWith('0') && remaining.length > 1) {
+                // Python 3 behavior: leading zeros with base=0 are invalid
                 throw new Error(`invalid literal for int() with base 0: '${value}'`);
             } else {
                 detectedBase = 10;
@@ -161,7 +155,8 @@ export function osiris_builtin_int(value, base = 10) {
                 validChars = /^[0-7]+$/;
                 break;
             case 10:
-                validChars = /^(0|[1-9]\d*)$/;
+                // Allow leading zeros ONLY if base was explicitly set to 10
+                validChars = (base === 0) ? /^(0|[1-9]\d*)$/ : /^[0-9]+$/;
                 break;
             case 16:
                 validChars = /^[0-9a-f]+$/i;
@@ -171,10 +166,6 @@ export function osiris_builtin_int(value, base = 10) {
         }
 
         if (!validChars.test(remaining)) {
-            throw new Error(`invalid literal for int() with base ${detectedBase}: '${value}'`);
-        }
-
-        if (remaining === '') {
             throw new Error(`invalid literal for int() with base ${detectedBase}: '${value}'`);
         }
 
@@ -386,43 +377,168 @@ export function osiris_builtin_extend(arr, iterable) {
   arr.push(...iterable);
 }
 
- export function osiris_builtin_python_evalPythonComparison(expr, context) {   if (/\b(and|or)\b/.test(expr)) {     return false;   }   function getDepths(str) {     const depths = new Array(str.length).fill(0);     let currentDepth = 0, inString = false, stringChar = null, escape = false;     for (let i = 0; i < str.length; i++) {       const char = str[i];       if (escape) { escape = false; continue; }       if (inString) {         if (char === stringChar) { inString = false; stringChar = null; }         else if (char === '\\') { escape = true; }       } else {         switch (char) {           case '(': case '[': case '{': currentDepth++; break;           case ')': case ']': case '}': currentDepth = Math.max(currentDepth - 1, 0); break;           case '"': case "'": case '\`': inString = true; stringChar = char; break;         }       }       depths[i] = currentDepth;     }     return depths;   } function tokenize(expr) {
-    const depths = getDepths(expr);
-    const operators = ['!=', '==', '<=', '>=', '<', '>', ' is not ', ' not in ', ' is ', ' in ']; // Prioritize longer operators first
-    const tokens = [];
-    let currentToken = '';
-    let i = 0;
 
-    while (i < expr.length) {
-        let foundOp = null;
-        let opLength = 0;
+export function osiris_builtin_python_evalPythonComparison(expr, context) {   
+    context = { ...functionMap, ...context };
 
-        // Check for all possible operators starting at current position
-        for (const op of operators) {
-            if (expr.startsWith(op, i)) {
-                foundOp = op;
-                opLength = op.length;
-                break;
-            }
-        }
-
-        if (foundOp) {
-            if (currentToken.trim()) {
-                tokens.push(currentToken.trim());
-                currentToken = '';
-            }
-            tokens.push(foundOp.trim());
-            i += opLength;
-        } else {
-            currentToken += expr[i];
-            i++;
-        }
+    if (/\b(and|or)\b/.test(expr)) {     
+        return false;   
     }
 
-    if (currentToken.trim()) tokens.push(currentToken.trim());
-    return tokens;
-}  function evaluateWithContext(valueStr, context) {     const keys = Object.keys(context);     const values = keys.map(key => context[key]);     try {       const evaluator = new Function(...keys, 'return (' + valueStr + ');');       return evaluator(...values);     } catch (e) {       return valueStr;     }   }   function isIn(a, b) {     if (Array.isArray(b)) return b.some(item => deepEqual(a, item));     if (typeof b === 'string') return b.includes(a);     if (b instanceof Set) {       for (const item of b) {         if (deepEqual(a, item)) return true;       }       return false;     }     if (typeof b === 'object' && b !== null) {       return Object.keys(b).some(key => deepEqual(a, key));     }     return false;   }   function deepEqual(a, b) {     if (a === b) return true;     if (a == null || b == null) return a === b;     if (typeof a !== typeof b) return false;     if (Array.isArray(a) && Array.isArray(b)) {       if (a.length !== b.length) return false;       for (let i = 0; i < a.length; i++) {         if (!deepEqual(a[i], b[i])) return false;       }       return true;     }     if (a instanceof Set && b instanceof Set) {       if (a.size !== b.size) return false;       const aArray = Array.from(a).sort();       const bArray = Array.from(b).sort();       return deepEqual(aArray, bArray);     }     if (typeof a === 'object') {       const keysA = Object.keys(a).sort();       const keysB = Object.keys(b).sort();       if (keysA.length !== keysB.length) return false;       for (let i = 0; i < keysA.length; i++) {         const key = keysA[i];         if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;       }       return true;     }     return false;   }   const operators = {     '==': (a, b) => deepEqual(a, b),     '!=': (a, b) => !deepEqual(a, b),     '<': (a, b) => a < b,     '<=': (a, b) => a <= b,     '>': (a, b) => a > b,     '>=': (a, b) => a >= b,     'in': (a, b) => isIn(a, b),     'not in': (a, b) => !isIn(a, b),     'is': (a, b) => Object.is(a, b),     'is not': (a, b) => !Object.is(a, b)   };   const parts = tokenize(expr);   const values = [];   const ops = [];   for (let i = 0; i < parts.length; i++) {     if (i % 2 === 0) {       values.push(evaluateWithContext(parts[i], context));     } else {       ops.push(parts[i]);     }   }   for (let i = 0; i < ops.length; i++) {     if (!operators[ops[i]](values[i], values[i + 1])) return false;   }   return true; }
+    function getDepths(str) {     
+        const depths = new Array(str.length).fill(0);     
+        let currentDepth = 0, inString = false, stringChar = null, escape = false;     
+        for (let i = 0; i < str.length; i++) {       
+            const char = str[i];       
+            if (escape) { 
+                escape = false; 
+                continue; 
+            }       
+            if (inString) {         
+                if (char === stringChar) { 
+                    inString = false; 
+                    stringChar = null; 
+                }         
+                else if (char === '\\') { 
+                    escape = true; 
+                }      
 
+            } else {         
+                switch (char) {           
+                    case '(': case '[': case '{': currentDepth++; break;           
+                    case ')': case ']': case '}': currentDepth = Math.max(currentDepth - 1, 0); break;           
+                    case '"': case "'": case '\`': inString = true; stringChar = char; break;         
+                }       
+            }       
+            depths[i] = currentDepth;     
+        }     
+        return depths;   
+    } 
+
+    function tokenize(expr) {
+        const depths = getDepths(expr);
+        const operators = ['!=', '==', '<=', '>=', '<', '>', ' is not ', ' not in ', ' is ', ' in ']; // Prioritize longer operators first
+        const tokens = [];
+        let currentToken = '';
+        let i = 0;
+
+        while (i < expr.length) {
+            let foundOp = null;
+            let opLength = 0;
+
+            // Check for all possible operators starting at current position
+            for (const op of operators) {
+                if (expr.startsWith(op, i)) {
+                    foundOp = op;
+                    opLength = op.length;
+                    break;
+                }
+            }
+
+            if (foundOp) {
+                if (currentToken.trim()) {
+                    tokens.push(currentToken.trim());
+                    currentToken = '';
+                }
+                tokens.push(foundOp.trim());
+                i += opLength;
+            } else {
+                currentToken += expr[i];
+                i++;
+            }
+        }
+
+        if (currentToken.trim()) tokens.push(currentToken.trim());
+        return tokens;
+    }
+
+    function evaluateWithContext(valueStr, context) {     
+        const keys = Object.keys(context);     
+        const values = keys.map(key => context[key]);     
+        try {       
+            const evaluator = new Function(...keys, 'return (' + valueStr + ');');       
+            return evaluator(...values);     
+        } catch (e) {       
+            return valueStr;     
+        }   
+    }   
+
+    function isIn(a, b) {     
+        if (Array.isArray(b)) return b.some(item => deepEqual(a, item));     
+        if (typeof b === 'string') return b.includes(a);     
+        if (b instanceof Set) {       
+            for (const item of b) {         
+                if (deepEqual(a, item)) return true;       
+            }       
+            return false;     
+        }     
+        if (typeof b === 'object' && b !== null) {       
+            return Object.keys(b).some(key => deepEqual(a, key));     
+        }     
+        return false;   
+    }   
+
+    function deepEqual(a, b) {     
+        if (a === b) return true;     
+        if (a == null || b == null) return a === b;     
+        if (typeof a !== typeof b) return false;     
+        if (Array.isArray(a) && Array.isArray(b)) {       
+            if (a.length !== b.length) return false;       
+            for (let i = 0; i < a.length; i++) {         
+                if (!deepEqual(a[i], b[i])) return false;       
+            }       
+            return true;     
+        }     
+        if (a instanceof Set && b instanceof Set) {       
+            if (a.size !== b.size) return false;       
+            const aArray = Array.from(a).sort();       
+            const bArray = Array.from(b).sort();       
+            return deepEqual(aArray, bArray);     
+        }     
+        if (typeof a === 'object') {       
+            const keysA = Object.keys(a).sort();       
+            const keysB = Object.keys(b).sort();       
+            if (keysA.length !== keysB.length) return false;       
+            for (let i = 0; i < keysA.length; i++) {         
+                const key = keysA[i];         
+                if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;       
+            }       
+            return true;     
+        }     
+        return false;   
+    }   
+
+    const operators = {     
+        '==': (a, b) => deepEqual(a, b),     
+        '!=': (a, b) => !deepEqual(a, b),     
+        '<': (a, b) => a < b,     
+        '<=': (a, b) => a <= b,     
+        '>': (a, b) => a > b,     
+        '>=': (a, b) => a >= b,     
+        'in': (a, b) => isIn(a, b),     
+        'not in': (a, b) => !isIn(a, b),     
+        'is': (a, b) => Object.is(a, b),     
+        'is not': (a, b) => !Object.is(a, b)   
+    };   
+
+    const parts = tokenize(expr);   
+    const values = [];   
+    const ops = [];   
+
+    for (let i = 0; i < parts.length; i++) {     
+        if (i % 2 === 0) {       
+            values.push(evaluateWithContext(parts[i], context));     
+        } else {       
+            ops.push(parts[i]);     
+        }   
+    }   
+
+    for (let i = 0; i < ops.length; i++) {     
+        if (!operators[ops[i]](values[i], values[i + 1])) return false;   
+    }   
+
+    return true; 
+}
 export function convertPythonOperand(value) {
     if (typeof value === 'boolean') {
         return value ? 1 : 0;
