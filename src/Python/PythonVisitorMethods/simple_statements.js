@@ -35,6 +35,11 @@ function hasTopLevelComma(str) {
   }
   return false;
 }
+
+function isGenexp(valuesStr) {
+  return valuesStr.includes("function*") && valuesStr.includes("return generator()");
+}
+
 function multipleTargets(targets, valuesStr) {
     var preDeclare = this.inIf ? "var" : "let";
     let ret = "";
@@ -51,7 +56,12 @@ function multipleTargets(targets, valuesStr) {
             ret += `${preDeclare} ${unpack}`;
     }
     for (let i = 0; i < targets.length; i++) {
-        let assignment = `${targets[i]} = osiris_iterable_unpacking[${i}];`;
+        let assignment;
+        if (isGenexp(valuesStr)) {
+            assignment = `${targets[i]} = osiris_iterable_unpacking.next().value;`;
+        } else {
+            assignment = `${targets[i]} = osiris_iterable_unpacking[${i}];`;
+        }
         if (this.localVars.includes(targets[i]) || targets[i].includes('.') || targets[i].includes('[')) {
             ret += assignment;
         } else {

@@ -1,3 +1,52 @@
+var acessFunc = `
+function pythonAccess(obj, index, isSlice = false) {
+  const returnObj = obj; // Pre-declare to ensure we access the original object
+
+  // Handle null/undefined indexes
+  if (index === null || index === undefined) {
+    const computedIndex = isSlice ? undefined : 0;
+    return returnObj[computedIndex];
+  }
+
+  // Handle dictionary access
+  if (returnObj && typeof returnObj === 'object' && !Array.isArray(returnObj)) {
+    const key = String(index);
+    return returnObj[key];
+  }
+
+  // Handle arrays and strings
+  if (Array.isArray(returnObj) || typeof returnObj === 'string') {
+    const len = returnObj.length;
+    let numIndex = Number(index);
+
+    // Validate numeric index for non-slice operations
+    if (isNaN(numIndex) && !isSlice) {
+      throw new Error("TypeError: indices must be integer");
+    }
+
+    // Convert negative indices
+    if (numIndex < 0) {
+      numIndex = len + numIndex;
+    }
+
+    // Adjust slice indices to valid range
+    if (isSlice) {
+      numIndex = numIndex < 0 ? 0 : numIndex > len ? len : numIndex;
+    } else {
+      // Validate index bounds for direct access
+      if (numIndex < 0 || numIndex >= len) {
+        throw new Error("IndexError: index out of range");
+      }
+    }
+
+    return returnObj[numIndex];
+  }
+
+  // Default case for other object types
+  return returnObj[index];
+}
+`
+
 var clearFunc = 
 `
 function osirisClear(target) {
@@ -1121,6 +1170,7 @@ export var funcNames = [
   "osiris_builtin_zip",
   "myRemove",
   "osirisEvalSingle",
+  "pythonAccess",
   "osirisClear"
 ];
 
@@ -1159,4 +1209,5 @@ ${joinFunc}
 ${joinFunc}
 ${funcInt}
 ${clearFunc}
+${acessFunc}
 `;

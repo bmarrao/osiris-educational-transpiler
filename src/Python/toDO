@@ -1,3 +1,7 @@
+Comparacao pares em evalPython Comparison 
+
+Colocar que se vier na esquerda o pythonIndex retorna o valor já . Faz sentido já que na esquerda nunca vai estar algo que muda o estado : Double let frase = mockInput().split(/\s+/).filter(Boolean)[pythonIndex(mockInput().split(/\s+/).filter(Boolean), - 1)];
+
 Find a way on evalComparison to not pass that context so explicitly because the code becomes really hard to redad -> TO DO THIS ADD STATIC CONTEXT THE BUILTIN FUNC AND PASS ONLY THE OTHER STUFF ADD CODE FOR THIS
 Teste de hipótese
 
@@ -21,5 +25,7 @@ Print in python is different than javascript make a function for print that take
 Create input function 
 
 comprehension generators dont work properly for more than one for 
+
+Adicioanr time out e também worker nodes não só webbrowsers
 
 notas = list(map(float, input("Digite as notas separadas por espaço: ").split()))

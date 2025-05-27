@@ -1,0 +1,25 @@
+Icatch cant be specific like it is in python because errors aren't the same
+fstring there is no translation for the formatting it has in python after ":"
+no else in the while, for statement
+catch cant be specific like it is in python because errors aren't the same - example except ZeroDivisionError as e:
+function in arrays/tuples
+no else in the while, for statement
+Parameters like def foo(*args: int, **kwargs: str)
+Parameters like (*args: int, **kwargs: str)
+No kwargs
+No kwargs
+fstring there is no translation for the formatting it has in python after ":"
+Precision infinita do python (Números)
+No imports
+catch cant be specific like it is in python because errors aren't the same - example except ZeroDivisionError as e:
+imaginary numbers are not supported in js
+decorators
+no else in the while, for statement
+Parameters like (*args: int, **kwargs: str) are not supported
+No args after *args, def (x , y, *args, z = 7) not supported because of z
+No kwargs
+with, del statements
+x,y = dictionary unpacking
+There are some missing builtin functions. add later
+
+

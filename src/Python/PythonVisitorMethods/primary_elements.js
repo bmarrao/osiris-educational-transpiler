@@ -475,7 +475,14 @@ export function visitSlices(ctx, primary, isTarget) {
 export function visitSlice(ctx, primary, isTarget) {
     if (ctx.named_expression()) {
         const index = this.visit(ctx.named_expression());
-        return `${primary}[pythonIndex(${primary}, ${index})]`;
+        if (!isTarget)
+        {
+          return `${primary}[pythonIndex(${primary}, ${index})]`;
+        }
+        else 
+        {
+          return `pythonAccess(${primary}, ${index})`;
+        }
     }
 
     if (!isTarget) {
