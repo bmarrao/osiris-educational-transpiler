@@ -32,8 +32,11 @@ ${builtInPythonFuncs}
 
 
 postMessage("Execution started")
-main()
-`;
+main().then(() => {
+        postMessage({ type: "done" });
+      }).catch(err => {
+        postMessage({ type: "error", error: err.toString() });
+      });`;
 
 /**
  * Custom error listener class that extends antlr4's ErrorListener.
@@ -307,7 +310,13 @@ class Osiris
         this.worker = new Worker(URL.createObjectURL(blob));
         this.worker.postMessage({ type: "start" });
         this.worker.onmessage = (event) => {
-          appendToTerminal(event);
+          if (event.data?.type === "done") {
+            clearTimeout(timeoutId);
+          } else if (event.data?.type === "error") {
+            clearTimeout(timeoutId);
+          } else {
+            appendToTerminal(event);
+          }
         };
         // console.log("FINISHED RUNNING");
       } catch (error) {

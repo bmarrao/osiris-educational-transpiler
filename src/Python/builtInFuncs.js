@@ -1,4 +1,53 @@
 import { funcNames } from './pre-defined-funcs.js';
+export function pythonSlice(obj, start, stop, step) {
+    const returnObj = obj;  // Single object reference
+    const len = returnObj?.length || 0;
+
+    // Helper to calculate indices using pythonIndex
+    const calcIndex = (index, defaultValue, clamp) => {
+        if (index === null || index === undefined) return defaultValue;
+        return pythonIndex(returnObj, index, clamp || true);
+    };
+
+    // Handle negative step (reverse slice)
+    if (step && Number(step) < 0) {
+        const absStep = Math.abs(Number(step)) || 1;
+        const startOmitted = start === null;
+        const stopOmitted = stop === null;
+
+        // Adjust indices for reverse slicing
+        const adjustedStop = stopOmitted ? 0 : calcIndex(stop, 0, true) + 1;
+        const adjustedStart = startOmitted ? len : calcIndex(start, len, true) + 1;
+
+        // Reverse and slice
+        const reversed = Array.isArray(returnObj) 
+            ? [...returnObj].reverse() 
+            : returnObj.split('').reverse().join('');
+        
+        const sliced = reversed.slice(adjustedStop, adjustedStart);
+        
+        // Apply step filtering
+        const stepped = absStep === 1 ? sliced : sliced.filter((_, i) => i % absStep === 0);
+        
+        return typeof returnObj === 'string' ? stepped.join('') : stepped;
+    }
+
+    // Handle positive steps
+    const adjStart = start !== null ? calcIndex(start, 0, true) : 0;
+    const adjStop = stop !== null ? calcIndex(stop, len, true) : len;
+    
+    let sliced = returnObj.slice(adjStart, adjStop);
+    
+    // Apply step if needed
+    if (step && Number(step) > 1) {
+        sliced = Array.isArray(sliced) 
+            ? sliced.filter((_, i) => i % Number(step) === 0)
+            : sliced.split('').filter((_, i) => i % Number(step) === 0).join('');
+    }
+
+    return sliced;
+}
+
 export function pythonAccess(obj, index, isSlice = false) {
   const returnObj = obj; // Pre-declare to ensure we access the original object
 
@@ -431,6 +480,48 @@ export function osiris_builtin_python_evalPythonComparison(expr, context) {
         return false;   
     }
 
+  function pythonCompare(a, b) {
+      // Handle null/undefined (treat as Python None)
+      if (a == null && b == null) return 0;
+      if (a == null) throw new TypeError(`Cannot compare null/undefined with ${b}`);
+      if (b == null) throw new TypeError(`Cannot compare ${a} with null/undefined`);
+
+      const typeA = typeof a;
+      const typeB = typeof b;
+
+      // Ensure same primitive type for comparison
+      if (typeA !== typeB) {
+          throw new TypeError(`Cannot compare different types: ${typeA} and ${typeB}`);
+      }
+
+      // Compare numbers
+      if (typeA === 'number') {
+          return a - b;
+      }
+
+      // Compare strings
+      if (typeA === 'string') {
+          return a.localeCompare(b);
+      }
+
+      // Compare booleans (false < true)
+      if (typeA === 'boolean') {
+          return Number(a) - Number(b);
+      }
+
+      // Compare arrays (recursive element-wise comparison)
+      if (Array.isArray(a) && Array.isArray(b)) {
+          const minLen = Math.min(a.length, b.length);
+          for (let i = 0; i < minLen; i++) {
+              const cmp = pythonCompare(a[i], b[i]);
+              if (cmp !== 0) return cmp;
+          }
+          return a.length - b.length;
+      }
+
+      // Handle other unsupported types
+      throw new TypeError(`Unsupported type for comparison: ${typeA}`);
+  }
     function getDepths(str) {     
         const depths = new Array(str.length).fill(0);     
         let currentDepth = 0, inString = false, stringChar = null, escape = false;     
@@ -554,18 +645,20 @@ export function osiris_builtin_python_evalPythonComparison(expr, context) {
         return false;   
     }   
 
-    const operators = {     
-        '==': (a, b) => deepEqual(a, b),     
-        '!=': (a, b) => !deepEqual(a, b),     
-        '<': (a, b) => a < b,     
-        '<=': (a, b) => a <= b,     
-        '>': (a, b) => a > b,     
-        '>=': (a, b) => a >= b,     
-        'in': (a, b) => isIn(a, b),     
-        'not in': (a, b) => !isIn(a, b),     
-        'is': (a, b) => Object.is(a, b),     
-        'is not': (a, b) => !Object.is(a, b)   
-    };   
+    
+    const operators = {
+        '==': (a, b) => deepEqual(a, b),
+        '!=': (a, b) => !deepEqual(a, b),
+        '<': (a, b) => pythonCompare(a, b) < 0,
+        '<=': (a, b) => pythonCompare(a, b) <= 0,
+        '>': (a, b) => pythonCompare(a, b) > 0,
+        '>=': (a, b) => pythonCompare(a, b) >= 0,
+        'in': (a, b) => isIn(a, b),
+        'not in': (a, b) => !isIn(a, b),
+        'is': (a, b) => Object.is(a, b),
+        'is not': (a, b) => !Object.is(a, b)
+    };
+       
 
     const parts = tokenize(expr);   
     const values = [];   
