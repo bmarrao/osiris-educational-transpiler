@@ -332,17 +332,14 @@ function osiris_builtin_int(value, base = 10) {
     if (typeof value === 'boolean') {
         return value ? 1 : 0;
     }
-
     if (typeof value === 'number') {
         return Math.trunc(value);
     }
-
     if (typeof value === 'string') {
         let trimmed = value.trim();
         if (trimmed === '') {
             throw new Error(\`invalid literal for int() with base \${base}: '\${value}'\`);
         }
-
         let sign = 1;
         if (trimmed[0] === '-') {
             sign = -1;
@@ -350,10 +347,8 @@ function osiris_builtin_int(value, base = 10) {
         } else if (trimmed[0] === '+') {
             trimmed = trimmed.slice(1);
         }
-
         let detectedBase = base;
         let remaining = trimmed;
-
         if (base === 0) {
             if (remaining.startsWith('0x') || remaining.startsWith('0X')) {
                 detectedBase = 16;
@@ -370,15 +365,14 @@ function osiris_builtin_int(value, base = 10) {
                 detectedBase = 10;
             }
         } else {
-            if (detectedBase === 16 && (remaining.startsWith('0x') || remaining.startsWith('0X')) {
+            if (detectedBase === 16 && (remaining.startsWith('0x') || remaining.startsWith('0X'))) {
                 remaining = remaining.slice(2);
-            } else if (detectedBase === 2 && (remaining.startsWith('0b') || remaining.startsWith('0B')) {
+            } else if (detectedBase === 2 && (remaining.startsWith('0b') || remaining.startsWith('0B'))) {
                 remaining = remaining.slice(2);
-            } else if (detectedBase === 8 && (remaining.startsWith('0o') || remaining.startsWith('0O')) {
+            } else if (detectedBase === 8 && (remaining.startsWith('0o') || remaining.startsWith('0O'))) {
                 remaining = remaining.slice(2);
             }
         }
-
         let validChars;
         switch (detectedBase) {
             case 2:
@@ -388,7 +382,7 @@ function osiris_builtin_int(value, base = 10) {
                 validChars = /^[0-7]+$/;
                 break;
             case 10:
-                validChars = /^(0|[1-9]\d*)$/;
+                validChars = /^(0|[1-9]\\d*)$/;
                 break;
             case 16:
                 validChars = /^[0-9a-f]+$/i;
@@ -396,27 +390,21 @@ function osiris_builtin_int(value, base = 10) {
             default:
                 throw new Error(\`unsupported base: \${detectedBase}\`);
         }
-
         if (!validChars.test(remaining)) {
             throw new Error(\`invalid literal for int() with base \${detectedBase}: '\${value}'\`);
         }
-
         if (remaining === '') {
             throw new Error(\`invalid literal for int() with base \${detectedBase}: '\${value}'\`);
         }
-
         const parsed = parseInt(remaining, detectedBase);
         if (isNaN(parsed)) {
             throw new Error(\`invalid literal for int() with base \${detectedBase}: '\${value}'\`);
         }
-
         return sign * parsed;
     }
-
     throw new Error(\`invalid type for int(): \${typeof value}\`);
 }
-`;
-var funcOrd = `
+`;var funcOrd = `
 function osiris_builtin_ord(str) {
     if (typeof str !== 'string' || [...str].length !== 1) {
         throw new Error('Input must be a single character string');
