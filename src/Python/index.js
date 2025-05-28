@@ -297,31 +297,40 @@ class Osiris
      */
     runCode(appendToTerminal, timeout) {
       try {
-        let Worker = window.Worker;
+        // Clean up previous worker/timeout if they exist
+        if (this.worker) {
+          this.worker.terminate(); // Terminate any lingering worker
+          this.worker = null;
+        }
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId); // Clear previous timeout
+          this.timeoutId = null;
+        }
 
         let insideCode = translatePython(this.code, true).code;
-        let runCodeStr = `async function main() {
-          ${insideCode}
-        };
-        ${code_suffix}`;
-        console.log(`CODE: ${runCodeStr}`);
+        let runCodeStr = `async function main() { ${insideCode} }; ${code_suffix}`;
+        
         const blob = new Blob([runCodeStr], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
-        const timeoutId = setTimeout(() => {
-          this.worker.terminate();
-          appendToTerminal({ data: "[Timeout] Execution exceeded " + timeout + "ms" });
-        }, timeout);
-        this.worker.postMessage({ type: "start" });
-        this.worker.onmessage = (event) => {
-          if (event.data?.type === "done") {
-            clearTimeout(timeoutId);
-          } else if (event.data?.type === "error") {
-            clearTimeout(timeoutId);
-          } else {
-            appendToTerminal(event);
+        
+        // Store timeout ID at the instance level
+        this.timeoutId = setTimeout(() => {
+          if (this.worker) {
+            this.worker.terminate();
+            this.worker = null;
+            appendToTerminal({ data: "[Timeout] Execution exceeded " + timeout + "ms" });
           }
+        }, timeout);
+
+        this.worker.postMessage({ type: "start" });
+        
+        this.worker.onmessage = (event) => {
+          if (event.data?.type === "done" || event.data?.type === "error") {
+            clearTimeout(this.timeoutId); // Clear on completion/error
+            this.timeoutId = null;
+          }
+          appendToTerminal(event);
         };
-        // console.log("FINISHED RUNNING");
       } catch (error) {
         console.error("Error in runCode:", error);
       }
