@@ -67,7 +67,7 @@ function osirisClear(target) {
 
 var evalSingleFunc = 
 `
-osirisEvalSingle(value) {
+function osirisEvalSingle(value) {
     // Check for Python's None
     if (value === null || value === undefined) {
         return false;
