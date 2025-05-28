@@ -307,6 +307,10 @@ class Osiris
         console.log(`CODE: ${runCodeStr}`);
         const blob = new Blob([runCodeStr], { type: "application/javascript" });
         this.worker = new Worker(URL.createObjectURL(blob));
+        const timeoutId = setTimeout(() => {
+          this.worker.terminate();
+          appendToTerminal({ data: "[Timeout] Execution exceeded " + timeout + "ms" });
+        }, timeout);
         this.worker.postMessage({ type: "start" });
         this.worker.onmessage = (event) => {
           if (event.data?.type === "done") {
