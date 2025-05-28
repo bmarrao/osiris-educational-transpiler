@@ -25,6 +25,9 @@
 !cjs/
 !cjs/**
 
+!Logo/
+!Logo/**
+
 
 !Python/
 !Python/**
